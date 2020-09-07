@@ -25,6 +25,7 @@ kinetic_catkin_build:
   stage: build
   script:
     - catkin build --summarize --no-status --force-color
+    - catkin run_tests romea_localisation --no-status --force-color --no-deps
 
 # melodic
 melodic_catkin_build:
@@ -32,6 +33,7 @@ melodic_catkin_build:
   stage: build
   script:
     - catkin build --summarize --no-status --force-color
+    - catkin run_tests romea_localisation --no-status --force-color --no-deps
 
 # noetic
 noetic_catkin_build:
@@ -39,3 +41,4 @@ noetic_catkin_build:
   stage: build
   script:
     - catkin build --summarize --no-status --force-color
+    - catkin run_tests romea_localisation --no-status --force-color --no-deps
