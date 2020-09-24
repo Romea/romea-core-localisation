@@ -172,6 +172,7 @@ Pose2D R2RLocalisationPFResults::toLeaderPose2D() const
   pose2d.position.y()=estimate_(LEADER_POSITION_Y );
   pose2d.yaw =estimate_(LEADER_ORIENTATION_Z);
   pose2d.covariance = estimateCovariance_;
+  return pose2d;
 }
 
 
