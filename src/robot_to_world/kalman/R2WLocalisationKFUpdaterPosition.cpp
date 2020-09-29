@@ -4,15 +4,16 @@ namespace romea {
 
 //-----------------------------------------------------------------------------
 R2WLocalisationKFUpdaterPosition::R2WLocalisationKFUpdaterPosition(const double &maximalMahalanobisDistance,
-                                                                   const bool & disableUpdateFunction):
-  LocalisationUpdater(disableUpdateFunction),
+                                                                   const bool & disableUpdateFunction,
+                                                                   const std::string & logFilename):
+  LocalisationUpdater(logFilename,disableUpdateFunction),
   KFUpdaterCore(maximalMahalanobisDistance),
   levelArmCompensation_()
 {
   this->H_(0, MetaState::POSITION_X)=1;
   this->H_(1, MetaState::POSITION_Y)=1;
 
-  logColumnNames_ = {"stamp",
+  setLogFileHeader_({"stamp",
                      "x_obs",
                      "y_obs",
                      "cov_x_obs",
@@ -34,7 +35,7 @@ R2WLocalisationKFUpdaterPosition::R2WLocalisationKFUpdaterPosition(const double 
                      "inn_y",
                      "mahalanobis_distance",
                      "success"
-                    };
+                    });
 }
 
 //--------------------------------------------------------------------------
@@ -109,7 +110,7 @@ void R2WLocalisationKFUpdaterPosition::update_(const Duration &duration,
   this->QInn_+= levelArmCompensation_.getPositionCovariance().block<2,2>(0,0);
 
   //log
-  if(isLogging_)
+  if(logFile_.is_open())
   {
     logFile_<< duration.count()<<",";
     logFile_<< currentObservation.Y(0) <<",";
@@ -140,7 +141,7 @@ void R2WLocalisationKFUpdaterPosition::update_(const Duration &duration,
     currentAddon.lastExteroceptiveUpdate.travelledDistance=currentAddon.travelledDistance;
   }
 
-  if(isLogging_)
+  if(logFile_.is_open())
   {
     logFile_<< this->mahalanobisDistance_ <<",";
     logFile_<<success<<",\n";

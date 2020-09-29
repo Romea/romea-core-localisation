@@ -5,8 +5,9 @@ namespace romea {
 
 //--------------------------------------------------------------------------
 R2RLocalisationPFUpdaterRange::R2RLocalisationPFUpdaterRange(const size_t &numberOfParticles,
-                                                             const double & maximalMahalanobisDistance):
-  LocalisationUpdater(false),
+                                                             const double & maximalMahalanobisDistance,
+                                                             const std::string & logFilename):
+  LocalisationUpdater(logFilename,false),
   PFGaussianUpdaterCore(numberOfParticles,maximalMahalanobisDistance),
   cosCourses_(RowMajorVector::Zero(numberOfParticles_)),
   sinCourses_(RowMajorVector::Zero(numberOfParticles_))
@@ -78,7 +79,7 @@ void R2RLocalisationPFUpdaterRange::update_(const Duration & duration,
   }
 
   //log
-  if(isLogging_)
+  if(logFile_.is_open())
   {
     logFile_<< duration.count()<<" ";
     logFile_<< success <<" ";

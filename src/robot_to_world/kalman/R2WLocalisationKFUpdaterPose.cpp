@@ -6,8 +6,9 @@ namespace romea {
 
 //-----------------------------------------------------------------------------
 R2WLocalisationKFUpdaterPose::R2WLocalisationKFUpdaterPose(const double & maximalMahalanobisDistance,
-                                                           const bool &disableUpdateFunction):
-  LocalisationUpdater(disableUpdateFunction),
+                                                           const bool &disableUpdateFunction,
+                                                           const std::string & logFilename):
+  LocalisationUpdater(logFilename,disableUpdateFunction),
   KFUpdaterCore(maximalMahalanobisDistance),
   levelArmCompensation_()
 {
@@ -15,7 +16,7 @@ R2WLocalisationKFUpdaterPose::R2WLocalisationKFUpdaterPose(const double & maxima
   H_(1, MetaState::POSITION_Y)=1;
   H_(2, MetaState::ORIENTATION_Z)=1;
 
-  logColumnNames_ = {"stamp",
+  setLogFileHeader_({"stamp",
                      "x_obs",
                      "y_obs",
                      "theta_obs",
@@ -38,7 +39,7 @@ R2WLocalisationKFUpdaterPose::R2WLocalisationKFUpdaterPose(const double & maxima
                      "level_arm_y"
                      "mahalanobis_distance",
                      "success"
-                    };
+                    });
 }
 
 //--------------------------------------------------------------------------
@@ -112,7 +113,7 @@ void R2WLocalisationKFUpdaterPose::update_(const Duration & duration,
   this->QInn_.template block<2,2>(0,0)+=levelArmCompensation_.getPositionCovariance().block<2,2>(0,0);
 
   //log
-  if(isLogging_)
+  if(logFile_.is_open())
   {
     logFile_<< duration.count()<<",";
     logFile_<< currentObservation.Y(0) <<",";

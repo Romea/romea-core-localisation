@@ -8,17 +8,18 @@ namespace romea {
 
 //--------------------------------------------------------------------------
 R2WLocalisationKFUpdaterCourse::R2WLocalisationKFUpdaterCourse(const double &maximalMahalanobisDistance,
-                                                               const bool & disableUpdateFunction):
-  LocalisationUpdater(disableUpdateFunction),
+                                                               const bool & disableUpdateFunction,
+                                                               const std::string & logFilename):
+  LocalisationUpdater(logFilename,disableUpdateFunction),
   KFUpdaterCore(maximalMahalanobisDistance)
 {
   this->H_(0, MetaState::ORIENTATION_Z)=1;
-  logColumnNames_={"stamp",
-                   "course",
-                   "cov_course",
-                   "theta",
-                   "cov_theta"
-                  };
+  setLogFileHeader_({"stamp",
+                     "course",
+                     "cov_course",
+                     "theta",
+                     "cov_theta"
+                    });
 }
 
 //--------------------------------------------------------------------------
@@ -70,7 +71,7 @@ void R2WLocalisationKFUpdaterCourse::update_(const Duration & duration,
                                                          MetaState::ORIENTATION_Z);
 
   //log
-  if(isLogging_)
+  if(logFile_.is_open())
   {
     logFile_<< duration.count()<<",";
     logFile_<< currentObservation.Y() <<",";

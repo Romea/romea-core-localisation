@@ -5,13 +5,12 @@ namespace romea
 
 
 //-----------------------------------------------------------------------------
-LocalisationUpdater::LocalisationUpdater(const bool &disableUpdateFunction):
+LocalisationUpdater::LocalisationUpdater(const std::string & logFilename,
+                                         const bool &disableUpdateFunction):
   logFile_(),
-  logColumnNames_(),
-  isLogging_(false),
   updateStartDisableTime_(disableUpdateFunction ? Duration::zero():Duration::max())
 {
-
+  openLogFile_(logFilename);
 }
 
 //-----------------------------------------------------------------------------
@@ -27,42 +26,49 @@ void LocalisationUpdater::disableUpdateFunction(const Duration & updateStartDisa
 }
 
 //-----------------------------------------------------------------------------
-void LocalisationUpdater::configureLogging(const std::string &logFilename,bool autostart)
+void LocalisationUpdater::openLogFile_(const std::string &logFilename)
 {
-  logFile_.open(logFilename);
-
-  if(!logFile_.is_open())
+  if(logFilename.empty())
   {
-    throw std::runtime_error("Cannot open debug file : "+logFilename);
-  }
+    logFile_.open(logFilename);
 
-  if(!logColumnNames_.empty())
-  {
-    logFile_<<"%";
-    for(size_t n=0;n<logColumnNames_.size();++n)
+    if(!logFile_.is_open())
     {
-      logFile_<<"("<<n+1<<")"<<logColumnNames_[n]<<",";
+      throw std::runtime_error("Cannot open debug file : "+logFilename);
     }
-    logFile_<<"\n";
   }
-  isLogging_=autostart;
 }
 
 //-----------------------------------------------------------------------------
-bool LocalisationUpdater::startLogging()
+void LocalisationUpdater::setLogFileHeader_(const std::vector<std::string> & logColumnNames)
 {
   if(logFile_.is_open())
   {
-    isLogging_=true;
+    logFile_<<"%";
+    for(size_t n=0;n<logColumnNames.size();++n)
+    {
+      logFile_<<"("<<n+1<<")"<<logColumnNames[n]<<",";
+    }
+    logFile_<<"\n";
   }
-
-  return isLogging_;
 }
 
-//-----------------------------------------------------------------------------
-void LocalisationUpdater::stopLogging()
-{
-  isLogging_=false;
-}
+
+////-----------------------------------------------------------------------------
+//bool LocalisationUpdater::startLogging()
+//{
+//  if(logFile_.is_open())
+//  {
+//    isLogging_=true;
+//  }
+
+//  return isLogging_;
+//}
+
+////-----------------------------------------------------------------------------
+//void LocalisationUpdater::stopLogging()
+//{
+//  isLogging_=false;
+//}
 
 }//romea

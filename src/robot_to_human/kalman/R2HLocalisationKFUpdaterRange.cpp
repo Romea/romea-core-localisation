@@ -10,9 +10,10 @@
 namespace romea {
 
 //-----------------------------------------------------------------------------
-R2HLocalisationKFUpdaterRange::R2HLocalisationKFUpdaterRange(const double &maximalMahalanobisDistance,
+R2HLocalisationKFUpdaterRange::R2HLocalisationKFUpdaterRange(const std::string & logFileName,
+                                                             const double &maximalMahalanobisDistance,
                                                              const bool usedConstraints):
-  LocalisationUpdater(false),
+  LocalisationUpdater(logFileName,false),
   KFUpdaterCore(maximalMahalanobisDistance),
   U_(Eigen::VectorXd::Zero(MetaState::STATE_SIZE)),
   W_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE,
@@ -30,7 +31,7 @@ R2HLocalisationKFUpdaterRange::R2HLocalisationKFUpdaterRange(const double &maxim
 {
   Dc_(1,1)=1;
 
-  logColumnNames_ = {"stamp",
+  setLogFileHeader_({"stamp",
                      "range",
                      "cov_range",
                      "x",
@@ -44,7 +45,7 @@ R2HLocalisationKFUpdaterRange::R2HLocalisationKFUpdaterRange(const double &maxim
                      "cov_apriori_range",
                      "mahalanobis_distance",
                      "sucess"
-                    };
+                    });
 }
 
 //-----------------------------------------------------------------------------
@@ -92,7 +93,7 @@ void R2HLocalisationKFUpdaterRange::update_(const Duration &duration,
   //Update state vector
   bool success = updateState_(currentState);
 
-  if(isLogging_)
+  if(logFile_.is_open())
   {
     logFile_<< duration.count()<<" ";
     logFile_<< currentObservation.Y() <<" ";
@@ -112,7 +113,7 @@ void R2HLocalisationKFUpdaterRange::update_(const Duration &duration,
   }
 
   //log
-  if(isLogging_)
+  if(logFile_.is_open())
   {
     logFile_<< aprioriRange <<",";
     logFile_<< aprioriRangeVariance <<",";

@@ -19,14 +19,15 @@ const double UNSCENTED_TRANSFORM_BETA=2;
 namespace romea {
 
 //-----------------------------------------------------------------------------
-R2RLocalisationKFUpdaterRange::R2RLocalisationKFUpdaterRange(const double &maximalMahalanobisDistance):
-  LocalisationUpdater(false),
+R2RLocalisationKFUpdaterRange::R2RLocalisationKFUpdaterRange(const std::string & logFilename,
+                                                             const double &maximalMahalanobisDistance):
+  LocalisationUpdater(logFilename,false),
   UKFUpdaterCore(UNSCENTED_TRANSFORM_KAPPA,
                  UNSCENTED_TRANSFORM_ALPHA,
                  UNSCENTED_TRANSFORM_BETA,
                  maximalMahalanobisDistance)
 {
-  logColumnNames_ = {"stamp",
+  setLogFileHeader_({"stamp",
                      "range",
                      "cov_range",
                      "x",
@@ -48,7 +49,7 @@ R2RLocalisationKFUpdaterRange::R2RLocalisationKFUpdaterRange(const double &maxim
                      "cov_apriori_range",
                      "mahalanobis_distance",
                      "sucess"
-                    };
+                    });
 
 }
 
@@ -115,7 +116,7 @@ void R2RLocalisationKFUpdaterRange::update_(const Duration &duration,
   //update state
   bool success = updateState_(currentState,currentObservation);
 
-  if(isLogging_)
+  if(logFile_.is_open())
   {
     logFile_<< duration.count()<<" ";
     logFile_<< currentObservation.Y() <<" ";
@@ -144,7 +145,7 @@ void R2RLocalisationKFUpdaterRange::update_(const Duration &duration,
   }
 
   //log
-  if(isLogging_)
+  if(logFile_.is_open())
   {
     logFile_<< this->propagatedState_.Y() <<" ";
     logFile_<< this->propagatedState_.R() <<" ";

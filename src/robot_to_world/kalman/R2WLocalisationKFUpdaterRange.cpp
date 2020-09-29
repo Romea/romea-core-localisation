@@ -14,15 +14,16 @@ namespace romea {
 
 //--------------------------------------------------------------------------
 R2WLocalisationKFUpdaterRange::R2WLocalisationKFUpdaterRange(const double &maximalMahalanobisDistance,
-                                                             const bool & disableUpdateFunction):
-  LocalisationUpdater(disableUpdateFunction),
+                                                             const bool & disableUpdateFunction,
+                                                             const std::string & logFilename):
+  LocalisationUpdater(logFilename,disableUpdateFunction),
   UKFUpdaterCore(UNSCENTED_TRANFORM_KAPPA,
                  UNSCENTED_TRANFORM_ALPHA,
                  UNSCENTED_TRANFORM_BETA,
                  maximalMahalanobisDistance),
   antennaAtitudeCompensation_()
 {  
-  logColumnNames_ = {"stamp",
+  setLogFileHeader_({"stamp",
                      "range",
                      "cov_range",
                      "x",
@@ -44,7 +45,7 @@ R2WLocalisationKFUpdaterRange::R2WLocalisationKFUpdaterRange(const double &maxim
                      "cov_apriori_range",
                      "mahalanobis_distance",
                      "sucess"
-                    };
+                    });
 }
 
 //-----------------------------------------------------------------------------
@@ -122,7 +123,7 @@ void R2WLocalisationKFUpdaterRange::update_(const Duration & duration,
   }
 
 
-  if(isLogging_)
+  if(logFile_.is_open())
   {
     logFile_<< duration.count()<<" ";
     logFile_<< currentObservation.Y() <<" ";
@@ -154,7 +155,7 @@ void R2WLocalisationKFUpdaterRange::update_(const Duration & duration,
   }
 
   //log
-  if(isLogging_)
+  if(logFile_.is_open())
   {
     logFile_<< this->propagatedState_.Y() <<" ";
     logFile_<< this->propagatedState_.R() <<" ";

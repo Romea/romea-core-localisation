@@ -4,6 +4,7 @@
 //romea
 #include "test_utils.hpp"
 #include "romea_localisation/Pose3D.hpp"
+#include "romea_localisation/LocalisationFSMState.hpp"
 
 //-----------------------------------------------------------------------------
 TEST(TestPose3DConversion, toPose2D)
@@ -44,6 +45,24 @@ TEST(TestPose3DConversion, toPosition3D)
   EXPECT_DOUBLE_EQ(posisition3d.position.y(),pose3d.position.y());
   EXPECT_DOUBLE_EQ(posisition3d.position.z(),pose3d.position.z());
   isSame(posisition3d.covariance,Eigen::Matrix3d(pose3d.covariance.block<3,3>(0,0)));
+}
+
+//-----------------------------------------------------------------------------
+TEST(TestFSMStateConversion, fsmStateToString)
+{
+  EXPECT_STREQ(romea::toString(romea::LocalisationFSMState::ABORTED).c_str(),"ABORTED");
+  EXPECT_STREQ(romea::toString(romea::LocalisationFSMState::RUNNING).c_str(),"RUNNING");
+  EXPECT_STREQ(romea::toString(romea::LocalisationFSMState::RESET).c_str(),"RESET");
+  EXPECT_STREQ(romea::toString(romea::LocalisationFSMState::INIT).c_str(),"INIT");
+}
+
+//-----------------------------------------------------------------------------
+TEST(TestFSMStateConversion, fsmStateToDiagnosticStatus)
+{
+  EXPECT_EQ(romea::toDiagnosticStatus(romea::LocalisationFSMState::ABORTED),romea::DiagnosticStatus::ERROR);
+  EXPECT_EQ(romea::toDiagnosticStatus(romea::LocalisationFSMState::RUNNING),romea::DiagnosticStatus::OK);
+  EXPECT_EQ(romea::toDiagnosticStatus(romea::LocalisationFSMState::RESET),romea::DiagnosticStatus::WARN);
+  EXPECT_EQ(romea::toDiagnosticStatus(romea::LocalisationFSMState::INIT),romea::DiagnosticStatus::WARN);
 }
 
 //-----------------------------------------------------------------------------

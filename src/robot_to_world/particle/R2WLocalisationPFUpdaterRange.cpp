@@ -6,8 +6,9 @@ namespace romea {
 //--------------------------------------------------------------------------
 R2WLocalisationPFUpdaterRange::R2WLocalisationPFUpdaterRange(const size_t &numberOfParticles,
                                                              const double & maximalMahalanobisDistance,
-                                                             const bool &disableUpdateFunction):
-  LocalisationUpdater(disableUpdateFunction),
+                                                             const bool &disableUpdateFunction,
+                                                             const std::string & logFilename):
+  LocalisationUpdater(logFilename,disableUpdateFunction),
   PFGaussianUpdaterCore(numberOfParticles,maximalMahalanobisDistance),
   levelArmCompensation_(),
   cosCourses_(RowMajorVector::Zero(numberOfParticles_)),

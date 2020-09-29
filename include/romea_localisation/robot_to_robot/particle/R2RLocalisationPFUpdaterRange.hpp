@@ -28,7 +28,8 @@ public:
 public :
 
   R2RLocalisationPFUpdaterRange(const size_t & numberOfParticles,
-                                const double &maximalMahalanobisDistance);
+                                const double &maximalMahalanobisDistance,
+                                const std::string &logFilename);
 
   void update(const Duration & duration,
               const Observation & currentObservation,

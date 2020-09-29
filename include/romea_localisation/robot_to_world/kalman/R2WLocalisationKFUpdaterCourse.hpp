@@ -26,7 +26,8 @@ public :
 public :
   
   R2WLocalisationKFUpdaterCourse(const double & maximalMahalanobisDistance,
-                                 const bool & disableUpdateFunction);
+                                 const bool & disableUpdateFunction,
+                                 const std::string &logFilename);
   
   void update(const Duration & duration,
               const Observation & currentObservation,

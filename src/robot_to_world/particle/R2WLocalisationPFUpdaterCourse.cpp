@@ -11,8 +11,9 @@ namespace romea {
 //--------------------------------------------------------------------------
 R2WLocalisationPFUpdaterCourse::R2WLocalisationPFUpdaterCourse(const size_t & numberOfParticles,
                                                                const double & /*maximalMahalanobisDistance*/,
-                                                               const bool & disableUpdateFunction):
-  LocalisationUpdater(disableUpdateFunction),
+                                                               const bool & disableUpdateFunction,
+                                                               const std::string & logFilename):
+  LocalisationUpdater(logFilename,disableUpdateFunction),
   PFUpdaterCore(numberOfParticles)
 {
 

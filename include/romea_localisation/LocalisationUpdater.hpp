@@ -18,7 +18,8 @@ class LocalisationUpdater
 
 public :
 
-  LocalisationUpdater(const bool & disableUpdateFunction);
+  LocalisationUpdater(const std::string & logFilename,
+                      const bool & disableUpdateFunction);
 
   virtual ~LocalisationUpdater()=default;
 
@@ -26,19 +27,15 @@ public :
 
   void disableUpdateFunction(const Duration & updateStartDisableTime = Duration::zero());
 
-  void configureLogging(const std::string &logFilename, bool autostart=true);
+protected :
 
-  bool startLogging();
+  void openLogFile_(const std::string & logFilename);
 
-  void stopLogging();
-
+  void setLogFileHeader_(const std::vector<std::string> & logColumnNames);
 
 protected :
 
   std::ofstream logFile_;
-  std::vector<std::string> logColumnNames_;
-  std::atomic<bool> isLogging_;
-
   Duration updateStartDisableTime_;
 };
 
