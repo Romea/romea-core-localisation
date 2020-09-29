@@ -28,7 +28,7 @@ public :
 public :
 
   R2RLocalisationKFUpdaterRange(const std::string &logFilename,
-                                const double & maximalMahalanobisDistance=std::numeric_limits<double>::max());
+                                const double & maximalMahalanobisDistance);
 
   void update(const Duration & duration,
               const Observation & currentObservation,
