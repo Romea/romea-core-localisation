@@ -41,6 +41,7 @@ add_library(romea_localisation
   src/Position3D.cpp
   src/Twist2D.cpp
   src/Twist3D.cpp
+  src/LocalisationFSMState.cpp
   src/LocalisationUpdater.cpp
   src/LocalisationUpdatesMonitoring.cpp
   src/robot_to_human/R2HLocalisationMetaState.cpp
