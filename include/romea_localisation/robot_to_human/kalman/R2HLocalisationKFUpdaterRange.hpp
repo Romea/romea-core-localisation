@@ -24,9 +24,9 @@ public :
 
 public :
 
-  R2HLocalisationKFUpdaterRange(const std::string & logFileName,
-                                const double & maximalMahalanobisDistance,
-                                const bool usedConstraints);
+  R2HLocalisationKFUpdaterRange(const double & maximalMahalanobisDistance,
+                                const bool usedConstraints,
+                                const std::string & logFileName);
 
   void update(const Duration & duration,
               const Observation & currentObservation,

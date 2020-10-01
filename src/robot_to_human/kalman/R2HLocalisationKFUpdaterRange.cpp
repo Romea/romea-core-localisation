@@ -10,9 +10,9 @@
 namespace romea {
 
 //-----------------------------------------------------------------------------
-R2HLocalisationKFUpdaterRange::R2HLocalisationKFUpdaterRange(const std::string & logFileName,
-                                                             const double &maximalMahalanobisDistance,
-                                                             const bool usedConstraints):
+R2HLocalisationKFUpdaterRange::R2HLocalisationKFUpdaterRange(const double &maximalMahalanobisDistance,
+                                                             const bool usedConstraints,
+                                                             const std::string & logFileName):
   LocalisationUpdater(logFileName,false),
   KFUpdaterCore(maximalMahalanobisDistance),
   U_(Eigen::VectorXd::Zero(MetaState::STATE_SIZE)),
