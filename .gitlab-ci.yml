@@ -21,15 +21,6 @@ before_script:
  - apt-get install -y -qq libgtest-dev
 
 
-kinetic_catkin_tests:
-  image: ros:kinetic-robot
-  stage: build
-  script:
-    - (cd /usr/src/gtest; cmake . && make && cp *.a /usr/lib/)
-    - catkin build romea_localisation --cmake-args -DBUILD_TESTS=ON
-    - cd build/romea_localisation
-    - GTEST_COLOR=1 ctest --output-on-failure
-
 melodic_catkin_tests:
   image: ros:melodic-robot
   stage: build
