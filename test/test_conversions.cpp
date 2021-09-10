@@ -3,7 +3,7 @@
 
 //romea
 #include "test_utils.hpp"
-#include "romea_commo/geometry/Pose3D.hpp"
+#include "romea_common/geometry/Pose3D.hpp"
 #include "romea_localisation/LocalisationFSMState.hpp"
 
 //-----------------------------------------------------------------------------
