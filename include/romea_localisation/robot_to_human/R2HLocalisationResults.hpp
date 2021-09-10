@@ -2,8 +2,8 @@
 #define _R2HLocalisationResults_hpp
 
 //romea
-#include "romea_localisation/PoseAndTwist3D.hpp"
-#include "romea_localisation/Position2D.hpp"
+#include <romea_common/geometry/PoseAndTwist3D.hpp>
+#include <romea_common/geometry/Position2D.hpp>
 
 namespace romea {
 

@@ -1,7 +1,7 @@
 #ifndef _R2HLocalisationKFResults_hpp
 #define _R2HLocalisationKFResults_hpp
 
-#include "../../Position2D.hpp"
+#include <romea_common/geometry/Position2D.hpp>
 #include "../R2HLocalisationResults.hpp"
 #include "R2HLocalisationKFMetaState.hpp"
 

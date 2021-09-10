@@ -14,7 +14,11 @@ namespace romea {
        ANGULAR_SPEED_Z_BODY,
        SIZE
      };
+
+     Eigen::Vector3d levelArm;
+
    };
+
 }
 
 

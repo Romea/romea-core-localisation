@@ -3,7 +3,7 @@
 
 //romea
 #include <romea_common/time/Time.hpp>
-#include "../PoseAndTwist3D.hpp"
+#include <romea_common/geometry/PoseAndTwist3D.hpp>
 
 namespace romea {
 

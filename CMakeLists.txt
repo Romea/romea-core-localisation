@@ -11,14 +11,6 @@ find_package(romea_common REQUIRED)
 find_package(romea_filtering REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
-  src/Pose2D.cpp
-  src/Pose3D.cpp
-  src/PoseAndTwist2D.cpp
-  src/PoseAndTwist3D.cpp
-  src/Position2D.cpp
-  src/Position3D.cpp
-  src/Twist2D.cpp
-  src/Twist3D.cpp
   src/LocalisationFSMState.cpp
   src/LocalisationUpdater.cpp
   src/LocalisationUpdatesMonitoring.cpp
