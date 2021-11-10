@@ -28,9 +28,13 @@ R2WLocalisationKFUpdaterPosition::R2WLocalisationKFUpdaterPosition(const double 
                      "cov_y",
                      "cov_ytheta",
                      "cov_theta",
+                     "roll",
+                     "pitch"
                      "level_arm_x",
                      "level_arm_y",
                      "level_arm_z",
+                     "x_ant_a_priori",
+                     "y_ant_a_priori",
                      "inn_x",
                      "inn_y",
                      "mahalanobis_distance",
@@ -127,9 +131,13 @@ void R2WLocalisationKFUpdaterPosition::update_(const Duration &duration,
     logFile_<< currentState.P(1,1)<<",";
     logFile_<< currentState.P(1,2)<<",";
     logFile_<< currentState.P(2,2)<<",";
+    logFile_<< currentAddon.roll<<",";
+    logFile_<< currentAddon.pitch<<",";
     logFile_<< levelArmCompensation_.getPosition()(0)<<",";
     logFile_<< levelArmCompensation_.getPosition()(1)<<",";
     logFile_<< levelArmCompensation_.getPosition()(2)<<",";
+    logFile_<< currentObservation.Y(0)-this->Inn_.x()<<",";
+    logFile_<< currentObservation.Y(1)-this->Inn_.y()<<",";
     logFile_<< this->Inn_.x()<<",";
     logFile_<< this->Inn_.y()<<",";
   }
