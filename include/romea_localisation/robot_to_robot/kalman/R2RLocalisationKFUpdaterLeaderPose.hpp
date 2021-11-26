@@ -6,12 +6,12 @@
 #include <romea_common/time/Time.hpp>
 #include "../../ObservationPose.hpp"
 #include "../../LocalisationFSMState.hpp"
-#include "../../LocalisationUpdater.hpp"
+#include "../../LocalisationUpdaterExteroceptive.hpp"
 #include "R2RLocalisationKFMetaState.hpp"
 
 namespace romea {
 
-class R2RLocalisationKFUpdaterLeaderPose
+class R2RLocalisationKFUpdaterLeaderPose : public LocalisationUpdaterExteroceptive
 {
 
 public :
@@ -24,7 +24,11 @@ public :
 
 public :
 
-  R2RLocalisationKFUpdaterLeaderPose();
+  R2RLocalisationKFUpdaterLeaderPose(const std::string & updaterName,
+                                     const double & minimalRate,
+                                     const TriggerMode & triggerMode,
+                                     const double & maximalMahalanobisDistance,
+                                     const std::string & logFilename);
 
   void update(const Duration & duration,
               const Observation &currentObservation,

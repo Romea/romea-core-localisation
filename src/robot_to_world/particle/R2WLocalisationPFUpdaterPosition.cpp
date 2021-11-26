@@ -5,16 +5,22 @@
 namespace romea {
 
 //-----------------------------------------------------------------------------
-R2WLocalisationPFUpdaterPosition::R2WLocalisationPFUpdaterPosition(const size_t &numberOfParticles,
+R2WLocalisationPFUpdaterPosition::R2WLocalisationPFUpdaterPosition(const std::string & updaterName,
+                                                                   const double & minimalRate,
+                                                                   const TriggerMode & triggerMode,
+                                                                   const size_t & numberOfParticles,
                                                                    const double &maximalMahalanobisDistance,
-                                                                   const bool &disableUpdateFunction,
-                                                                   const std::string &logFilename):
-  LocalisationUpdater(logFilename,disableUpdateFunction),
-  PFGaussianUpdaterCore(numberOfParticles,maximalMahalanobisDistance),
-  levelArmCompensation_(),
+                                                                   const std::string & logFilename):
+  LocalisationUpdaterExteroceptive(updaterName,
+                                   minimalRate,
+                                   triggerMode,
+                                   logFilename),
+  PFGaussianUpdaterCore(numberOfParticles,
+                        maximalMahalanobisDistance),
   levelArms_(RowMajorMatrix::Zero(2,numberOfParticles)),
   cosCourses_(RowMajorVector::Zero(numberOfParticles)),
-  sinCourses_(RowMajorVector::Zero(numberOfParticles))
+  sinCourses_(RowMajorVector::Zero(numberOfParticles)),
+  levelArmCompensation_()
 {
 }
 
@@ -37,7 +43,7 @@ void R2WLocalisationPFUpdaterPosition::update(const Duration &duration,
     }
     break;
   case LocalisationFSMState::RUNNING:
-    if(duration<updateStartDisableTime_)
+    if(triggerMode_==TriggerMode::ALWAYS)
     {
       try{
         update_(duration,

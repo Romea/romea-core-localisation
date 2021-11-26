@@ -4,11 +4,18 @@
 namespace romea {
 
 //--------------------------------------------------------------------------
-R2RLocalisationPFUpdaterRange::R2RLocalisationPFUpdaterRange(const size_t &numberOfParticles,
-                                                             const double & maximalMahalanobisDistance,
+R2RLocalisationPFUpdaterRange::R2RLocalisationPFUpdaterRange(const std::string & updaterName,
+                                                             const double & minimalRate,
+                                                             const TriggerMode & triggerMode,
+                                                             const size_t & numberOfParticles,
+                                                             const double &maximalMahalanobisDistance,
                                                              const std::string & logFilename):
-  LocalisationUpdater(logFilename,false),
-  PFGaussianUpdaterCore(numberOfParticles,maximalMahalanobisDistance),
+  LocalisationUpdaterExteroceptive(updaterName,
+                                   minimalRate,
+                                   triggerMode,
+                                   logFilename),
+  PFGaussianUpdaterCore(numberOfParticles,
+                        maximalMahalanobisDistance),
   cosCourses_(RowMajorVector::Zero(numberOfParticles_)),
   sinCourses_(RowMajorVector::Zero(numberOfParticles_))
 {

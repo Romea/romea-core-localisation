@@ -12,7 +12,10 @@ find_package(romea_filtering REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
   src/LocalisationFSMState.cpp
-  src/LocalisationUpdater.cpp
+  src/LocalisationUpdaterBase.cpp
+  src/LocalisationUpdaterExteroceptive.cpp
+  src/LocalisationUpdaterProprioceptive.cpp
+  src/LocalisationUpdaterTriggerMode.cpp
   src/LocalisationUpdatesMonitoring.cpp
   src/robot_to_human/R2HLocalisationMetaState.cpp
   src/robot_to_human/kalman/R2HLocalisationKFResults.cpp

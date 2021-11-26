@@ -3,10 +3,15 @@
 namespace romea {
 
 //-----------------------------------------------------------------------------
-R2WLocalisationKFUpdaterPosition::R2WLocalisationKFUpdaterPosition(const double &maximalMahalanobisDistance,
-                                                                   const bool & disableUpdateFunction,
+R2WLocalisationKFUpdaterPosition::R2WLocalisationKFUpdaterPosition(const std::string &updaterName,
+                                                                   const double &minimalRate,
+                                                                   const TriggerMode &triggerMode,
+                                                                   const double &maximalMahalanobisDistance,
                                                                    const std::string & logFilename):
-  LocalisationUpdater(logFilename,disableUpdateFunction),
+  LocalisationUpdaterExteroceptive(updaterName,
+                                   minimalRate,
+                                   triggerMode,
+                                   logFilename),
   KFUpdaterCore(maximalMahalanobisDistance),
   levelArmCompensation_()
 {
@@ -48,6 +53,8 @@ void R2WLocalisationKFUpdaterPosition::update(const Duration &duration,
                                               LocalisationFSMState & currentFSMState,
                                               MetaState &currentMetaState)
 {
+  rateDiagnostic_.evaluate(duration);
+
   switch (currentFSMState) {
   case LocalisationFSMState::INIT:
     if(set_(duration,
@@ -61,7 +68,7 @@ void R2WLocalisationKFUpdaterPosition::update(const Duration &duration,
     }
     break;
   case LocalisationFSMState::RUNNING:
-    if(duration<updateStartDisableTime_)
+    if(triggerMode_==TriggerMode::ALWAYS)
     {
       try{
         update_(duration,
@@ -102,16 +109,16 @@ void R2WLocalisationKFUpdaterPosition::update_(const Duration &duration,
                                 currentObservation.levelArm);
 
   //Compute innovation
-  this->Inn_ = currentObservation.Y();
-  this->Inn_ -=currentState.X().segment<2>(MetaState::POSITION_X);
-  this->Inn_ -= levelArmCompensation_.getPosition().segment<2>(0);
+  Inn_ = currentObservation.Y();
+  Inn_ -=currentState.X().segment<2>(MetaState::POSITION_X);
+  Inn_ -= levelArmCompensation_.getPosition().segment<2>(0);
 
   //Compute innovation covariance
   //  this->R_ = currentObservation.R();
   //  this->R_ += levelArmCompensation_.getPositionCovariance().block<2,2>(0,0);
-  this->H_.template block<2,1>(0,2)= levelArmCompensation_.getJacobian().block<2,1>(0,2);
-  this->QInn_=this->H_*currentState.P()*this->H_.transpose()+currentObservation.R();
-  this->QInn_+= levelArmCompensation_.getPositionCovariance().block<2,2>(0,0);
+  H_.template block<2,1>(0,2)= levelArmCompensation_.getJacobian().block<2,1>(0,2);
+  QInn_=H_*currentState.P()*H_.transpose()+currentObservation.R();
+  QInn_+= levelArmCompensation_.getPositionCovariance().block<2,2>(0,0);
 
   //log
   if(logFile_.is_open())
@@ -136,10 +143,10 @@ void R2WLocalisationKFUpdaterPosition::update_(const Duration &duration,
     logFile_<< levelArmCompensation_.getPosition()(0)<<",";
     logFile_<< levelArmCompensation_.getPosition()(1)<<",";
     logFile_<< levelArmCompensation_.getPosition()(2)<<",";
-    logFile_<< currentObservation.Y(0)-this->Inn_.x()<<",";
-    logFile_<< currentObservation.Y(1)-this->Inn_.y()<<",";
-    logFile_<< this->Inn_.x()<<",";
-    logFile_<< this->Inn_.y()<<",";
+    logFile_<< currentObservation.Y(0)-Inn_.x()<<",";
+    logFile_<< currentObservation.Y(1)-Inn_.y()<<",";
+    logFile_<< Inn_.x()<<",";
+    logFile_<< Inn_.y()<<",";
   }
 
   //Update state vector
@@ -151,7 +158,7 @@ void R2WLocalisationKFUpdaterPosition::update_(const Duration &duration,
 
   if(logFile_.is_open())
   {
-    logFile_<< this->mahalanobisDistance_ <<",";
+    logFile_<< mahalanobisDistance_ <<",";
     logFile_<<success<<",\n";
   }
 
@@ -162,12 +169,12 @@ void R2WLocalisationKFUpdaterPosition::update_(const Duration &duration,
     std::cout <<"P "<< std::endl;
     std::cout << previousState.P() << std::endl;
 
-    std::cout <<"this->Inn_ "<< std::endl;
-    std::cout <<this->Inn_ << std::endl;
-    std::cout <<"this->QInn_ "<< std::endl;
-    std::cout <<this->QInn_<< std::endl;
-    std::cout <<"this->H_ "<< std::endl;
-    std::cout <<this->H_<< std::endl;
+    std::cout <<"Inn_ "<< std::endl;
+    std::cout <<Inn_ << std::endl;
+    std::cout <<"QInn_ "<< std::endl;
+    std::cout <<QInn_<< std::endl;
+    std::cout <<"H_ "<< std::endl;
+    std::cout <<H_<< std::endl;
 
     std::cout <<"Y "<< std::endl;
     std::cout << currentObservation.Y() << std::endl;

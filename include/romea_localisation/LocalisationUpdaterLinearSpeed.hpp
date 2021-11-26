@@ -1,31 +1,36 @@
-#ifndef _romea_KalmanUpdaterLinearSpeed_HPP_
-#define _romea_KalmanUpdaterLinearSpeed_HPP_
+#ifndef _romea_LocalisationUpdaterLinearSpeed_HPP_
+#define _romea_LocalisationKalmanUpdaterLinearSpeed_HPP_
 
 
 //romea
 #include <romea_common/time/Time.hpp>
+#include "LocalisationUpdaterProprioceptive.hpp"
 #include "ObservationLinearSpeed.hpp"
 #include "LocalisationFSMState.hpp"
 
 namespace romea {
 
 template <class MetaState>
-class LocalisationUpdaterLinearSpeed
+class LocalisationUpdaterLinearSpeed : public LocalisationUpdaterProprioceptive
 {
 
 public :
 
-  LocalisationUpdaterLinearSpeed()
+  LocalisationUpdaterLinearSpeed(const std::string & updaterName,
+                                 const double & minimalRate):
+    LocalisationUpdaterProprioceptive(updaterName,minimalRate)
   {
   }
 
   using Observation = ObservationLinearSpeed;
 
-  void update(const Duration & /*duration*/,
+  void update(const Duration & duration,
               const Observation & currentObservation,
               LocalisationFSMState & /*currentFSMState*/,
               MetaState &currentMetaState)
   {
+
+    rateDiagnostic_.evaluate(duration);
 
     currentMetaState.input.U().template segment<2>(MetaState::LINEAR_SPEED_X_BODY)<<currentObservation.Y(),0;
 

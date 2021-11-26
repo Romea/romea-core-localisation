@@ -9,11 +9,15 @@
 namespace romea {
 
 //--------------------------------------------------------------------------
-R2WLocalisationPFUpdaterCourse::R2WLocalisationPFUpdaterCourse(const size_t & numberOfParticles,
+R2WLocalisationPFUpdaterCourse::R2WLocalisationPFUpdaterCourse(const std::string & updaterName, const double & minimalRate,
+                                                               const TriggerMode & triggerMode,
+                                                               const size_t & numberOfParticles,
                                                                const double & /*maximalMahalanobisDistance*/,
-                                                               const bool & disableUpdateFunction,
                                                                const std::string & logFilename):
-  LocalisationUpdater(logFilename,disableUpdateFunction),
+  LocalisationUpdaterExteroceptive(updaterName,
+                                   minimalRate,
+                                   triggerMode,
+                                   logFilename),
   PFUpdaterCore(numberOfParticles)
 {
 
@@ -26,6 +30,8 @@ void R2WLocalisationPFUpdaterCourse::update(const Duration & duration,
                                             LocalisationFSMState & currentFSMState,
                                             MetaState & currentMetaState)
 {
+  rateDiagnostic_.evaluate(duration);
+
   switch (currentFSMState) {
   case LocalisationFSMState::INIT:
     set_(duration,
@@ -34,7 +40,13 @@ void R2WLocalisationPFUpdaterCourse::update(const Duration & duration,
          currentMetaState.addon);
     break;
   case LocalisationFSMState::RUNNING:
-    //    update_(duration,currentObservation,currentState);
+    if(triggerMode_==TriggerMode::ALWAYS)
+    {
+      update_(duration,
+              currentObservation,
+              currentMetaState.state,
+              currentMetaState.addon);
+    }
     break;
   default:
     break;

@@ -29,23 +29,11 @@ void fillEigenCovariance(EigenCovType & covariance, int start=0)
 }
 
 //-----------------------------------------------------------------------------
-template <typename MsgCovType, typename EigenCovType>
-void isSame(const MsgCovType & msgCovariance,
-            const EigenCovType &obsCovariance)
+template <typename EigenType>
+void isSame(const EigenType & obj1,const EigenType & obj2)
 {
-  for(size_t n=0;n<msgCovariance.size();++n)
+  for(int n=0;n<obj1.cols()*obj1.rows();++n)
   {
-    EXPECT_DOUBLE_EQ(msgCovariance[n], obsCovariance(n));
-  }
-}
-
-//-----------------------------------------------------------------------------
-template <typename EigenCovType>
-void isSame(const EigenCovType & obsCovariance1,
-           const EigenCovType & obsCovariance2)
-{
-  for(int n=0;n<obsCovariance1.cols()*obsCovariance1.rows();++n)
-  {
-    EXPECT_DOUBLE_EQ(obsCovariance2(n), obsCovariance2(n));
+    EXPECT_DOUBLE_EQ(obj2(n), obj2(n));
   }
 }

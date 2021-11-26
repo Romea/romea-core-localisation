@@ -4,29 +4,33 @@
 
 //local
 #include <romea_common/time/Time.hpp>
-#include <romea_filtering/FilterUpdater.hpp>
+#include "LocalisationUpdaterProprioceptive.hpp"
 #include "ObservationAngularSpeed.hpp"
 #include "LocalisationFSMState.hpp"
 
 namespace romea {
 
 template < class MetaState>
-class LocalisationUpdaterAngularSpeed
+class LocalisationUpdaterAngularSpeed : public LocalisationUpdaterProprioceptive
 {
 
 public :
 
   using Observation = ObservationAngularSpeed;
 
-  LocalisationUpdaterAngularSpeed()
+  LocalisationUpdaterAngularSpeed(const std::string & updaterName,
+                                  const double & minimalRate):
+    LocalisationUpdaterProprioceptive(updaterName,minimalRate)
   {
   }
 
-  void update(const Duration & /*duration*/,
+  void update(const Duration & duration,
               const Observation & currentObservation,
               LocalisationFSMState & /*currentFSMState*/,
               MetaState & currentMetaState)
   {
+
+    rateDiagnostic_.evaluate(duration);
 
     currentMetaState.input.U(MetaState::ANGULAR_SPEED_Z_BODY)=currentObservation.Y();
 

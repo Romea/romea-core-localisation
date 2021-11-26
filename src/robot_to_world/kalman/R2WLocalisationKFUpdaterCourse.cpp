@@ -7,13 +7,18 @@
 namespace romea {
 
 //--------------------------------------------------------------------------
-R2WLocalisationKFUpdaterCourse::R2WLocalisationKFUpdaterCourse(const double &maximalMahalanobisDistance,
-                                                               const bool & disableUpdateFunction,
+R2WLocalisationKFUpdaterCourse::R2WLocalisationKFUpdaterCourse(const std::string & updaterName,
+                                                               const double & minimalRate,
+                                                               const TriggerMode & triggerMode,
+                                                               const double & maximalMahalanobisDistance,
                                                                const std::string & logFilename):
-  LocalisationUpdater(logFilename,disableUpdateFunction),
+  LocalisationUpdaterExteroceptive(updaterName,
+                                   minimalRate,
+                                   triggerMode,
+                                   logFilename),
   KFUpdaterCore(maximalMahalanobisDistance)
 {
-  this->H_(0, MetaState::ORIENTATION_Z)=1;
+  H_(0, MetaState::ORIENTATION_Z)=1;
   setLogFileHeader_({"stamp",
                      "course",
                      "cov_course",
@@ -28,6 +33,10 @@ void R2WLocalisationKFUpdaterCourse::update(const Duration & duration,
                                             LocalisationFSMState & currentFSMState,
                                             MetaState & currentMetaState)
 {
+  assert(currentObservation.R()>0);
+
+  rateDiagnostic_.evaluate(duration);
+
   switch (currentFSMState) {
   case LocalisationFSMState::INIT:
     set_(duration,
@@ -36,7 +45,7 @@ void R2WLocalisationKFUpdaterCourse::update(const Duration & duration,
          currentMetaState.addon);
     break;
   case LocalisationFSMState::RUNNING:
-    if(duration<updateStartDisableTime_)
+    if(triggerMode_==TriggerMode::ALWAYS)
     {
       try
       {
@@ -67,7 +76,7 @@ void R2WLocalisationKFUpdaterCourse::update_(const Duration & duration,
 
   Inn_ = betweenMinusPiAndPi(currentObservation.Y()-currentState.X(MetaState::ORIENTATION_Z));
 
-  this->QInn_  = currentObservation.R() + currentState.P(MetaState::ORIENTATION_Z,
+  QInn_  = currentObservation.R() + currentState.P(MetaState::ORIENTATION_Z,
                                                          MetaState::ORIENTATION_Z);
 
   //log
@@ -79,9 +88,11 @@ void R2WLocalisationKFUpdaterCourse::update_(const Duration & duration,
     logFile_<< currentState.X(2) <<",";
     logFile_<< currentState.P(2,2) <<",/n";
   }
-  //  if(!updateClassic_(currentState)){
-  //    //TODO renvoyer un throw
-  //  }
+
+  if(!updateState_(currentState))
+  {
+      //TODO renvoyer un throw
+   }
 
   currentAddon.lastExteroceptiveUpdate.time=duration;
   currentAddon.lastExteroceptiveUpdate.travelledDistance=currentAddon.travelledDistance;
@@ -89,10 +100,10 @@ void R2WLocalisationKFUpdaterCourse::update_(const Duration & duration,
 }
 
 //--------------------------------------------------------------------------
-void R2WLocalisationKFUpdaterCourse::set_(const Duration & duration,
+void R2WLocalisationKFUpdaterCourse::set_(const Duration & /*duration*/,
                                           const Observation & currentObservation,
                                           State & currentState,
-                                          AddOn & currentAddon)
+                                          AddOn & /*currentAddon*/)
 {
   currentState.X(MetaState::ORIENTATION_Z)=currentObservation.Y();
 
@@ -100,8 +111,8 @@ void R2WLocalisationKFUpdaterCourse::set_(const Duration & duration,
                  MetaState::ORIENTATION_Z)=currentObservation.R();
 
 
-  currentAddon.lastExteroceptiveUpdate.time=duration;
-  currentAddon.lastExteroceptiveUpdate.travelledDistance=currentAddon.travelledDistance;
+//  currentAddon.lastExteroceptiveUpdate.time=duration;
+//  currentAddon.lastExteroceptiveUpdate.travelledDistance=currentAddon.travelledDistance;
 
 }
 

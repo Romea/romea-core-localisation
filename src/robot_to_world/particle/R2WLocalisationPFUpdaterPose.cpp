@@ -7,15 +7,21 @@
 namespace romea {
 
 //-----------------------------------------------------------------------------
-R2WLocalisationPFUpdaterPose::R2WLocalisationPFUpdaterPose(const size_t & numberOfParticles,
+R2WLocalisationPFUpdaterPose::R2WLocalisationPFUpdaterPose(const std::string &updaterName,
+                                                           const double &minimalRate,
+                                                           const TriggerMode &triggerMode,
+                                                           const size_t & numberOfParticles,
                                                            const double &maximalMahalanobisDistance,
-                                                           const bool &disableUpdateFunction,
                                                            const std::string &logFilename):
-  LocalisationUpdater(logFilename,disableUpdateFunction),
-  PFGaussianUpdaterCore(numberOfParticles,maximalMahalanobisDistance),
-  levelArmCompensation_(),
+  LocalisationUpdaterExteroceptive(updaterName,
+                                   minimalRate,
+                                   triggerMode,
+                                   logFilename),
+  PFGaussianUpdaterCore(numberOfParticles,
+                        maximalMahalanobisDistance),
   cosCourses_(RowMajorVector::Zero(numberOfParticles)),
-  sinCourses_(RowMajorVector::Zero(numberOfParticles))
+  sinCourses_(RowMajorVector::Zero(numberOfParticles)),
+  levelArmCompensation_()
 {
 }
 
@@ -26,6 +32,8 @@ void R2WLocalisationPFUpdaterPose::update(const Duration &duration,
                                           LocalisationFSMState & currentFSMState,
                                           MetaState &currentMetaState)
 {
+  rateDiagnostic_.evaluate(duration);
+
   switch (currentFSMState) {
   case LocalisationFSMState::INIT:
     if(set_(duration,
@@ -39,7 +47,7 @@ void R2WLocalisationPFUpdaterPose::update(const Duration &duration,
     }
     break;
   case LocalisationFSMState::RUNNING:
-    if(duration<updateStartDisableTime_)
+    if(triggerMode_==TriggerMode::ALWAYS)
     {
       try
       {

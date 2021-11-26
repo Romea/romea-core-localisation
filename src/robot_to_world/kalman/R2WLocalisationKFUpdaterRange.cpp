@@ -13,10 +13,15 @@ const double UNSCENTED_TRANFORM_BETA = 2;
 namespace romea {
 
 //--------------------------------------------------------------------------
-R2WLocalisationKFUpdaterRange::R2WLocalisationKFUpdaterRange(const double &maximalMahalanobisDistance,
-                                                             const bool & disableUpdateFunction,
+R2WLocalisationKFUpdaterRange::R2WLocalisationKFUpdaterRange(const std::string &updaterName,
+                                                             const double &minimalRate,
+                                                             const TriggerMode &triggerMode,
+                                                             const double &maximalMahalanobisDistance,
                                                              const std::string & logFilename):
-  LocalisationUpdater(logFilename,disableUpdateFunction),
+  LocalisationUpdaterExteroceptive(updaterName,
+                                   minimalRate,
+                                   triggerMode,
+                                   logFilename),
   UKFUpdaterCore(UNSCENTED_TRANFORM_KAPPA,
                  UNSCENTED_TRANFORM_ALPHA,
                  UNSCENTED_TRANFORM_BETA,
@@ -56,10 +61,11 @@ void R2WLocalisationKFUpdaterRange::update(const Duration & duration,
 {
 
   //  std::cout << " update range " << std::endl;
+  rateDiagnostic_.evaluate(duration);
 
   if(currentFSMState == LocalisationFSMState::RUNNING)
   {
-    if(duration<updateStartDisableTime_)
+    if(triggerMode_==TriggerMode::ALWAYS)
     {
       try
       {
@@ -157,10 +163,10 @@ void R2WLocalisationKFUpdaterRange::update_(const Duration & duration,
   //log
   if(logFile_.is_open())
   {
-    logFile_<< this->propagatedState_.Y() <<" ";
-    logFile_<< this->propagatedState_.R() <<" ";
-    logFile_<< this->mahalanobisDistance_ <<"/n";
-    logFile_<< success <<" ";
+    logFile_<< propagatedState_.Y() <<" ";
+    logFile_<< propagatedState_.R() <<" ";
+    logFile_<< mahalanobisDistance_ <<" ";
+    logFile_<< success <<"/n";
   }
 
   assert(isPositiveSemiDefiniteMatrix(currentState.P()));

@@ -10,13 +10,13 @@
 #include "../R2WLevelArmCompensation.hpp"
 #include "../../ObservationPose.hpp"
 #include "../../LocalisationFSMState.hpp"
-#include "../../LocalisationUpdater.hpp"
+#include "../../LocalisationUpdaterExteroceptive.hpp"
 #include <romea_filtering/kalman/KalmanFilterUpdaterCore.hpp>
 
 namespace romea {
 
 
-class R2WLocalisationKFUpdaterPose : public LocalisationUpdater, public KFUpdaterCore<double,3,3>
+class R2WLocalisationKFUpdaterPose : public LocalisationUpdaterExteroceptive, public KFUpdaterCore<double,3,3>
 {
 
 public :
@@ -29,9 +29,11 @@ public :
 
 public :
 
-  R2WLocalisationKFUpdaterPose(const double &maximalMahalanobisDistance,
-                               const bool & disableUpdateFunction,
-                               const std::string &logFilename);
+  R2WLocalisationKFUpdaterPose(const std::string & updaterName,
+                               const double & minimalRate,
+                               const TriggerMode & triggerMode,
+                               const double &maximalMahalanobisDistance,
+                               const std::string & logFilename);
 
   void update(const Duration & duration,
               const Observation  & currentObservation,

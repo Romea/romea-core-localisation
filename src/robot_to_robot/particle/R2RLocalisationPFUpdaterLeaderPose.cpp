@@ -4,9 +4,20 @@
 
 namespace romea {
 
+//TODO add update stage
 //-----------------------------------------------------------------------------
-R2RLocalisationPFUpdaterLeaderPose::R2RLocalisationPFUpdaterLeaderPose()
+R2RLocalisationPFUpdaterLeaderPose::R2RLocalisationPFUpdaterLeaderPose(const std::string & updaterName,
+                                                                       const double & minimalRate,
+                                                                       const TriggerMode & triggerMode,
+                                                                       const size_t & /*numberOfParticles*/,
+                                                                       const double & /*maximalMahalanobisDistance*/,
+                                                                       const std::string & logFilename):
+  LocalisationUpdaterExteroceptive(updaterName,
+                                   minimalRate,
+                                   triggerMode,
+                                   logFilename)
 {
+
 }
 
 
@@ -16,6 +27,8 @@ void R2RLocalisationPFUpdaterLeaderPose::update(const Duration &duration,
                                                 LocalisationFSMState & currentFSMState,
                                                 MetaState &currentMetaState)
 {
+  rateDiagnostic_.evaluate(duration);
+
   switch (currentFSMState) {
   case LocalisationFSMState::INIT:
     if(set_(duration,

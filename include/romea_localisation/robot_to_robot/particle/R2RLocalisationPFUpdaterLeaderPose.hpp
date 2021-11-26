@@ -5,12 +5,12 @@
 #include <romea_common/time/Time.hpp>
 #include "../../ObservationPose.hpp"
 #include "../../LocalisationFSMState.hpp"
-#include "../../LocalisationUpdater.hpp"
+#include "../../LocalisationUpdaterExteroceptive.hpp"
 #include "R2RLocalisationPFMetaState.hpp"
 
 namespace romea {
 
-class R2RLocalisationPFUpdaterLeaderPose
+class R2RLocalisationPFUpdaterLeaderPose : public LocalisationUpdaterExteroceptive
 {
 public:
 
@@ -22,7 +22,12 @@ public:
 
 public :
 
-  R2RLocalisationPFUpdaterLeaderPose();
+  R2RLocalisationPFUpdaterLeaderPose(const std::string & updaterName,
+                                     const double & minimalRate,
+                                     const TriggerMode & triggerMode,
+                                     const size_t &numberOfParticles,
+                                     const double &maximalMahalanobisDistance,
+                                     const std::string & logFilename);
 
   void update(const Duration & duration,
               const Observation  & currentObservation,

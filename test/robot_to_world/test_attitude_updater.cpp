@@ -20,7 +20,7 @@ TEST(TestAttitudeUpdater, checkUpdate)
   Duration t(1000);
   R2WLocalisationMetaState metaState;
   LocalisationFSMState fsmState=LocalisationFSMState::INIT;
-  R2WLocalisationUpdaterAttitude<R2WLocalisationMetaState> updater;
+  R2WLocalisationUpdaterAttitude<R2WLocalisationMetaState> updater("attitude_updater",10);
 
   updater.update(t,observation,fsmState,metaState);
 

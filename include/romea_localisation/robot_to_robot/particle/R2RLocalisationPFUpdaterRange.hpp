@@ -5,7 +5,7 @@
 #include <romea_common/time/Time.hpp>
 #include "../../ObservationRange.hpp"
 #include "../../LocalisationFSMState.hpp"
-#include "../../LocalisationUpdater.hpp"
+#include "../../LocalisationUpdaterExteroceptive.hpp"
 #include <romea_filtering/particle/ParticleFilterGaussianUpdaterCore.hpp>
 #include <romea_filtering/particle/ParticleFilterResampling.hpp>
 #include "R2RLocalisationPFMetaState.hpp"
@@ -14,7 +14,7 @@
 namespace romea {
 
 
-class R2RLocalisationPFUpdaterRange : public LocalisationUpdater, public PFGaussianUpdaterCore<double,3,1>
+class R2RLocalisationPFUpdaterRange : public LocalisationUpdaterExteroceptive, public PFGaussianUpdaterCore<double,3,1>
 {
 public:
 
@@ -27,9 +27,12 @@ public:
 
 public :
 
-  R2RLocalisationPFUpdaterRange(const size_t & numberOfParticles,
+  R2RLocalisationPFUpdaterRange(const std::string & updaterName,
+                                const double & minimalRate,
+                                const TriggerMode & triggerMode,
+                                const size_t &numberOfParticles,
                                 const double &maximalMahalanobisDistance,
-                                const std::string &logFilename);
+                                const std::string & logFilename);
 
   void update(const Duration & duration,
               const Observation & currentObservation,

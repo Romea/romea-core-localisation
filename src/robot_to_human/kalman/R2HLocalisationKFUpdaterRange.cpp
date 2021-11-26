@@ -10,10 +10,16 @@
 namespace romea {
 
 //-----------------------------------------------------------------------------
-R2HLocalisationKFUpdaterRange::R2HLocalisationKFUpdaterRange(const double &maximalMahalanobisDistance,
-                                                             const bool usedConstraints,
-                                                             const std::string & logFileName):
-  LocalisationUpdater(logFileName,false),
+R2HLocalisationKFUpdaterRange::R2HLocalisationKFUpdaterRange(const std::string &updaterName,
+                                                             const double &minimalRate,
+                                                             const TriggerMode &triggerMode,
+                                                             const double &maximalMahalanobisDistance,
+                                                             const std::string &logFilename,
+                                                             const bool & usedConstraints):
+  LocalisationUpdaterExteroceptive(updaterName,
+                                   minimalRate,
+                                   triggerMode,
+                                   logFilename),
   KFUpdaterCore(maximalMahalanobisDistance),
   U_(Eigen::VectorXd::Zero(MetaState::STATE_SIZE)),
   W_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE,
@@ -54,6 +60,7 @@ void R2HLocalisationKFUpdaterRange::update(const Duration & duration,
                                            LocalisationFSMState & currentFSMState,
                                            MetaState &currentMetaState)
 {
+  rateDiagnostic_.evaluate(duration);
 
   if(currentFSMState == LocalisationFSMState::RUNNING)
   {

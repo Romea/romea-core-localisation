@@ -3,16 +3,17 @@
 
 //romea
 #include <romea_common/time/Time.hpp>
+#include <romea_filtering/particle/ParticleFilterUpdaterCore.hpp>
+
+#include "R2WLocalisationPFMetaState.hpp"
 #include "../../ObservationCourse.hpp"
 #include "../../LocalisationFSMState.hpp"
-#include "../../LocalisationUpdater.hpp"
-#include "R2WLocalisationPFMetaState.hpp"
-#include <romea_filtering/particle/ParticleFilterUpdaterCore.hpp>
+#include "../../LocalisationUpdaterExteroceptive.hpp"
 
 namespace romea {
 
 
-class R2WLocalisationPFUpdaterCourse : public LocalisationUpdater, public PFUpdaterCore<double,3,1>
+class R2WLocalisationPFUpdaterCourse : public LocalisationUpdaterExteroceptive, public PFUpdaterCore<double,3,1>
 {
 
 public :
@@ -25,10 +26,12 @@ public :
 
 public :
 
-  R2WLocalisationPFUpdaterCourse(const size_t & numberOfParticles,
-                                 const double &maximalMahalanobisDistance,
-                                 const bool & disableUpdateFunction,
-                                 const std::string &logFilename);
+  R2WLocalisationPFUpdaterCourse(const std::string & updaterName,
+                                 const double & minimalRate,
+                                 const TriggerMode & triggerMode,
+                                 const size_t & numberOfParticles,
+                                 const double & maximalMahalanobisDistance,
+                                 const std::string & logFilename);
 
   void update(const Duration & duration,
               const Observation & currentObservation,

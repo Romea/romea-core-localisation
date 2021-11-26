@@ -6,13 +6,13 @@
 #include <romea_common/time/Time.hpp>
 #include "../../ObservationRange.hpp"
 #include "../../LocalisationFSMState.hpp"
-#include "../../LocalisationUpdater.hpp"
+#include "../../LocalisationUpdaterExteroceptive.hpp"
 #include <romea_filtering/kalman/KalmanFilterUpdaterCore.hpp>
 #include "R2HLocalisationKFMetaState.hpp"
 
 namespace romea {
 
-class R2HLocalisationKFUpdaterRange : public LocalisationUpdater, public KFUpdaterCore<double,2,1>
+class R2HLocalisationKFUpdaterRange : public LocalisationUpdaterExteroceptive, public KFUpdaterCore<double,2,1>
 {
 public :
 
@@ -24,9 +24,12 @@ public :
 
 public :
 
-  R2HLocalisationKFUpdaterRange(const double & maximalMahalanobisDistance,
-                                const bool usedConstraints,
-                                const std::string & logFileName);
+  R2HLocalisationKFUpdaterRange(const std::string & updaterName,
+                                const double & minimalRate,
+                                const TriggerMode & triggerMode,
+                                const double &maximalMahalanobisDistance,
+                                const std::string & logFilename,
+                                const bool & usedConstraints);
 
   void update(const Duration & duration,
               const Observation & currentObservation,

@@ -5,10 +5,14 @@ namespace romea {
 
 
 //-----------------------------------------------------------------------------
-R2WLocalisationKFUpdaterPose::R2WLocalisationKFUpdaterPose(const double & maximalMahalanobisDistance,
-                                                           const bool &disableUpdateFunction,
+R2WLocalisationKFUpdaterPose::R2WLocalisationKFUpdaterPose(const std::string & updaterName, const double & minimalRate,
+                                                           const TriggerMode & triggerMode,
+                                                           const double &maximalMahalanobisDistance,
                                                            const std::string & logFilename):
-  LocalisationUpdater(logFilename,disableUpdateFunction),
+  LocalisationUpdaterExteroceptive(updaterName,
+                                   minimalRate,
+                                   triggerMode,
+                                   logFilename),
   KFUpdaterCore(maximalMahalanobisDistance),
   levelArmCompensation_()
 {
@@ -48,6 +52,8 @@ void R2WLocalisationKFUpdaterPose::update(const Duration &duration,
                                           LocalisationFSMState & currentFSMState,
                                           MetaState &currentMetaState)
 {
+  rateDiagnostic_.evaluate(duration);
+
   switch (currentFSMState) {
   case LocalisationFSMState::INIT:
     if(set_(duration,
@@ -61,7 +67,7 @@ void R2WLocalisationKFUpdaterPose::update(const Duration &duration,
     }
     break;
   case LocalisationFSMState::RUNNING:
-    if(duration<updateStartDisableTime_)
+    if(triggerMode_==TriggerMode::ALWAYS)
     {
       try
       {
@@ -100,17 +106,17 @@ void R2WLocalisationKFUpdaterPose::update_(const Duration & duration,
 
 
   //Compute innovation
-  this->Inn_[0]=currentObservation.Y(ObservationPose::POSITION_X)-currentState.X(MetaState::POSITION_X);
-  this->Inn_[1]=currentObservation.Y(ObservationPose::POSITION_Y)-currentState.X(MetaState::POSITION_Y);
-  this->Inn_[2]=betweenMinusPiAndPi(currentObservation.Y(ObservationPose::ORIENTATION_Z)-currentState.X(MetaState::ORIENTATION_Z));
-  this->Inn_.template segment<2>(0) -= levelArmCompensation_.getPosition().segment<2>(0);
+  Inn_[0]=currentObservation.Y(ObservationPose::POSITION_X)-currentState.X(MetaState::POSITION_X);
+  Inn_[1]=currentObservation.Y(ObservationPose::POSITION_Y)-currentState.X(MetaState::POSITION_Y);
+  Inn_[2]=betweenMinusPiAndPi(currentObservation.Y(ObservationPose::ORIENTATION_Z)-currentState.X(MetaState::ORIENTATION_Z));
+  Inn_.template segment<2>(0) -= levelArmCompensation_.getPosition().segment<2>(0);
 
   //Compute innovation covariance
   //  this->R_ = currentObservation.R();
   //  this->R_.template block<2,2>(0,0) += levelArmCompensation_.getPositionCovariance().block<2,2>(0,0);
-  this->H_.template block<2,1>(0,2)= levelArmCompensation_.getJacobian().block<2,1>(0,2);
-  this->QInn_=this->H_*currentState.P()*this->H_.transpose()+currentObservation.R();
-  this->QInn_.template block<2,2>(0,0)+=levelArmCompensation_.getPositionCovariance().block<2,2>(0,0);
+  H_.template block<2,1>(0,2)= levelArmCompensation_.getJacobian().block<2,1>(0,2);
+  QInn_=H_*currentState.P()* H_.transpose()+currentObservation.R();
+  QInn_.template block<2,2>(0,0)+=levelArmCompensation_.getPositionCovariance().block<2,2>(0,0);
 
   //log
   if(logFile_.is_open())

@@ -19,9 +19,15 @@ const double UNSCENTED_TRANSFORM_BETA=2;
 namespace romea {
 
 //-----------------------------------------------------------------------------
-R2RLocalisationKFUpdaterRange::R2RLocalisationKFUpdaterRange(const double &maximalMahalanobisDistance,
+R2RLocalisationKFUpdaterRange::R2RLocalisationKFUpdaterRange(const std::string &updaterName,
+                                                             const double &minimalRate,
+                                                             const TriggerMode &triggerMode,
+                                                             const double &maximalMahalanobisDistance,
                                                              const std::string & logFilename):
-  LocalisationUpdater(logFilename,false),
+  LocalisationUpdaterExteroceptive(updaterName,
+                                   minimalRate,
+                                   triggerMode,
+                                   logFilename),
   UKFUpdaterCore(UNSCENTED_TRANSFORM_KAPPA,
                  UNSCENTED_TRANSFORM_ALPHA,
                  UNSCENTED_TRANSFORM_BETA,

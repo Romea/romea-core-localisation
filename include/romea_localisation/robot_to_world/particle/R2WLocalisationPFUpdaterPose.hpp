@@ -3,16 +3,18 @@
 
 //romea
 #include <romea_common/time/Time.hpp>
+#include <romea_filtering/particle/ParticleFilterGaussianUpdaterCore.hpp>
+
+#include "R2WLocalisationPFMetaState.hpp"
+#include "../R2WLevelArmCompensation.hpp"
 #include "../../ObservationPose.hpp"
 #include "../../LocalisationFSMState.hpp"
-#include "../../LocalisationUpdater.hpp"
-#include "../R2WLevelArmCompensation.hpp"
-#include "R2WLocalisationPFMetaState.hpp"
-#include <romea_filtering/particle/ParticleFilterGaussianUpdaterCore.hpp>
+#include "../../LocalisationUpdaterExteroceptive.hpp"
+
 
 namespace romea {
 
-class R2WLocalisationPFUpdaterPose :  public LocalisationUpdater, public PFGaussianUpdaterCore<double,3,3>
+class R2WLocalisationPFUpdaterPose :  public LocalisationUpdaterExteroceptive, public PFGaussianUpdaterCore<double,3,3>
 {
 
 public :
@@ -25,9 +27,11 @@ public :
 
 public :
 
-  R2WLocalisationPFUpdaterPose(const size_t &numberOfParticles,
+  R2WLocalisationPFUpdaterPose(const std::string & updaterName,
+                               const double & minimalRate,
+                               const TriggerMode & triggerMode,
+                               const size_t &numberOfParticles,
                                const double &maximalMahalanobisDistance,
-                               const bool &disableUpdateFunction,
                                const std::string & logFilename);
 
   void update(const Duration & duration,
@@ -54,9 +58,9 @@ private :
 
 private :
 
-  LevelArmCompensation levelArmCompensation_;
   RowMajorVector cosCourses_;
   RowMajorVector sinCourses_;
+  LevelArmCompensation levelArmCompensation_;
 };
 
 

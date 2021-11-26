@@ -17,7 +17,7 @@ TEST(TestAngularSpeedUpdater, checkUpdate)
   Duration t(1000);
   R2WLocalisationMetaState metaState;
   LocalisationFSMState fsmState=LocalisationFSMState::INIT;
-  LocalisationUpdaterLinearSpeed<R2WLocalisationMetaState> updater;
+  LocalisationUpdaterLinearSpeed<R2WLocalisationMetaState> updater("linear_speed_updater",10);
 
   updater.update(t,observation,fsmState,metaState);
 
