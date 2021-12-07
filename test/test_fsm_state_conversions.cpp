@@ -3,7 +3,7 @@
 
 //romea
 #include "test_utils.hpp"
-#include "romea_localisation/LocalisationFSMState.hpp"
+#include "romea_core_localisation/LocalisationFSMState.hpp"
 
 
 //-----------------------------------------------------------------------------

@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.5)
 
 project(
-  "romea_localisation"
+  "romea_core_localisation"
   VERSION 0.1.0
   #  DESCRIPTION
   #  HOMEPAGE_URL
   LANGUAGES CXX)
 
-find_package(romea_common REQUIRED)
-find_package(romea_filtering REQUIRED)
+find_package(romea_core_common REQUIRED)
+find_package(romea_core_filtering REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
   src/LocalisationFSMState.cpp
@@ -57,15 +57,15 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
-  ${romea_common_INCLUDE_DIRS}
-  ${romea_filtering_INCLUDE_DIRS}
+  ${romea_core_common_INCLUDE_DIRS}
+  ${romea_core_filtering_INCLUDE_DIRS}
   )
 
 target_compile_options(${PROJECT_NAME} PRIVATE
   -Wall -Wextra -O3 -std=c++17)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
-  romea_common::romea_common)
+  romea_core_common::romea_core_common)
 
 include(GNUInstallDirs)
 

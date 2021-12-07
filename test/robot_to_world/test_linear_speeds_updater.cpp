@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 #include <cmath>
 
-#include "romea_localisation/LocalisationFSMState.hpp"
-#include "romea_localisation/LocalisationUpdaterLinearSpeeds.hpp"
-#include "romea_localisation/robot_to_world/R2WLocalisationMetaState.hpp"
+#include "romea_core_localisation/LocalisationFSMState.hpp"
+#include "romea_core_localisation/LocalisationUpdaterLinearSpeeds.hpp"
+#include "romea_core_localisation/robot_to_world/R2WLocalisationMetaState.hpp"
 
 using namespace romea;
 

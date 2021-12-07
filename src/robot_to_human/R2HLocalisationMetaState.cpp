@@ -1,5 +1,5 @@
 //romea
-#include "romea_localisation/robot_to_human/R2HLocalisationMetaState.hpp"
+#include "romea_core_localisation/robot_to_human/R2HLocalisationMetaState.hpp"
 
 namespace {
 const size_t MAXIMAL_TRAJECTORY_SIZE = 1000;

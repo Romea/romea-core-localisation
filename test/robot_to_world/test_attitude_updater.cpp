@@ -1,9 +1,9 @@
 ﻿// gtest
 #include <gtest/gtest.h>
 
-#include "romea_localisation/LocalisationFSMState.hpp"
-#include "romea_localisation/robot_to_world/R2WLocalisationUpdaterAttitude.hpp"
-#include "romea_localisation/robot_to_world/R2WLocalisationMetaState.hpp"
+#include "romea_core_localisation/LocalisationFSMState.hpp"
+#include "romea_core_localisation/robot_to_world/R2WLocalisationUpdaterAttitude.hpp"
+#include "romea_core_localisation/robot_to_world/R2WLocalisationMetaState.hpp"
 
 using namespace romea;
 

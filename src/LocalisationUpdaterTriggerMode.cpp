@@ -1,5 +1,5 @@
 //romea
-#include "romea_localisation/LocalisationUpdaterTriggerMode.hpp"
+#include "romea_core_localisation/LocalisationUpdaterTriggerMode.hpp"
 
 //std
 #include <exception>

@@ -1,4 +1,4 @@
-#include "romea_localisation/LocalisationUpdaterProprioceptive.hpp"
+#include "romea_core_localisation/LocalisationUpdaterProprioceptive.hpp"
 
 namespace romea {
 
