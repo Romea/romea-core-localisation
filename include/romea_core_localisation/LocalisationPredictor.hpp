@@ -70,8 +70,7 @@ void LocalisationPredictor<State>::predict(const Duration & previousDuration,
   assert(currentduration>=previousDuration);
 
   currentFSMState = previousFSMState;
-
-  if(currentFSMState == LocalisationFSMState::RUNNING)
+  if(previousFSMState == LocalisationFSMState::RUNNING)
   {
     dt_ =durationToSecond(currentduration-previousDuration);
 
@@ -98,10 +97,10 @@ void LocalisationPredictor<State>::predict(const Duration & previousDuration,
   }
 
 //  std::cout << "predict current state "<<std::endl;
-//  std::cout << currentState.X <<std::endl;
-//  std::cout << currentState.P <<std::endl;
-//  std::cout << currentState.U <<std::endl;
-//  std::cout << currentState.QU <<std::endl;
+//  std::cout << currentState.state.X() <<std::endl;
+//  std::cout << currentState.state.P() <<std::endl;
+//  std::cout << currentState.input.U() <<std::endl;
+//  std::cout << currentState.input.QU() <<std::endl;
 //  std::cout << "fsm state " <<int(currentFSMState) <<std::endl;
 
 }
