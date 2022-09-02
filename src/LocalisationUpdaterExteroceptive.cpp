@@ -1,4 +1,5 @@
 #include "romea_core_localisation/LocalisationUpdaterExteroceptive.hpp"
+#include <iostream>
 
 namespace romea {
 
@@ -18,7 +19,7 @@ LocalisationUpdaterExteroceptive::LocalisationUpdaterExteroceptive(const std::st
 //-----------------------------------------------------------------------------
 void LocalisationUpdaterExteroceptive::openLogFile_(const std::string & logFilename)
 {
-  if(logFilename.empty())
+  if(!logFilename.empty())
   {
     logFile_.open(logFilename);
 
