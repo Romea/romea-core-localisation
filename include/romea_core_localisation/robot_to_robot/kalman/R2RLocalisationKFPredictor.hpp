@@ -18,7 +18,9 @@ public :
 
 public :
 
-  R2RLocalisationKFPredictor(const LocalisationStoppingCriteria & stoppingCriteria);
+  R2RLocalisationKFPredictor(const Duration &maximalDurationInDeadReckoning,
+                             const double &maximalTravelledDistanceInDeadReckoning,
+                             const double &maximalPositionCircularErrorProbable);
 
 private :
 

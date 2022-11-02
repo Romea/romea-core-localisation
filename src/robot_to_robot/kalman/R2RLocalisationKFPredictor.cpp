@@ -11,8 +11,12 @@
 namespace romea {
 
 //-----------------------------------------------------------------------------
-R2RLocalisationKFPredictor::R2RLocalisationKFPredictor(const LocalisationStoppingCriteria & stoppingCriteria):
-  LocalisationPredictor<MetaState>(stoppingCriteria),
+R2RLocalisationKFPredictor::R2RLocalisationKFPredictor(const Duration & maximalDurationInDeadReckoning,
+                                                       const double & maximalTravelledDistanceInDeadReckoning,
+                                                       const double & maximalPositionCircularErrorProbable):
+  LocalisationPredictor<MetaState>(maximalDurationInDeadReckoning,
+                                   maximalTravelledDistanceInDeadReckoning,
+                                   maximalPositionCircularErrorProbable),
   jFl_(Eigen::MatrixXd::Identity(MetaState::STATE_SIZE,MetaState::STATE_SIZE)),
   jGl_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE,MetaState::INPUT_SIZE)),
   jFf_(Eigen::MatrixXd::Identity(MetaState::STATE_SIZE,MetaState::STATE_SIZE)),
@@ -191,13 +195,13 @@ bool R2RLocalisationKFPredictor::stop_(const Duration & duration,
                                                       metaState.state.P(MetaState::LEADER_POSITION_Y,
                                                                         MetaState::LEADER_POSITION_Y));
 
-  //  std::cout << " kalman dr elapsed time "<< durationToSecond(duration) <<" "<< durationToSecond(state.lastExteroceptiveUpdate.time) <<" " <<  durationToSecond(stoppingCriteria_.maximalDurationInDeadReckoning)<< std::endl;
-  //  std::cout << " kalman dr elapsed distance "<< state.travelledDistance <<" " <<state.lastExteroceptiveUpdate.travelledDistance <<" " <<  stoppingCriteria_.maximalTravelledDistanceInDeadReckoning<< std::endl;
+  //  std::cout << " kalman dr elapsed time "<< durationToSecond(duration) <<" "<< durationToSecond(state.lastExteroceptiveUpdate.time) <<" " <<  durationToSecond(shutoffParameters_.maximalDurationInDeadReckoning)<< std::endl;
+  //  std::cout << " kalman dr elapsed distance "<< state.travelledDistance <<" " <<state.lastExteroceptiveUpdate.travelledDistance <<" " <<  shutoffParameters_.maximalTravelledDistanceInDeadReckoning<< std::endl;
 
 
-  return positionCircularErrorProbability > stoppingCriteria_.maximalPositionCircularErrorProbability ||
-      travelledDistanceInDeadReckoningMode > stoppingCriteria_.maximalTravelledDistanceInDeadReckoning||
-      durationInDeadReckoningMode > stoppingCriteria_.maximalDurationInDeadReckoning;
+  return positionCircularErrorProbability > maximalPositionCircularErrorProbable_ ||
+      travelledDistanceInDeadReckoningMode > maximalTravelledDistanceInDeadReckoning_||
+      durationInDeadReckoningMode > maximalDurationInDeadReckoning_;
 
 }
 

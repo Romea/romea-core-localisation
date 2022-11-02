@@ -21,7 +21,9 @@ public:
 
 public :
 
-  R2RLocalisationPFPredictor(const LocalisationStoppingCriteria & stoppingCriteria,
+  R2RLocalisationPFPredictor(const Duration &maximalDurationInDeadReckoning,
+                             const double &maximalTravelledDistanceInDeadReckoning,
+                             const double &maximalPositionCircularErrorProbable,
                              const size_t & numberOfParticles);
 
 private :

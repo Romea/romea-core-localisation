@@ -6,8 +6,12 @@
 namespace romea {
 
 //--------------------------------------------------------------------------
-R2WLocalisationKFPredictor::R2WLocalisationKFPredictor(const LocalisationStoppingCriteria &stoppingCriteria):
-  LocalisationPredictor(stoppingCriteria),
+R2WLocalisationKFPredictor::R2WLocalisationKFPredictor(const Duration & maximalDurationInDeadReckoning,
+                                                       const double & maximalTravelledDistanceInDeadReckoning,
+                                                       const double & maximalPositionCircularErrorProbable):
+  LocalisationPredictor(maximalDurationInDeadReckoning,
+                        maximalTravelledDistanceInDeadReckoning,
+                        maximalPositionCircularErrorProbable),
   jF_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE,MetaState::STATE_SIZE)),
   jG_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE,MetaState::INPUT_SIZE)),
   x_(0), y_(0), theta_(0), vx_(0), vy_(0), w_(0),
@@ -123,13 +127,13 @@ bool R2WLocalisationKFPredictor::stop_(const Duration & duration,
                                                       metaState.state.P(MetaState::POSITION_Y,
                                                                         MetaState::POSITION_Y));
 
-  if(positionCircularErrorProbability > stoppingCriteria_.maximalPositionCircularErrorProbability ||
-      travelledDistanceInDeadReckoningMode > stoppingCriteria_.maximalTravelledDistanceInDeadReckoning||
-      durationInDeadReckoningMode > stoppingCriteria_.maximalDurationInDeadReckoning)
+  if(positionCircularErrorProbability >maximalPositionCircularErrorProbable_ ||
+      travelledDistanceInDeadReckoningMode > maximalTravelledDistanceInDeadReckoning_||
+      durationInDeadReckoningMode > maximalDurationInDeadReckoning_)
   {
-    std::cout<<" positionCircularErrorProbability "<<positionCircularErrorProbability<<" "<<stoppingCriteria_.maximalPositionCircularErrorProbability<<std::endl;
-    std::cout<<" travelledDistanceInDeadReckoningMode "<<travelledDistanceInDeadReckoningMode<<" "<<stoppingCriteria_.maximalTravelledDistanceInDeadReckoning << std::endl;
-    std::cout<<" durationInDeadReckoningMode "<<durationInDeadReckoningMode.count()<<" "<<stoppingCriteria_.maximalDurationInDeadReckoning.count() << std::endl;
+    std::cout<<" positionCircularErrorProbability "<<positionCircularErrorProbability<<" "<<maximalPositionCircularErrorProbable_<<std::endl;
+    std::cout<<" travelledDistanceInDeadReckoningMode "<<travelledDistanceInDeadReckoningMode<<" "<<maximalTravelledDistanceInDeadReckoning_ << std::endl;
+    std::cout<<" durationInDeadReckoningMode "<<durationInDeadReckoningMode.count()<<" "<<maximalDurationInDeadReckoning_.count() << std::endl;
     return true;
   }
   else

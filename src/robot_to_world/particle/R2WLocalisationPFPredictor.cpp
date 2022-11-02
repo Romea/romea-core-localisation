@@ -7,9 +7,13 @@
 namespace romea {
 
 //--------------------------------------------------------------------------
-R2WLocalisationPFPredictor::R2WLocalisationPFPredictor(const LocalisationStoppingCriteria & stoppingCriteria,
+R2WLocalisationPFPredictor::R2WLocalisationPFPredictor(const Duration & maximalDurationInDeadReckoning,
+                                                       const double & maximalTravelledDistanceInDeadReckoning,
+                                                       const double & maximalPositionCircularErrorProbable,
                                                        const size_t &numberOfParticles):
-  LocalisationPredictor<MetaState>(stoppingCriteria),
+  LocalisationPredictor<MetaState>(maximalDurationInDeadReckoning,
+                                   maximalTravelledDistanceInDeadReckoning,
+                                   maximalPositionCircularErrorProbable),
   vxdT_(0),
   vydT_(0),
   cosCourses_(RowMajorVector::Zero(numberOfParticles)),
@@ -112,9 +116,9 @@ bool R2WLocalisationPFPredictor::stop_(const Duration & duration,
   double positionCircularErrorProbability = 0;
 
 
-  return positionCircularErrorProbability > stoppingCriteria_.maximalPositionCircularErrorProbability ||
-      travelledDistanceInDeadReckoningMode > stoppingCriteria_.maximalTravelledDistanceInDeadReckoning||
-      durationInDeadReckoningMode > stoppingCriteria_.maximalDurationInDeadReckoning;
+  return positionCircularErrorProbability > maximalPositionCircularErrorProbable_ ||
+      travelledDistanceInDeadReckoningMode > maximalTravelledDistanceInDeadReckoning_||
+      durationInDeadReckoningMode > maximalDurationInDeadReckoning_;
 
 }
 

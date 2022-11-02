@@ -5,7 +5,6 @@
 #include <romea_core_common/time/Time.hpp>
 #include <romea_core_filtering/FilterPredictor.hpp>
 #include "LocalisationFSMState.hpp"
-#include "LocalisationStoppingCriteria.hpp"
 
 //std
 #include <limits>
@@ -21,7 +20,9 @@ class LocalisationPredictor : public FilterPredictor<State,LocalisationFSMState,
 
 public :
 
-  LocalisationPredictor(const LocalisationStoppingCriteria & stoppingCriteria);
+  LocalisationPredictor(const Duration &maximalDurationInDeadReckoning,
+                        const double &maximalTravelledDistanceInDeadReckoning,
+                        const double &maximalPositionCircularErrorProbable);
 
   virtual ~LocalisationPredictor()=default;
 
@@ -43,7 +44,9 @@ protected :
 
 protected :
 
-  LocalisationStoppingCriteria stoppingCriteria_;
+  Duration maximalDurationInDeadReckoning_;
+  double maximalTravelledDistanceInDeadReckoning_;
+  double maximalPositionCircularErrorProbable_;
   double dt_;
 };
 
@@ -52,8 +55,12 @@ protected :
 
 //-----------------------------------------------------------------------------
 template <class State>
-LocalisationPredictor<State>::LocalisationPredictor(const LocalisationStoppingCriteria & stoppingCriteria):
-  stoppingCriteria_(stoppingCriteria),
+LocalisationPredictor<State>::LocalisationPredictor(const Duration & maximalDurationInDeadReckoning,
+                                                    const double & maximalTravelledDistanceInDeadReckoning,
+                                                    const double & maximalPositionCircularErrorProbable):
+  maximalDurationInDeadReckoning_(maximalDurationInDeadReckoning),
+  maximalTravelledDistanceInDeadReckoning_(maximalTravelledDistanceInDeadReckoning),
+  maximalPositionCircularErrorProbable_(maximalPositionCircularErrorProbable),
   dt_(0)
 {
 }
@@ -96,12 +103,12 @@ void LocalisationPredictor<State>::predict(const Duration & previousDuration,
 
   }
 
-//  std::cout << "predict current state "<<std::endl;
-//  std::cout << currentState.state.X() <<std::endl;
-//  std::cout << currentState.state.P() <<std::endl;
-//  std::cout << currentState.input.U() <<std::endl;
-//  std::cout << currentState.input.QU() <<std::endl;
-//  std::cout << "fsm state " <<int(currentFSMState) <<std::endl;
+  //  std::cout << "predict current state "<<std::endl;
+  //  std::cout << currentState.state.X() <<std::endl;
+  //  std::cout << currentState.state.P() <<std::endl;
+  //  std::cout << currentState.input.U() <<std::endl;
+  //  std::cout << currentState.input.QU() <<std::endl;
+  //  std::cout << "fsm state " <<int(currentFSMState) <<std::endl;
 
 }
 

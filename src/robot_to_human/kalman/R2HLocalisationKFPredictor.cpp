@@ -13,9 +13,13 @@
 namespace romea {
 
 //-----------------------------------------------------------------------------
-R2HLocalisationKFPredictor::R2HLocalisationKFPredictor(const LocalisationStoppingCriteria & stoppingCriteria,
+R2HLocalisationKFPredictor::R2HLocalisationKFPredictor(const Duration & maximalDurationInDeadReckoning,
+                                                       const double & maximalTravelledDistanceInDeadReckoning,
+                                                       const double & maximalPositionCircularErrorProbable,
                                                        const Eigen::Matrix2d & leaderMotionCovariance):
-  LocalisationPredictor(stoppingCriteria),
+  LocalisationPredictor(maximalDurationInDeadReckoning,
+                        maximalTravelledDistanceInDeadReckoning,
+                        maximalPositionCircularErrorProbable),
   jF_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE,MetaState::STATE_SIZE)),
   jG_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE,MetaState::INPUT_SIZE)),
   leaderMotionCovariance_(leaderMotionCovariance),
@@ -131,9 +135,9 @@ bool R2HLocalisationKFPredictor::stop_(const Duration & duration,
                                                       metaState.state.P(MetaState::LEADER_POSITION_Y,
                                                                         MetaState::LEADER_POSITION_Y));
 
-  return positionCircularErrorProbability > stoppingCriteria_.maximalPositionCircularErrorProbability ||
-      travelledDistanceInDeadReckoningMode > stoppingCriteria_.maximalTravelledDistanceInDeadReckoning||
-      durationInDeadReckoningMode > stoppingCriteria_.maximalDurationInDeadReckoning;
+  return positionCircularErrorProbability > maximalPositionCircularErrorProbable_ ||
+      travelledDistanceInDeadReckoningMode > maximalTravelledDistanceInDeadReckoning_||
+      durationInDeadReckoningMode > maximalDurationInDeadReckoning_;
 }
 
 

@@ -19,7 +19,9 @@ public :
 
 public :
 
-  R2WLocalisationKFPredictor(const LocalisationStoppingCriteria & stoppingCriteria);
+  R2WLocalisationKFPredictor(const Duration &maximalDurationInDeadReckoning,
+                             const double &maximalTravelledDistanceInDeadReckoning,
+                             const double &maximalPositionCircularErrorProbable);
 
 protected :
 

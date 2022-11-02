@@ -36,7 +36,7 @@ protected :
 protected :
 
   TriggerMode triggerMode_;
-  CheckupRate rateDiagnostic_;
+  CheckupGreaterThanRate rateDiagnostic_;
   mutable std::mutex mutex_;
 };
 

@@ -8,9 +8,13 @@
 namespace romea {
 
 //--------------------------------------------------------------------------
-R2RLocalisationPFPredictor::R2RLocalisationPFPredictor(const LocalisationStoppingCriteria & stoppingCriteria,
+R2RLocalisationPFPredictor::R2RLocalisationPFPredictor(const Duration & maximalDurationInDeadReckoning,
+                                                       const double & maximalTravelledDistanceInDeadReckoning,
+                                                       const double & maximalPositionCircularErrorProbable,
                                                        const size_t &numberOfParticles):
-  LocalisationPredictor<MetaState>(stoppingCriteria),
+  LocalisationPredictor<MetaState>(maximalDurationInDeadReckoning,
+                                   maximalTravelledDistanceInDeadReckoning,
+                                   maximalPositionCircularErrorProbable),
   cosCourses_(RowMajorVector::Zero(numberOfParticles)),
   sinCourses_(RowMajorVector::Zero(numberOfParticles)),
   wfdT_(0),
@@ -178,12 +182,12 @@ bool R2RLocalisationPFPredictor::stop_(const Duration & duration,
 
   double positionCircularErrorProbability = 0;
 
-  //    std::cout << " particle dr elapsed time "<< durationToSecond(duration) <<" "<< durationToSecond(state.lastExteroceptiveUpdate.time) <<" " <<  durationToSecond(stoppingCriteria_.maximalDurationInDeadReckoning)<< std::endl;
-  //    std::cout << " particle dr elapsed distance "<< state.travelledDistance <<" " <<state.lastExteroceptiveUpdate.travelledDistance <<" " <<  stoppingCriteria_.maximalTravelledDistanceInDeadReckoning<< std::endl;
+  //    std::cout << " particle dr elapsed time "<< durationToSecond(duration) <<" "<< durationToSecond(state.lastExteroceptiveUpdate.time) <<" " <<  durationToSecond(shutoffParameters_.maximalDurationInDeadReckoning)<< std::endl;
+  //    std::cout << " particle dr elapsed distance "<< state.travelledDistance <<" " <<state.lastExteroceptiveUpdate.travelledDistance <<" " <<  shutoffParameters_.maximalTravelledDistanceInDeadReckoning<< std::endl;
 
-  return positionCircularErrorProbability > stoppingCriteria_.maximalPositionCircularErrorProbability ||
-      travelledDistanceInDeadReckoningMode > stoppingCriteria_.maximalTravelledDistanceInDeadReckoning||
-      durationInDeadReckoningMode > stoppingCriteria_.maximalDurationInDeadReckoning;
+  return positionCircularErrorProbability > maximalPositionCircularErrorProbable_ ||
+      travelledDistanceInDeadReckoningMode > maximalTravelledDistanceInDeadReckoning_||
+      durationInDeadReckoningMode > maximalDurationInDeadReckoning_;
 
 }
 

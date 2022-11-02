@@ -27,7 +27,8 @@ public :
 
 public :
 
-  R2WLocalisationKFUpdaterPosition(const std::string & updaterName, const double & minimalRate,
+  R2WLocalisationKFUpdaterPosition(const std::string & updaterName,
+                                   const double & minimalRate,
                                    const TriggerMode & triggerMode,
                                    const double &maximalMahalanobisDistance,
                                    const std::string & logFilename);

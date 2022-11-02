@@ -17,7 +17,9 @@ public :
 
 public :
 
-  R2HLocalisationKFPredictor(const LocalisationStoppingCriteria &stoppingCriteria,
+  R2HLocalisationKFPredictor(const Duration &maximalDurationInDeadReckoning,
+                             const double &maximalTravelledDistanceInDeadReckoning,
+                             const double &maximalPositionCircularErrorProbable,
                              const Eigen::Matrix2d & leaderMotionCovariance);
 
   virtual ~R2HLocalisationKFPredictor()=default;

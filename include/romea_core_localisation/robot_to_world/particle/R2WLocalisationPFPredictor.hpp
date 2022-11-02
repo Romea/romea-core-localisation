@@ -20,7 +20,9 @@ public:
 
 public :
 
-  R2WLocalisationPFPredictor(const LocalisationStoppingCriteria & stoppingCriteria,
+  R2WLocalisationPFPredictor(const Duration & maximalDurationInDeadReckoning,
+                             const double & maximalTravelledDistanceInDeadReckoning,
+                             const double & maximalPositionCircularErrorProbable,
                              const size_t & numberOfParticles);
 
 private :
