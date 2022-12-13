@@ -1,5 +1,5 @@
-#ifndef romea_LocalisationUpdaterTriggerMode_hpp
-#define romea_LocalisationUpdaterTriggerMode_hpp
+#ifndef ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATERTRIGGERMODE_HPP_  
+#define ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATERTRIGGERMODE_HPP_  
 
 #include <string>
 
@@ -16,6 +16,6 @@ namespace romea {
 
   LocalisationUpdaterTriggerMode toTriggerMode(const std::string & triggerMode);
 
-}//romea
+}  // namespace romea
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATERTRIGGERMODE_HPP_  

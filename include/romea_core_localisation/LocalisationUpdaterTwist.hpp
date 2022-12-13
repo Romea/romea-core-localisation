@@ -1,12 +1,14 @@
-#ifndef _romea_LocalisationUpdaterTwist_HPP_
-#define _romea_LocalisationUpdaterTwist_HPP_
+#ifndef ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATERTWIST_HPP_
+#define ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATERTWIST_HPP_
 
+// std
+#include <string>
 
-//local
+// romea
 #include <romea_core_common/time/Time.hpp>
-#include "LocalisationUpdaterProprioceptive.hpp"
-#include "ObservationTwist.hpp"
-#include "LocalisationFSMState.hpp"
+#include "romea_core_localisation/LocalisationUpdaterProprioceptive.hpp"
+#include "romea_core_localisation/ObservationTwist.hpp"
+#include "romea_core_localisation/LocalisationFSMState.hpp"
 
 namespace romea {
 
@@ -18,7 +20,7 @@ public :
 
   LocalisationUpdaterTwist(const std::string & updaterName,
                            const double & minimalRate):
-    LocalisationUpdaterProprioceptive(updaterName,minimalRate)
+    LocalisationUpdaterProprioceptive(updaterName, minimalRate)
   {
   }
 
@@ -29,17 +31,17 @@ public :
               LocalisationFSMState & /*currentFSMState*/,
               MetaState &currentMetaState)
   {
-
     rateDiagnostic_.evaluate(duration);
 
-    currentMetaState.input.U().template segment<3>(MetaState::LINEAR_SPEED_X_BODY)=currentObservation.Y();
+    currentMetaState.input.U().template
+      segment<3>(MetaState::LINEAR_SPEED_X_BODY) = currentObservation.Y();
 
-    currentMetaState.input.QU().template block<3,3>(MetaState::LINEAR_SPEED_X_BODY,
-                                                    MetaState::LINEAR_SPEED_X_BODY)=currentObservation.R();
+    currentMetaState.input.QU().template
+      block<3, 3>(MetaState::LINEAR_SPEED_X_BODY,
+                  MetaState::LINEAR_SPEED_X_BODY) = currentObservation.R();
   }
-
 };
 
-}//romea
+}  //namespace romea
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATERTWIST_HPP_

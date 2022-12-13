@@ -1,23 +1,25 @@
-#ifndef romea_LocalisationUpdaterExteroceptive_hpp
-#define romea_LocalisationUpdaterExteroceptive_hpp
+#ifndef ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATEREXTEROCEPTIVE_HPP_
+#define ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATEREXTEROCEPTIVE_HPP_
 
-#include "romea_core_localisation/LocalisationUpdaterBase.hpp"
-
+// std
 #include <fstream>
+#include <vector>
+#include <string>
+
+// romea
+#include "romea_core_localisation/LocalisationUpdaterBase.hpp"
 
 namespace romea {
 
 class LocalisationUpdaterExteroceptive : public LocalisationUpdaterBase
 {
-
 public:
-
   LocalisationUpdaterExteroceptive(const std::string & updaterName,
                                    const double & minimalRate,
                                    const TriggerMode & triggerMode,
                                    const std::string & logFilename);
 
-  virtual ~LocalisationUpdaterExteroceptive()=default;
+  virtual ~LocalisationUpdaterExteroceptive() = default;
 
   void openLogFile_(const std::string & logFilename);
 
@@ -26,9 +28,8 @@ public:
 protected :
 
   std::ofstream logFile_;
-
 };
 
-}//romea
+}  // namespace romea
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATEREXTEROCEPTIVE_HPP_  

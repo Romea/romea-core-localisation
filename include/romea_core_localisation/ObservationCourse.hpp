@@ -1,11 +1,11 @@
-#ifndef romea_ObservationCourse_hpp
-#define romea_ObservationCourse_hpp
+#ifndef ROMEA_CORE_LOCALISATION_OBSERVATIONCOURSE_HPP_
+#define ROMEA_CORE_LOCALISATION_OBSERVATIONCOURSE_HPP_
 
 #include "romea_core_filtering/GaussianObservation.hpp"
 
 namespace romea
 {
- using ObservationCourse = GaussianObservation<double,1>;
+ using ObservationCourse = GaussianObservation<double, 1>;
 }
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_OBSERVATIONCOURSE_HPP_

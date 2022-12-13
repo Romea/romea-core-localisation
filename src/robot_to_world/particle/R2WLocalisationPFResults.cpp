@@ -1,4 +1,4 @@
-//romea
+// romea
 #include "romea_core_localisation/robot_to_world/particle/R2WLocalisationPFResults.hpp"
 #include <romea_core_common/math/EulerAngles.hpp>
 
@@ -12,9 +12,8 @@ R2WLocalisationPFResults::R2WLocalisationPFResults(const size_t & numberOfPartic
   estimate_(Eigen::Vector3d::Zero()),
   estimateCovarianceStamp_(Duration::zero()),
   estimateCovariance_(Eigen::Matrix3d::Zero()),
-  meanCenteredParticles_(RowMajorMatrix::Zero(STATE_SIZE,numberOfParticles))
+  meanCenteredParticles_(RowMajorMatrix::Zero(STATE_SIZE, numberOfParticles))
 {
-
 }
 
 //-----------------------------------------------------------------------------
@@ -25,9 +24,9 @@ R2WLocalisationPFResults::~R2WLocalisationPFResults()
 //-----------------------------------------------------------------------------
 void R2WLocalisationPFResults::reset(const Duration & duration)
 {
-  duration_=duration;
-  estimateStamp_=Duration::zero();
-  estimateCovarianceStamp_=Duration::zero();
+  duration_ = duration;
+  estimateStamp_ = Duration::zero();
+  estimateCovarianceStamp_ = Duration::zero();
 }
 
 //-----------------------------------------------------------------------------
@@ -109,15 +108,15 @@ Eigen::Matrix3d R2WLocalisationPFResults::getTwistCovariance() const
 //-----------------------------------------------------------------------------
 void R2WLocalisationPFResults::lazyComputeEstimate_()const
 {
-  if(estimateStamp_!=duration_)
+  if (estimateStamp_ != duration_)
   {
     weightSum_ = state.weights.sum();
     this->estimate_(0) = (state.particles.row(0)*state.weights).sum()/weightSum_;
     this->estimate_(1) = (state.particles.row(1)*state.weights).sum()/weightSum_;
-    double C=(state.particles.row(2).cos()*state.weights).sum()/weightSum_;
-    double S=(state.particles.row(2).sin()*state.weights).sum()/weightSum_;
-    this->estimate_(2)= std::atan2(S,C);
-    estimateStamp_=duration_;
+    double C = (state.particles.row(2).cos()*state.weights).sum()/weightSum_;
+    double S = (state.particles.row(2).sin()*state.weights).sum()/weightSum_;
+    this->estimate_(2) = std::atan2(S, C);
+    estimateStamp_ = duration_;
   }
 }
 
@@ -125,26 +124,25 @@ void R2WLocalisationPFResults::lazyComputeEstimate_()const
 //-----------------------------------------------------------------------------
 void R2WLocalisationPFResults::lazyComputeEstimateVovariance_() const
 {
-  if(estimateCovarianceStamp_!=duration_)
+  if (estimateCovarianceStamp_ != duration_)
   {
-    for(int i=0;i<STATE_SIZE;++i)
+    for (int i = 0; i < STATE_SIZE; ++i)
       this->meanCenteredParticles_.row(i) = state.particles.row(i)- this->estimate_(i);
 
-    //TODO à vectoriser
+    // TODO(jean) à vectoriser
     auto courseRow = this->meanCenteredParticles_.row(2);
-    for(int n=0;n<state.particles.cols();++n)
+    for (int n=0 ; n < state.particles.cols() ; ++n)
       courseRow(n) = betweenMinusPiAndPi(courseRow(n));
 
 
-    for(int i=0 ; i<STATE_SIZE ; ++i)
-      for(int j=i ; j<STATE_SIZE ; ++j)
-        this->estimateCovariance_(i,j) =
-          this->estimateCovariance_(j,i)= (this->meanCenteredParticles_.row(i)*
-                                           this->meanCenteredParticles_.row(j)*
-                                           state.weights).sum()/weightSum_;
+    for (int i = 0 ; i < STATE_SIZE ; ++i)
+      for (int j = i ; j < STATE_SIZE ; ++j)
+        this->estimateCovariance_(i , j) =
+          this->estimateCovariance_(j, i) = (this->meanCenteredParticles_.row(i)*
+                                            this->meanCenteredParticles_.row(j)*
+                                            state.weights).sum()/weightSum_;
 
-
-    estimateCovarianceStamp_=duration_;
+    estimateCovarianceStamp_ = duration_;
   }
 }
 
@@ -155,10 +153,10 @@ Pose2D R2WLocalisationPFResults::toPose2D() const
   lazyComputeEstimateVovariance_();
 
   Pose2D pose2D;
-  pose2D.position.x()=estimate_(POSITION_X);
-  pose2D.position.y()=estimate_(POSITION_Y);
-  pose2D.yaw=estimate_(ORIENTATION_Z);
-  pose2D.covariance=estimateCovariance_;
+  pose2D.position.x() = estimate_(POSITION_X);
+  pose2D.position.y() = estimate_(POSITION_Y);
+  pose2D.yaw = estimate_(ORIENTATION_Z);
+  pose2D.covariance = estimateCovariance_;
   return pose2D;
 }
 
@@ -169,13 +167,13 @@ Pose3D R2WLocalisationPFResults::toPose3D() const
   lazyComputeEstimateVovariance_();
 
   Pose3D pose3d;
-  pose3d.position.x()=estimate_(POSITION_X);
-  pose3d.position.y()=estimate_(POSITION_Y);
-  pose3d.orientation.x()=addon.roll;
-  pose3d.orientation.y()=addon.pitch;
-  pose3d.orientation.z()=estimate_(ORIENTATION_Z);
+  pose3d.position.x() = estimate_(POSITION_X);
+  pose3d.position.y() = estimate_(POSITION_Y);
+  pose3d.orientation.x() = addon.roll;
+  pose3d.orientation.y() = addon.pitch;
+  pose3d.orientation.z() = estimate_(ORIENTATION_Z);
   pose3d.covariance = toSe3Covariance(estimateCovariance_);
-  pose3d.covariance(3,3)=pose3d.covariance(4,4)=addon.rollPitchVariance;
+  pose3d.covariance(3, 3) = pose3d.covariance(4, 4) = addon.rollPitchVariance;
   return pose3d;
 }
 
@@ -187,12 +185,12 @@ PoseAndTwist2D R2WLocalisationPFResults::toPoseAndBodyTwist2D() const
   lazyComputeEstimateVovariance_();
 
   PoseAndTwist2D poseAndTwist2D;
-  poseAndTwist2D.pose.position.x()=estimate_(POSITION_X);
-  poseAndTwist2D.pose.position.y()=estimate_(POSITION_Y);
-  poseAndTwist2D.pose.yaw=estimate_(ORIENTATION_Z);
-  poseAndTwist2D.pose.covariance=estimateCovariance_;
-  poseAndTwist2D.twist.linearSpeeds.x()=getLinearSpeed();
-  poseAndTwist2D.twist.linearSpeeds.y()=getLateralSpeed();
+  poseAndTwist2D.pose.position.x() = estimate_(POSITION_X);
+  poseAndTwist2D.pose.position.y() = estimate_(POSITION_Y);
+  poseAndTwist2D.pose.yaw = estimate_(ORIENTATION_Z);
+  poseAndTwist2D.pose.covariance = estimateCovariance_;
+  poseAndTwist2D.twist.linearSpeeds.x() = getLinearSpeed();
+  poseAndTwist2D.twist.linearSpeeds.y() = getLateralSpeed();
   poseAndTwist2D.twist.angularSpeed = getAngularSpeed();
   poseAndTwist2D.twist.covariance = getTwistCovariance();
   return poseAndTwist2D;
@@ -205,19 +203,19 @@ PoseAndTwist3D R2WLocalisationPFResults::toPoseAndBodyTwist3D() const
   lazyComputeEstimateVovariance_();
 
   PoseAndTwist3D poseAndTwist3D;
-  poseAndTwist3D.pose.position.x()=estimate_(POSITION_X);
-  poseAndTwist3D.pose.position.y()=estimate_(POSITION_Y);
-  poseAndTwist3D.pose.orientation.x()=addon.roll;
-  poseAndTwist3D.pose.orientation.y()=addon.pitch;
-  poseAndTwist3D.pose.orientation.z()=estimate_(ORIENTATION_Z);
-  poseAndTwist3D.twist.linearSpeeds.x()=getLinearSpeed();
-  poseAndTwist3D.twist.linearSpeeds.y()=getLateralSpeed();
-  poseAndTwist3D.twist.angularSpeeds.z()=getAngularSpeed();
+  poseAndTwist3D.pose.position.x() = estimate_(POSITION_X);
+  poseAndTwist3D.pose.position.y() = estimate_(POSITION_Y);
+  poseAndTwist3D.pose.orientation.x() = addon.roll;
+  poseAndTwist3D.pose.orientation.y() = addon.pitch;
+  poseAndTwist3D.pose.orientation.z() = estimate_(ORIENTATION_Z);
+  poseAndTwist3D.twist.linearSpeeds.x() = getLinearSpeed();
+  poseAndTwist3D.twist.linearSpeeds.y() = getLateralSpeed();
+  poseAndTwist3D.twist.angularSpeeds.z() = getAngularSpeed();
   poseAndTwist3D.pose.covariance = toSe3Covariance(estimateCovariance_);
   poseAndTwist3D.twist.covariance = toSe3Covariance(getTwistCovariance());
-  poseAndTwist3D.pose.covariance(3,3)=addon.rollPitchVariance;
-  poseAndTwist3D.pose.covariance(4,4)=addon.rollPitchVariance;
+  poseAndTwist3D.pose.covariance(3, 3) = addon.rollPitchVariance;
+  poseAndTwist3D.pose.covariance(4, 4) = addon.rollPitchVariance;
   return poseAndTwist3D;
 }
 
-}
+}  // namespace romea

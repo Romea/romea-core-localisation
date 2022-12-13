@@ -1,11 +1,10 @@
-#ifndef _romea_ObservationLinearSpeed_HPP_
-#define _romea_ObservationLinearSpeed_HPP_
+#ifndef ROMEA_CORE_LOCALISATION_OBSERVATIONLINEARSPEED_HPP_
+#define ROMEA_CORE_LOCALISATION_OBSERVATIONLINEARSPEED_HPP_
 
 #include <romea_core_filtering/GaussianObservation.hpp>
 
 namespace romea {
-  using  ObservationLinearSpeed = GaussianObservation<double,1>;
+  using  ObservationLinearSpeed = GaussianObservation<double, 1>;
 }
 
-
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_OBSERVATIONLINEARSPEED_HPP_

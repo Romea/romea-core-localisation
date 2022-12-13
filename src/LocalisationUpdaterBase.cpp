@@ -1,18 +1,15 @@
 #include "romea_core_localisation/LocalisationUpdaterBase.hpp"
 
-
 namespace romea {
-
 
 //-----------------------------------------------------------------------------
 LocalisationUpdaterBase::LocalisationUpdaterBase(const std::string & updaterName,
                                                  const double & minimalRate,
                                                  const TriggerMode & triggerMode):
   triggerMode_(triggerMode),
-  rateDiagnostic_(updaterName,minimalRate,0.1*minimalRate),
+  rateDiagnostic_(updaterName, minimalRate, 0.1*minimalRate),
   mutex_()
 {
-
 }
 
 //-----------------------------------------------------------------------------
@@ -37,5 +34,5 @@ void LocalisationUpdaterBase::udapteDiagnostic_(const Duration & duration)
   rateDiagnostic_.evaluate(duration);
 }
 
-}//romea
+}  // namespace romea
 

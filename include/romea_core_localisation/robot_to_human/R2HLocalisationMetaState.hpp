@@ -1,16 +1,15 @@
-#ifndef _romea_R2HLocalisationState_HPP_
-#define _romea_R2HLocalisationState_HPP_
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_R2HLOCALISATIONMETASTATE_HPP_
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_R2HLOCALISATIONMETASTATE_HPP_
 
-//romea
+// romea
 #include <romea_core_filtering/GaussianInput.hpp>
 #include <romea_core_common/containers/Eigen/RingOfEigenVector.hpp>
-#include "../LocalisationUpdatesMonitoring.hpp"
+#include "romea_core_localisation/LocalisationUpdatesMonitoring.hpp"
 
 namespace romea {
 
 struct R2HLocalisationMetaState
 {
-
   enum StateIndex {
     LEADER_POSITION_X = 0,
     LEADER_POSITION_Y,
@@ -24,7 +23,7 @@ struct R2HLocalisationMetaState
     INPUT_SIZE
   };
 
-  using Input = GaussianInput<double,INPUT_SIZE>;
+  using Input = GaussianInput<double, INPUT_SIZE>;
 
   struct AddOn
   {
@@ -39,12 +38,12 @@ struct R2HLocalisationMetaState
   };
 
   R2HLocalisationMetaState();
-  virtual ~R2HLocalisationMetaState()=default;
+  virtual ~R2HLocalisationMetaState() = default;
 
   Input input;
   AddOn addon;
 };
 
-}//romea
+}  // namespace romea
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_R2HLOCALISATIONMETASTATE_HPP_

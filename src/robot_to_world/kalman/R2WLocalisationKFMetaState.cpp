@@ -8,7 +8,6 @@ R2WLocalisationKFMetaState::R2WLocalisationKFMetaState():
   R2WLocalisationMetaState(),
   state()
 {
-
 }
 
 
@@ -29,14 +28,15 @@ void applyLevelArmCompensation(R2WLocalisationKFMetaState::State & currentState,
   currentState.X().segment<2>(R2WLocalisationKFMetaState::POSITION_X) -=
       levelArmCompensation.getPosition().segment<2>(R2WLocalisationKFMetaState::POSITION_X);
 
-  currentState.P().block<2,2>(R2WLocalisationKFMetaState::POSITION_X,
-                              R2WLocalisationKFMetaState::POSITION_X) +=
-      levelArmCompensation.getPositionCovariance().block<2,2>(R2WLocalisationKFMetaState::POSITION_X,
-                                                              R2WLocalisationKFMetaState::POSITION_X);
+  currentState.P().
+    block<2, 2>(R2WLocalisationKFMetaState::POSITION_X,
+                R2WLocalisationKFMetaState::POSITION_X) +=
+      levelArmCompensation.getPositionCovariance().
+        block<2, 2>(R2WLocalisationKFMetaState::POSITION_X,
+                    R2WLocalisationKFMetaState::POSITION_X);
 
   assert(isPositiveSemiDefiniteMatrix(currentState.P()));
 }
 
-
-}
+}  // namespace romea
 

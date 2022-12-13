@@ -1,4 +1,4 @@
-//romea
+// romea
 #include "romea_core_localisation/robot_to_robot/particle/R2RLocalisationPFResults.hpp"
 #include <romea_core_common/math/EulerAngles.hpp>
 
@@ -12,9 +12,9 @@ R2RLocalisationPFResults::R2RLocalisationPFResults(const size_t & numberOfPartic
   estimate_(Eigen::Vector3d::Zero()),
   estimateCovarianceStamp_(Duration::zero()),
   estimateCovariance_(Eigen::Matrix3d::Zero()),
-  meanCenteredParticles_(R2RLocalisationPFMetaState::State::RowMajorMatrix::Zero(STATE_SIZE,numberOfParticles))
+  meanCenteredParticles_(R2RLocalisationPFMetaState::
+    State::RowMajorMatrix::Zero(STATE_SIZE, numberOfParticles))
 {
-
 }
 
 //-----------------------------------------------------------------------------
@@ -43,7 +43,6 @@ Eigen::Vector3d R2RLocalisationPFResults::getLeaderPose() const
 {
   lazyComputeEstimate_();
   return estimate_;
-
 }
 
 //-----------------------------------------------------------------------------
@@ -81,10 +80,9 @@ Eigen::Vector3d R2RLocalisationPFResults::getTwist() const
 //-----------------------------------------------------------------------------
 Eigen::Matrix3d R2RLocalisationPFResults::getTwistCovariance() const
 {
-  return input.QU().block<3,3>(LINEAR_SPEED_X_BODY,
-                               LINEAR_SPEED_X_BODY);
+  return input.QU().block<3, 3>(LINEAR_SPEED_X_BODY,
+                                LINEAR_SPEED_X_BODY);
 }
-
 
 //-----------------------------------------------------------------------------
 const double & R2RLocalisationPFResults::getLeaderLinearSpeed() const
@@ -113,24 +111,23 @@ Eigen::Vector3d R2RLocalisationPFResults::getLeaderTwist() const
 //-----------------------------------------------------------------------------
 Eigen::Matrix3d R2RLocalisationPFResults::getLeaderTwistCovariance() const
 {
-  return input.QU().block<3,3>(LEADER_LINEAR_SPEED_X_BODY,
-                               LEADER_LINEAR_SPEED_X_BODY);
+  return input.QU().block<3, 3>(LEADER_LINEAR_SPEED_X_BODY,
+                                LEADER_LINEAR_SPEED_X_BODY);
 }
-
 
 //-----------------------------------------------------------------------------
 void R2RLocalisationPFResults::lazyComputeEstimate_()const
 {
-  if(estimateStamp_!=duration_)
+  if (estimateStamp_ != duration_)
   {
     weightSum_ = state.weights.sum();
     this->estimate_(0) = (state.particles.row(0)*state.weights).sum()/weightSum_;
     this->estimate_(1) = (state.particles.row(1)*state.weights).sum()/weightSum_;
-    double C=(state.particles.row(2).cos()*state.weights).sum()/weightSum_;
-    double S=(state.particles.row(2).sin()*state.weights).sum()/weightSum_;
-    this->estimate_(2)= std::atan2(S,C);
+    double C = (state.particles.row(2).cos()*state.weights).sum()/weightSum_;
+    double S = (state.particles.row(2).sin()*state.weights).sum()/weightSum_;
+    this->estimate_(2) = std::atan2(S, C);
 
-    estimateStamp_=duration_;
+    estimateStamp_ = duration_;
   }
 }
 
@@ -138,26 +135,25 @@ void R2RLocalisationPFResults::lazyComputeEstimate_()const
 //-----------------------------------------------------------------------------
 void R2RLocalisationPFResults::lazyComputeEstimateVovariance_() const
 {
-  if(estimateCovarianceStamp_!=duration_)
+  if (estimateCovarianceStamp_ != duration_)
   {
-    for(int i=0;i<STATE_SIZE;++i)
+    for (int i=0; i < STATE_SIZE; ++i)
       this->meanCenteredParticles_.row(i) = state.particles.row(i)- this->estimate_(i);
 
-    //TODO à vectoriser
+    // TODO(jean) à vectoriser
     auto courseRow = this->meanCenteredParticles_.row(2);
-    for(int n=0;n<state.particles.cols();++n)
+    for (int n=0; n < state.particles.cols(); ++n)
       courseRow(n) = betweenMinusPiAndPi(courseRow(n));
 
 
-    for(int i=0 ; i<STATE_SIZE ; ++i)
-      for(int j=i ; j<STATE_SIZE ; ++j)
-        this->estimateCovariance_(i,j) =
-          this->estimateCovariance_(j,i)= (this->meanCenteredParticles_.row(i)*
-                                           this->meanCenteredParticles_.row(j)*
-                                           state.weights).sum()/weightSum_;
+    for (int i = 0 ; i < STATE_SIZE ; ++i)
+      for (int j = i ; j < STATE_SIZE ; ++j)
+        this->estimateCovariance_(i, j) =
+          this->estimateCovariance_(j, i)= (this->meanCenteredParticles_.row(i)*
+                                            this->meanCenteredParticles_.row(j)*
+                                            state.weights).sum()/weightSum_;
 
-
-    estimateCovarianceStamp_=duration_;
+    estimateCovarianceStamp_ = duration_;
   }
 }
 
@@ -168,9 +164,9 @@ Pose2D R2RLocalisationPFResults::toLeaderPose2D() const
   lazyComputeEstimateVovariance_();
 
   Pose2D pose2d;
-  pose2d.position.x()=estimate_(LEADER_POSITION_X);
-  pose2d.position.y()=estimate_(LEADER_POSITION_Y );
-  pose2d.yaw =estimate_(LEADER_ORIENTATION_Z);
+  pose2d.position.x() = estimate_(LEADER_POSITION_X);
+  pose2d.position.y() = estimate_(LEADER_POSITION_Y);
+  pose2d.yaw = estimate_(LEADER_ORIENTATION_Z);
   pose2d.covariance = estimateCovariance_;
   return pose2d;
 }
@@ -183,15 +179,15 @@ PoseAndTwist2D R2RLocalisationPFResults::toLeaderPoseAndBodyTwist2D() const
   lazyComputeEstimateVovariance_();
 
   PoseAndTwist2D poseAndTwist2D;
-  poseAndTwist2D.pose.position.x()=estimate_(LEADER_POSITION_X);
-  poseAndTwist2D.pose.position.y()=estimate_(LEADER_POSITION_Y);
-  poseAndTwist2D.pose.yaw=estimate_(LEADER_ORIENTATION_Z);
-  poseAndTwist2D.pose.covariance=estimateCovariance_;
-  poseAndTwist2D.twist.linearSpeeds.x()=getLeaderLinearSpeed();
-  poseAndTwist2D.twist.linearSpeeds.y()=getLeaderLateralSpeed();
-  poseAndTwist2D.twist.angularSpeed=getLeaderAngularSpeed();
-  poseAndTwist2D.twist.covariance=getLeaderTwistCovariance();
+  poseAndTwist2D.pose.position.x() = estimate_(LEADER_POSITION_X);
+  poseAndTwist2D.pose.position.y() = estimate_(LEADER_POSITION_Y);
+  poseAndTwist2D.pose.yaw = estimate_(LEADER_ORIENTATION_Z);
+  poseAndTwist2D.pose.covariance = estimateCovariance_;
+  poseAndTwist2D.twist.linearSpeeds.x() = getLeaderLinearSpeed();
+  poseAndTwist2D.twist.linearSpeeds.y() = getLeaderLateralSpeed();
+  poseAndTwist2D.twist.angularSpeed = getLeaderAngularSpeed();
+  poseAndTwist2D.twist.covariance = getLeaderTwistCovariance();
   return poseAndTwist2D;
 }
 
-}
+}  // namespace romea

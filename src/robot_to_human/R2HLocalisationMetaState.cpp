@@ -1,4 +1,4 @@
-//romea
+// romea
 #include "romea_core_localisation/robot_to_human/R2HLocalisationMetaState.hpp"
 
 namespace {
@@ -20,11 +20,11 @@ R2HLocalisationMetaState::AddOn::AddOn():
 //-----------------------------------------------------------------------------
 void R2HLocalisationMetaState::AddOn::reset()
 {
-  lastExteroceptiveUpdate.time=Duration::max();
+  lastExteroceptiveUpdate.time = Duration::max();
   leaderTrajectory.clear();
   robotTrajectory.clear();
-  lastExteroceptiveUpdate.travelledDistance=0;
-  travelledDistance=0;
+  lastExteroceptiveUpdate.travelledDistance = 0;
+  travelledDistance = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -32,8 +32,7 @@ R2HLocalisationMetaState::R2HLocalisationMetaState():
   input(),
   addon()
 {
-
 }
 
-}//romea
+}  // romea
 

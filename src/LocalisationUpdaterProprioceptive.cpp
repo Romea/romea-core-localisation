@@ -9,8 +9,7 @@ LocalisationUpdaterProprioceptive::LocalisationUpdaterProprioceptive(const std::
                           minimalRate,
                           TriggerMode::ALWAYS)
 {
-
 }
 
-}//romea
+} // namespace romea
 

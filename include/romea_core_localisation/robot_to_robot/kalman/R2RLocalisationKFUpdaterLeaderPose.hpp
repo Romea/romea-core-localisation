@@ -1,19 +1,20 @@
-#ifndef _romea_R2RLocalisationKFUpdaterLeaderPose_HPP_
-#define _romea_R2RLocalisationKFUpdaterLeaderPose_HPP_
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_KALMAN_R2RLOCALISATIONKFUPDATERLEADERPOSE_HPP_
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_KALMAN_R2RLOCALISATIONKFUPDATERLEADERPOSE_HPP_
 
+// std
+#include <string>
 
-//local
+// romea
 #include <romea_core_common/time/Time.hpp>
-#include "../../ObservationPose.hpp"
-#include "../../LocalisationFSMState.hpp"
-#include "../../LocalisationUpdaterExteroceptive.hpp"
-#include "R2RLocalisationKFMetaState.hpp"
+#include "romea_core_localisation/ObservationPose.hpp"
+#include "romea_core_localisation/LocalisationFSMState.hpp"
+#include "romea_core_localisation/LocalisationUpdaterExteroceptive.hpp"
+#include "romea_core_localisation/robot_to_robot/kalman/R2RLocalisationKFMetaState.hpp"
 
 namespace romea {
 
 class R2RLocalisationKFUpdaterLeaderPose : public LocalisationUpdaterExteroceptive
 {
-
 public :
 
   using Observation = ObservationPose;
@@ -41,8 +42,8 @@ protected :
             const Input & currentInput,
             State & currentState,
             AddOn & currentAddOn);
-
 };
 
-}//romea
-#endif
+}  // namespace romea
+
+#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_KALMAN_R2RLOCALISATIONKFUPDATERLEADERPOSE_HPP_

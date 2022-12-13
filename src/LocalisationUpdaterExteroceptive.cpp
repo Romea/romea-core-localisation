@@ -1,5 +1,4 @@
 #include "romea_core_localisation/LocalisationUpdaterExteroceptive.hpp"
-#include <iostream>
 
 namespace romea {
 
@@ -19,11 +18,11 @@ LocalisationUpdaterExteroceptive::LocalisationUpdaterExteroceptive(const std::st
 //-----------------------------------------------------------------------------
 void LocalisationUpdaterExteroceptive::openLogFile_(const std::string & logFilename)
 {
-  if(!logFilename.empty())
+  if (!logFilename.empty())
   {
     logFile_.open(logFilename);
 
-    if(!logFile_.is_open())
+    if (!logFile_.is_open())
     {
       throw std::runtime_error("Cannot open debug file : "+logFilename);
     }
@@ -31,19 +30,20 @@ void LocalisationUpdaterExteroceptive::openLogFile_(const std::string & logFilen
 }
 
 //-----------------------------------------------------------------------------
-void LocalisationUpdaterExteroceptive::setLogFileHeader_(const std::vector<std::string> & logColumnNames)
+void LocalisationUpdaterExteroceptive::setLogFileHeader_(
+  const std::vector<std::string> & logColumnNames)
 {
-  if(logFile_.is_open())
+  if (logFile_.is_open())
   {
-    logFile_<<"%";
-    for(size_t n=0;n<logColumnNames.size();++n)
+    logFile_ << "%";
+    for (size_t n = 0; n < logColumnNames.size(); ++n)
     {
-      logFile_<<"("<<n+1<<")"<<logColumnNames[n]<<",";
+      logFile_ << "(" << n+1 << ")" << logColumnNames[n] << ",";
     }
-    logFile_<<"\n";
+    logFile_<< "\n";
   }
 }
 
 
-}//romea
+}  // namespace romea
 

@@ -1,20 +1,19 @@
-#ifndef romea_LocalisationUpdaterBase_hpp
-#define romea_LocalisationUpdaterBase_hpp
+#ifndef ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATERBASE_HPP_
+#define ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATERBASE_HPP_
 
-//romea
+// std
+#include <mutex>
+#include <string>
+
+// romea
 #include <romea_core_common/diagnostic/CheckupRate.hpp>
 #include <romea_core_common/diagnostic/DiagnosticReport.hpp>
-#include "LocalisationUpdaterTriggerMode.hpp"
-
-
-//std
-#include <mutex>
+#include "romea_core_localisation/LocalisationUpdaterTriggerMode.hpp"
 
 namespace romea {
 
 class LocalisationUpdaterBase
 {
-
 public :
 
   using TriggerMode =  LocalisationUpdaterTriggerMode;
@@ -40,6 +39,6 @@ protected :
   mutable std::mutex mutex_;
 };
 
-}//romea
+}  // namespace romea
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATERBASE_HPP_

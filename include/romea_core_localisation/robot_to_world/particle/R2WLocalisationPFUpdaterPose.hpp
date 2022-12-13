@@ -1,22 +1,24 @@
-#ifndef romea_R2WLocalisationPFUpdaterPose_hpp
-#define romea_R2WLocalisationPFUpdaterPose_hpp
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_PARTICLE_R2WLOCALISATIONPFUPDATERPOSE_HPP_
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_PARTICLE_R2WLOCALISATIONPFUPDATERPOSE_HPP_
 
-//romea
+// std
+#include <string>
+
+// romea
 #include <romea_core_common/time/Time.hpp>
 #include <romea_core_filtering/particle/ParticleFilterGaussianUpdaterCore.hpp>
-
-#include "R2WLocalisationPFMetaState.hpp"
-#include "../R2WLevelArmCompensation.hpp"
-#include "../../ObservationPose.hpp"
-#include "../../LocalisationFSMState.hpp"
-#include "../../LocalisationUpdaterExteroceptive.hpp"
-
+#include "romea_core_localisation/ObservationPose.hpp"
+#include "romea_core_localisation/LocalisationFSMState.hpp"
+#include "romea_core_localisation/LocalisationUpdaterExteroceptive.hpp"
+#include "romea_core_localisation/robot_to_world/R2WLevelArmCompensation.hpp"
+#include "romea_core_localisation/robot_to_world/particle/R2WLocalisationPFMetaState.hpp"
 
 namespace romea {
 
-class R2WLocalisationPFUpdaterPose :  public LocalisationUpdaterExteroceptive, public PFGaussianUpdaterCore<double,3,3>
+class R2WLocalisationPFUpdaterPose :
+  public LocalisationUpdaterExteroceptive,
+  public PFGaussianUpdaterCore<double, 3, 3>
 {
-
 public :
 
   using Observation = ObservationPose;
@@ -41,8 +43,8 @@ public :
 
 private :
 
-  virtual void computeInnovation_(const PFGaussianUpdaterCore::Observation & observation,
-                                  const RawMajorVector & weights)override;
+  void computeInnovation_(const PFGaussianUpdaterCore::Observation & observation,
+                          const RawMajorVector & weights)override;
 
   void update_(const Duration & duration,
                Observation currentObservation,
@@ -63,10 +65,9 @@ private :
   LevelArmCompensation levelArmCompensation_;
 };
 
+}  // namespace romea
 
-}
-
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_PARTICLE_R2WLOCALISATIONPFUPDATERPOSE_HPP_
 
 
 

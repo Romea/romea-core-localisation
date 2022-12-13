@@ -6,7 +6,6 @@ namespace romea {
 R2HLocalisationKFResults::R2HLocalisationKFResults():
   R2HLocalisationResults()
 {
-
 }
 
 //--------------------------------------------------------------------------
@@ -68,9 +67,9 @@ Eigen::Matrix2d R2HLocalisationKFResults::getLeaderPositionCovariance() const
 Position2D R2HLocalisationKFResults::toLeaderPosition2D() const
 {
   Position2D position2d;
-  position2d.position.x()=getLeaderX();
-  position2d.position.y()=getLeaderY();
-  position2d.covariance=getLeaderPositionCovariance();
+  position2d.position.x() = getLeaderX();
+  position2d.position.y() = getLeaderY();
+  position2d.covariance = getLeaderPositionCovariance();
   return position2d;
 }
 

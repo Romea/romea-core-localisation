@@ -7,10 +7,11 @@
 namespace romea {
 
 //--------------------------------------------------------------------------
-R2WLocalisationPFPredictor::R2WLocalisationPFPredictor(const Duration & maximalDurationInDeadReckoning,
-                                                       const double & maximalTravelledDistanceInDeadReckoning,
-                                                       const double & maximalPositionCircularErrorProbable,
-                                                       const size_t &numberOfParticles):
+R2WLocalisationPFPredictor::R2WLocalisationPFPredictor(
+    const Duration & maximalDurationInDeadReckoning,
+    const double & maximalTravelledDistanceInDeadReckoning,
+    const double & maximalPositionCircularErrorProbable,
+    const size_t &numberOfParticles):
   LocalisationPredictor<MetaState>(maximalDurationInDeadReckoning,
                                    maximalTravelledDistanceInDeadReckoning,
                                    maximalPositionCircularErrorProbable),
@@ -18,7 +19,7 @@ R2WLocalisationPFPredictor::R2WLocalisationPFPredictor(const Duration & maximalD
   vydT_(0),
   cosCourses_(RowMajorVector::Zero(numberOfParticles)),
   sinCourses_(RowMajorVector::Zero(numberOfParticles)),
-  randomU_(RowMajorMatrix::Zero(3,numberOfParticles))
+  randomU_(RowMajorMatrix::Zero(3, numberOfParticles))
 {
 }
 
@@ -26,7 +27,6 @@ R2WLocalisationPFPredictor::R2WLocalisationPFPredictor(const Duration & maximalD
 void R2WLocalisationPFPredictor::predict_(const MetaState & previousMetaState,
                                           MetaState & currentMetaState)
 {
-
   currentMetaState.input = previousMetaState.input;
 
   predictState_(previousMetaState.state,
@@ -48,7 +48,7 @@ void R2WLocalisationPFPredictor::drawInputs(const Input &previousInput)
   vydT_ = previousInput.U(MetaState::LINEAR_SPEED_Y_BODY)*dt_;
 
   NormalRandomArrayGenerator3D<double> randomGenerator;
-  randomGenerator.init(previousInput.U()*dt_,previousInput.QU()*dt_*dt_);
+  randomGenerator.init(previousInput.U()*dt_, previousInput.QU()*dt_*dt_);
   randomGenerator.fill(randomU_);
 }
 
@@ -60,18 +60,18 @@ void R2WLocalisationPFPredictor::predictState_(const State &previousState,
 {
   drawInputs(previousInput);
 
-  //predict particles
+  // predict particles
   currentState.particles.row(MetaState::ORIENTATION_Z) =
       previousState.particles.row(MetaState::ORIENTATION_Z)+
       randomU_.row(MetaState::ANGULAR_SPEED_Z_BODY);
 
-  auto courses=currentState.particles.row(MetaState::ORIENTATION_Z);
-  for(int n=0;n<previousState.particles.cols();++n)
-      courses(n)=between0And2Pi(courses(n));
+  auto courses = currentState.particles.row(MetaState::ORIENTATION_Z);
+  for (int n = 0; n < previousState.particles.cols(); ++n)
+      courses(n) = between0And2Pi(courses(n));
 
 
-  cosCourses_=currentState.particles.row(MetaState::ORIENTATION_Z).cos();
-  sinCourses_=currentState.particles.row(MetaState::ORIENTATION_Z).sin();
+  cosCourses_ = currentState.particles.row(MetaState::ORIENTATION_Z).cos();
+  sinCourses_ = currentState.particles.row(MetaState::ORIENTATION_Z).sin();
 
   currentState.particles.row(MetaState::POSITION_X) =
       previousState.particles.row(MetaState::POSITION_X)+
@@ -83,20 +83,19 @@ void R2WLocalisationPFPredictor::predictState_(const State &previousState,
       sinCourses_*randomU_.row(MetaState::LINEAR_SPEED_X_BODY)+
       cosCourses_*randomU_.row(MetaState::LINEAR_SPEED_Y_BODY);
 
-
   currentState.weights = previousState.weights;
-
 }
 
 //------------------------------------------------------------------------------
 void R2WLocalisationPFPredictor::predictAddOn_(const AddOn & previousAddOn,
                                                AddOn &currentAddOn)
 {
-  currentAddOn.roll=previousAddOn.roll;
-  currentAddOn.pitch=previousAddOn.pitch;
-  currentAddOn.roll=previousAddOn.rollPitchVariance;
-  currentAddOn.travelledDistance =previousAddOn.travelledDistance + std::sqrt(vxdT_*vxdT_+vydT_*vydT_);
+  currentAddOn.roll = previousAddOn.roll;
+  currentAddOn.pitch = previousAddOn.pitch;
+  currentAddOn.roll = previousAddOn.rollPitchVariance;
   currentAddOn.lastExteroceptiveUpdate = previousAddOn.lastExteroceptiveUpdate;
+  currentAddOn.travelledDistance  = previousAddOn.travelledDistance +
+    std::sqrt(vxdT_*vxdT_+vydT_*vydT_);
 }
 
 //-----------------------------------------------------------------------------
@@ -105,7 +104,8 @@ bool R2WLocalisationPFPredictor::stop_(const Duration & duration,
 {
   Duration durationInDeadReckoningMode = duration-metaState.addon.lastExteroceptiveUpdate.time;
 
-  double travelledDistanceInDeadReckoningMode = metaState.addon.travelledDistance-metaState.addon.lastExteroceptiveUpdate.travelledDistance;
+  double travelledDistanceInDeadReckoningMode =
+    metaState.addon.travelledDistance-metaState.addon.lastExteroceptiveUpdate.travelledDistance;
 
 
   //  double positionCircularErrorProbability = std::sqrt(state.P(R2WKalmanLocalisationState::POSITION_X,
@@ -119,10 +119,7 @@ bool R2WLocalisationPFPredictor::stop_(const Duration & duration,
   return positionCircularErrorProbability > maximalPositionCircularErrorProbable_ ||
       travelledDistanceInDeadReckoningMode > maximalTravelledDistanceInDeadReckoning_||
       durationInDeadReckoningMode > maximalDurationInDeadReckoning_;
-
 }
-
-
 
 //-----------------------------------------------------------------------------
 void R2WLocalisationPFPredictor::reset_(MetaState &metaState)
@@ -131,5 +128,4 @@ void R2WLocalisationPFPredictor::reset_(MetaState &metaState)
   metaState.addon.reset();
 }
 
-
-}
+}  // namespace romea

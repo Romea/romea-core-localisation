@@ -1,22 +1,24 @@
-#ifndef romea_LocalisationUpdaterProprioceptive_hpp
-#define romea_LocalisationUpdaterProprioceptive_hpp
+#ifndef ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATERPROPRIOCEPTIVE_HPP_
+#define ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATERPROPRIOCEPTIVE_HPP_
 
-#include "LocalisationUpdaterBase.hpp"
+// std
+#include <string>
+
+// romea
+#include "romea_core_localisation/LocalisationUpdaterBase.hpp"
 
 namespace romea {
 
 class LocalisationUpdaterProprioceptive : public LocalisationUpdaterBase
 {
-
 public :
 
   LocalisationUpdaterProprioceptive(const std::string &updaterName,
                                     const double & minimalRate);
 
-  virtual ~LocalisationUpdaterProprioceptive()=default;
-
+  virtual ~LocalisationUpdaterProprioceptive() = default;
 };
 
-}//romea
+} // namespace romea
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATERPROPRIOCEPTIVE_HPP_

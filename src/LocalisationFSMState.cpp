@@ -1,13 +1,12 @@
 #include "romea_core_localisation/LocalisationFSMState.hpp"
 
-
 namespace romea
 {
 
 //-----------------------------------------------------------------------------
 std::string toString(const LocalisationFSMState & fmsState)
 {
-  switch(fmsState)
+  switch (fmsState)
   {
   case LocalisationFSMState::INIT:
     return "INIT";
@@ -25,7 +24,7 @@ std::string toString(const LocalisationFSMState & fmsState)
 //-----------------------------------------------------------------------------
 DiagnosticStatus toDiagnosticStatus(const LocalisationFSMState & fmsState)
 {
-  switch(fmsState)
+  switch (fmsState)
   {
   case LocalisationFSMState::INIT:
     return DiagnosticStatus::WARN;
@@ -40,4 +39,4 @@ DiagnosticStatus toDiagnosticStatus(const LocalisationFSMState & fmsState)
   }
 }
 
-}
+}  // namespace romea

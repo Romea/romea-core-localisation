@@ -1,19 +1,21 @@
-#ifndef romea_R2RLocalisationPFUpdaterLeaderPose_hpp
-#define romea_R2RLocalisationPFUpdaterLeaderPose_hpp
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_PARTICLE_R2RLOCALISATIONPFUPDATERLEADERPOSE_HPP_
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_PARTICLE_R2RLOCALISATIONPFUPDATERLEADERPOSE_HPP_
 
-//romea
+// std
+#include <string>
+
+// romea
 #include <romea_core_common/time/Time.hpp>
-#include "../../ObservationPose.hpp"
-#include "../../LocalisationFSMState.hpp"
-#include "../../LocalisationUpdaterExteroceptive.hpp"
-#include "R2RLocalisationPFMetaState.hpp"
+#include "romea_core_localisation/ObservationPose.hpp"
+#include "romea_core_localisation/LocalisationFSMState.hpp"
+#include "romea_core_localisation/LocalisationUpdaterExteroceptive.hpp"
+#include "romea_core_localisation/robot_to_robot/particle/R2RLocalisationPFMetaState.hpp"
 
 namespace romea {
 
 class R2RLocalisationPFUpdaterLeaderPose : public LocalisationUpdaterExteroceptive
 {
 public:
-
   using Observation = ObservationPose;
   using MetaState = R2RLocalisationPFMetaState;
   using State = R2RLocalisationPFMetaState::State;
@@ -41,13 +43,12 @@ private :
             const Input & currentInput,
             State & currentState,
             AddOn & currentAddOn);
-
 };
 
 
-}
+}  // namespace romea
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_PARTICLE_R2RLOCALISATIONPFUPDATERLEADERPOSE_HPP_
 
 
 

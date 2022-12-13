@@ -1,23 +1,26 @@
-#ifndef romea_R2RLocalisationPFUpdaterRange_hpp
-#define romea_R2RLocalisationPFUpdaterRange_hpp
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_PARTICLE_R2RLOCALISATIONPFUPDATERRANGE_HPP_
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_PARTICLE_R2RLOCALISATIONPFUPDATERRANGE_HPP_
 
-//romea
+// std
+#include <string>
+
+// romea
 #include <romea_core_common/time/Time.hpp>
-#include "../../ObservationRange.hpp"
-#include "../../LocalisationFSMState.hpp"
-#include "../../LocalisationUpdaterExteroceptive.hpp"
 #include <romea_core_filtering/particle/ParticleFilterGaussianUpdaterCore.hpp>
 #include <romea_core_filtering/particle/ParticleFilterResampling.hpp>
-#include "R2RLocalisationPFMetaState.hpp"
+#include "romea_core_localisation/ObservationRange.hpp"
+#include "romea_core_localisation/LocalisationFSMState.hpp"
+#include "romea_core_localisation/LocalisationUpdaterExteroceptive.hpp"
+#include "romea_core_localisation/robot_to_robot/particle/R2RLocalisationPFMetaState.hpp"
 
 
 namespace romea {
 
-
-class R2RLocalisationPFUpdaterRange : public LocalisationUpdaterExteroceptive, public PFGaussianUpdaterCore<double,3,1>
+class R2RLocalisationPFUpdaterRange :
+  public LocalisationUpdaterExteroceptive,
+  public PFGaussianUpdaterCore<double, 3, 1>
 {
 public:
-
   using Observation = ObservationRange;
   using MetaState = R2RLocalisationPFMetaState;
   using State = R2RLocalisationPFMetaState::State;
@@ -49,9 +52,8 @@ protected :
 
   RowMajorVector cosCourses_;
   RowMajorVector sinCourses_;
-
 };
 
-}
+}  // namespace romea
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_PARTICLE_R2RLOCALISATIONPFUPDATERRANGE_HPP_

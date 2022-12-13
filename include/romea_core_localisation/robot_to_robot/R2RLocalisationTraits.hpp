@@ -1,25 +1,20 @@
-#ifndef __R2RLocalisationTraits_HPP__
-#define __R2RLocalisationTraits_HPP__
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_R2RLOCALISATIONTRAITS_HPP_  
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_R2RLOCALISATIONTRAITS_HPP_  
 
 
-//romea
+// romea
 #include <romea_core_filtering/kalman/KalmanFilter.hpp>
-#include "kalman/R2RLocalisationKFResults.hpp"
-#include "kalman/R2RLocalisationKFUpdaterRange.hpp"
-#include "R2RLocalisationUpdaterLeaderTwist.hpp"
-#include "kalman/R2RLocalisationKFUpdaterLeaderPose.hpp"
-#include "kalman/R2RLocalisationKFPredictor.hpp"
-#include "kalman/R2RLocalisationKFResults.hpp"
-#include "../LocalisationUpdaterTwist.hpp"
-
 #include <romea_core_filtering/particle/ParticleFilter.hpp>
-#include "particle/R2RLocalisationPFResults.hpp"
-#include "particle/R2RLocalisationPFUpdaterRange.hpp"
-#include "R2RLocalisationUpdaterLeaderTwist.hpp"
-#include "particle/R2RLocalisationPFUpdaterLeaderPose.hpp"
-#include "particle/R2RLocalisationPFPredictor.hpp"
-#include "particle/R2RLocalisationPFResults.hpp"
-#include "../LocalisationUpdaterTwist.hpp"
+#include "romea_core_localisation/LocalisationUpdaterTwist.hpp"
+#include "romea_core_localisation/robot_to_robot/R2RLocalisationUpdaterLeaderTwist.hpp"
+#include "romea_core_localisation/robot_to_robot/kalman/R2RLocalisationKFResults.hpp"
+#include "romea_core_localisation/robot_to_robot/kalman/R2RLocalisationKFUpdaterRange.hpp"
+#include "romea_core_localisation/robot_to_robot/kalman/R2RLocalisationKFUpdaterLeaderPose.hpp"
+#include "romea_core_localisation/robot_to_robot/kalman/R2RLocalisationKFPredictor.hpp"
+#include "romea_core_localisation/robot_to_robot/particle/R2RLocalisationPFResults.hpp"
+#include "romea_core_localisation/robot_to_robot/particle/R2RLocalisationPFUpdaterRange.hpp"
+#include "romea_core_localisation/robot_to_robot/particle/R2RLocalisationPFUpdaterLeaderPose.hpp"
+#include "romea_core_localisation/robot_to_robot/particle/R2RLocalisationPFPredictor.hpp"
 
 
 namespace romea {
@@ -34,7 +29,7 @@ struct R2RLocalisationTraits
 template<>
 struct R2RLocalisationTraits<KALMAN>
 {
-  using Filter = KalmanFilter<R2RLocalisationKFMetaState,LocalisationFSMState,Duration>;
+  using Filter = KalmanFilter<R2RLocalisationKFMetaState, LocalisationFSMState, Duration>;
   using UpdaterLeaderTwist = R2RLocalisationUpdaterLeaderTwist<R2RLocalisationKFMetaState>;
   using UpdaterTwist = LocalisationUpdaterTwist<R2RLocalisationKFMetaState>;
   using UpdaterPose = R2RLocalisationKFUpdaterLeaderPose;
@@ -46,7 +41,7 @@ struct R2RLocalisationTraits<KALMAN>
 template<>
 struct R2RLocalisationTraits<PARTICLE>
 {
-  using Filter = ParticleFilter<R2RLocalisationPFMetaState,LocalisationFSMState,Duration>;
+  using Filter = ParticleFilter<R2RLocalisationPFMetaState, LocalisationFSMState, Duration>;
   using UpdaterLeaderTwist = R2RLocalisationUpdaterLeaderTwist<R2RLocalisationPFMetaState>;
   using UpdaterTwist = LocalisationUpdaterTwist<R2RLocalisationPFMetaState>;
   using UpdaterPose = R2RLocalisationPFUpdaterLeaderPose;
@@ -55,8 +50,7 @@ struct R2RLocalisationTraits<PARTICLE>
   using Results = R2RLocalisationPFResults;
 };
 
+}  // namespace romea
 
-}
-
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_R2RLOCALISATIONTRAITS_HPP_
 

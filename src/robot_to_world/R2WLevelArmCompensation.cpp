@@ -1,4 +1,4 @@
-//romea
+// romea
 #include "romea_core_localisation/robot_to_world/R2WLevelArmCompensation.hpp"
 
 namespace romea {
@@ -11,7 +11,6 @@ LevelArmCompensation::LevelArmCompensation():
   vehicleAttitudeCovariance_(Eigen::Matrix3d::Zero()),
   jacobian_(Eigen::Matrix3d::Zero())
 {
-
 }
 
 //-----------------------------------------------------------------------------
@@ -23,20 +22,17 @@ void LevelArmCompensation::compute(const double & vehicleRollAngle,
                                    const Eigen::Vector3d & bodyAntennaPosition)
 {
   // Compute full vehicle atiitude
-  vehicleAttitudeCovariance_(0,0)=vehicleRollPitchVariance;
-  vehicleAttitudeCovariance_(1,1)=vehicleRollPitchVariance;
-  vehicleAttitudeCovariance_(2,2)=vehicleYawAngleVariance;
+  vehicleAttitudeCovariance_(0, 0) = vehicleRollPitchVariance;
+  vehicleAttitudeCovariance_(1, 1) = vehicleRollPitchVariance;
+  vehicleAttitudeCovariance_(2, 2) = vehicleYawAngleVariance;
 
-  vehicleAttitude_.init(vehicleRollAngle,vehiclePitchAngle,vehicleYawAngle);
+  vehicleAttitude_.init(vehicleRollAngle, vehiclePitchAngle, vehicleYawAngle);
 
-  //Compute antenna position and its covariance in NED reference frame
+  // Compute antenna position and its covariance
   position_ = vehicleAttitude_*bodyAntennaPosition;
-
-  jacobian_= vehicleAttitude_.dRTdAngles(bodyAntennaPosition);
-
+  jacobian_ = vehicleAttitude_.dRTdAngles(bodyAntennaPosition);
   positionCovariance_ = jacobian_ * vehicleAttitudeCovariance_ * jacobian_.transpose();
 }
-
 
 //-----------------------------------------------------------------------------
 const Eigen::Vector3d & LevelArmCompensation::getPosition()const
@@ -56,5 +52,4 @@ const Eigen::Matrix3d & LevelArmCompensation::getJacobian()const
   return jacobian_;
 }
 
-
-}
+}  // namespace romea

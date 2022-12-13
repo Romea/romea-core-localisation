@@ -1,29 +1,26 @@
-#ifndef __R2WLocalisationTraits_HPP__
-#define __R2WLocalisationTraits_HPP__
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_R2WLOCALISATIONTRAITS_HPP_
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_R2WLOCALISATIONTRAITS_HPP_
 
 
-//romea
+// romea
 #include <romea_core_filtering/kalman/KalmanFilter.hpp>
-#include "kalman/R2WLocalisationKFResults.hpp"
-#include "kalman/R2WLocalisationKFUpdaterCourse.hpp"
-#include "kalman/R2WLocalisationKFUpdaterRange.hpp"
-#include "kalman/R2WLocalisationKFUpdaterPose.hpp"
-#include "kalman/R2WLocalisationKFUpdaterPosition.hpp"
-#include "kalman/R2WLocalisationKFPredictor.hpp"
-
 #include <romea_core_filtering/particle/ParticleFilter.hpp>
-#include "particle/R2WLocalisationPFResults.hpp"
-#include "particle/R2WLocalisationPFUpdaterCourse.hpp"
-#include "particle/R2WLocalisationPFUpdaterRange.hpp"
-#include "particle/R2WLocalisationPFUpdaterPose.hpp"
-#include "particle/R2WLocalisationPFUpdaterPosition.hpp"
-#include "particle/R2WLocalisationPFPredictor.hpp"
-
-#include "R2WLocalisationUpdaterAttitude.hpp"
-#include "../LocalisationUpdaterLinearSpeed.hpp"
-#include "../LocalisationUpdaterLinearSpeeds.hpp"
-#include "../LocalisationUpdaterAngularSpeed.hpp"
-
+#include "romea_core_localisation/LocalisationUpdaterLinearSpeed.hpp"
+#include "romea_core_localisation/LocalisationUpdaterLinearSpeeds.hpp"
+#include "romea_core_localisation/LocalisationUpdaterAngularSpeed.hpp"
+#include "romea_core_localisation/robot_to_world/R2WLocalisationUpdaterAttitude.hpp"
+#include "romea_core_localisation/robot_to_world/kalman/R2WLocalisationKFResults.hpp"
+#include "romea_core_localisation/robot_to_world/kalman/R2WLocalisationKFUpdaterCourse.hpp"
+#include "romea_core_localisation/robot_to_world/kalman/R2WLocalisationKFUpdaterRange.hpp"
+#include "romea_core_localisation/robot_to_world/kalman/R2WLocalisationKFUpdaterPose.hpp"
+#include "romea_core_localisation/robot_to_world/kalman/R2WLocalisationKFUpdaterPosition.hpp"
+#include "romea_core_localisation/robot_to_world/kalman/R2WLocalisationKFPredictor.hpp"
+#include "romea_core_localisation/robot_to_world/particle/R2WLocalisationPFResults.hpp"
+#include "romea_core_localisation/robot_to_world/particle/R2WLocalisationPFUpdaterCourse.hpp"
+#include "romea_core_localisation/robot_to_world/particle/R2WLocalisationPFUpdaterRange.hpp"
+#include "romea_core_localisation/robot_to_world/particle/R2WLocalisationPFUpdaterPose.hpp"
+#include "romea_core_localisation/robot_to_world/particle/R2WLocalisationPFUpdaterPosition.hpp"
+#include "romea_core_localisation/robot_to_world/particle/R2WLocalisationPFPredictor.hpp"
 
 namespace romea {
 
@@ -52,7 +49,7 @@ struct R2WLocalisationTraits<KALMAN>
 template<>
 struct R2WLocalisationTraits<PARTICLE>
 {
-  using Filter = ParticleFilter<R2WLocalisationPFMetaState,LocalisationFSMState,Duration>;
+  using Filter = ParticleFilter<R2WLocalisationPFMetaState, LocalisationFSMState, Duration>;
   using UpdaterLinearSpeed = LocalisationUpdaterLinearSpeed<R2WLocalisationPFMetaState>;
   using UpdaterLinearSpeeds = LocalisationUpdaterLinearSpeeds<R2WLocalisationPFMetaState>;
   using UpdaterAngularSpeed = LocalisationUpdaterAngularSpeed<R2WLocalisationPFMetaState>;
@@ -65,8 +62,7 @@ struct R2WLocalisationTraits<PARTICLE>
   using Results = R2WLocalisationPFResults;
 };
 
+}  // namespace romea
 
-}
-
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_R2WLOCALISATIONTRAITS_HPP_
 

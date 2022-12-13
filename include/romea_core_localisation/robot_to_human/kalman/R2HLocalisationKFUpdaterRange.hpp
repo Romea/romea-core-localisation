@@ -1,18 +1,22 @@
-#ifndef _romea_R2HLocalisationKFUpdaterRange_HPP_
-#define _romea_R2HLocalisationKFUpdaterRange_HPP_
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_KALMAN_R2HLOCALISATIONKFUPDATERRANGE_HPP_
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_KALMAN_R2HLOCALISATIONKFUPDATERRANGE_HPP_
 
+// std
+#include <string>
 
-//local
+// romea
 #include <romea_core_common/time/Time.hpp>
-#include "../../ObservationRange.hpp"
-#include "../../LocalisationFSMState.hpp"
-#include "../../LocalisationUpdaterExteroceptive.hpp"
 #include <romea_core_filtering/kalman/KalmanFilterUpdaterCore.hpp>
-#include "R2HLocalisationKFMetaState.hpp"
+#include "romea_core_localisation/ObservationRange.hpp"
+#include "romea_core_localisation/LocalisationFSMState.hpp"
+#include "romea_core_localisation/LocalisationUpdaterExteroceptive.hpp"
+#include "romea_core_localisation/robot_to_human/kalman/R2HLocalisationKFMetaState.hpp"
 
 namespace romea {
 
-class R2HLocalisationKFUpdaterRange : public LocalisationUpdaterExteroceptive, public KFUpdaterCore<double,2,1>
+class R2HLocalisationKFUpdaterRange :
+  public LocalisationUpdaterExteroceptive,
+  public KFUpdaterCore<double, 2, 1>
 {
 public :
 
@@ -48,23 +52,23 @@ private :
 
 private :
 
-  //Covariance Eigen Vector decomposition
+  // Covariance Eigen Vector decomposition
   Eigen::MatrixXd U_;
   Eigen::MatrixXd W_;
 
-  //Modified Grand Schmidt variable
+  // Modified Grand Schmidt variable
   Eigen::MatrixXd Amgs_;
   Eigen::MatrixXd Tmgs_;
   double Wmgs_;
 
-  //Constraint observation
+  // Constraint observation
   Eigen::MatrixXd Dc_;
   Eigen::VectorXd Yc_;
   Eigen::MatrixXd RYc_;
 
   bool isConstraintsUsed_;
-
 };
 
-}//romea
-#endif
+}  //namespace romea
+
+#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_KALMAN_R2HLOCALISATIONKFUPDATERRANGE_HPP_ 

@@ -1,11 +1,11 @@
-#ifndef romea_ObservationAttitude_hpp
-#define romea_ObservationAttitude_hpp
+#ifndef ROMEA_CORE_LOCALISATION_OBSERVATIONATTITUDE_HPP_
+#define ROMEA_CORE_LOCALISATION_OBSERVATIONATTITUDE_HPP_
 
 #include <romea_core_filtering/GaussianObservation.hpp>
 
 namespace romea {
 
-struct ObservationAttitude : GaussianObservation<double,2>
+struct ObservationAttitude : GaussianObservation<double, 2>
 {
   enum Index {
     ROLL = 0,
@@ -14,7 +14,7 @@ struct ObservationAttitude : GaussianObservation<double,2>
   };
 };
 
-}
+}  // namespace romea
 
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_OBSERVATIONATTITUDE_HPP_

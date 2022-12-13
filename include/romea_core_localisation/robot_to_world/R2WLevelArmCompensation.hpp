@@ -1,5 +1,5 @@
-#ifndef romea_LevelArmCompensation_hpp
-#define romea_LevelArmCompensation_hpp
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_R2WLEVELARMCOMPENSATION_HPP_
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_R2WLEVELARMCOMPENSATION_HPP_
 
 //romea
 #include <romea_core_common/transform/SmartRotation3D.hpp>
@@ -8,7 +8,6 @@ namespace romea {
 
 class LevelArmCompensation
 {
-
 public :
 
   LevelArmCompensation();
@@ -32,9 +31,8 @@ private :
   SmartRotation3D vehicleAttitude_;
   Eigen::Matrix3d vehicleAttitudeCovariance_;
   Eigen::Matrix3d jacobian_;
-
 };
 
 }
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_R2WLEVELARMCOMPENSATION_HPP_

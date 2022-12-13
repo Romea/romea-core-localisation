@@ -1,27 +1,26 @@
-#ifndef romea_R2WLocalisationKFState_hpp
-#define romea_R2WLocalisationKFState_hpp
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_KALMAN_R2WLOCALISATIONKFMETASTATE_HPP_
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_KALMAN_R2WLOCALISATIONKFMETASTATE_HPP_
+
+// std
+#include <memory>
 
 // romea
 #include <romea_core_filtering/GaussianState.hpp>
-#include "../R2WLocalisationMetaState.hpp"
-#include "../R2WLevelArmCompensation.hpp"
+#include "romea_core_localisation/robot_to_world/R2WLocalisationMetaState.hpp"
+#include "romea_core_localisation/robot_to_world/R2WLevelArmCompensation.hpp"
 
-//std
-#include <memory>
 
 namespace romea {
 
 struct R2WLocalisationKFMetaState : R2WLocalisationMetaState
 {
-
-  using State =GaussianState<double,STATE_SIZE>;
+  using State = GaussianState<double, STATE_SIZE>;
 
   R2WLocalisationKFMetaState();
 
-  virtual ~R2WLocalisationKFMetaState()=default;
+  virtual ~R2WLocalisationKFMetaState() = default;
 
   State state;
-
 };
 
 void applyLevelArmCompensation(R2WLocalisationKFMetaState::State & currentState,
@@ -29,7 +28,6 @@ void applyLevelArmCompensation(R2WLocalisationKFMetaState::State & currentState,
                                LevelArmCompensation & levelArmCompensation,
                                const Eigen::Vector3d & levelArm);
 
-}
+}  // namespace romea
 
-
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_KALMAN_R2WLOCALISATIONKFMETASTATE_HPP_

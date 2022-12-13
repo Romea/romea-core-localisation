@@ -1,19 +1,20 @@
-//romea
+// romea
 #include "romea_core_localisation/robot_to_world/particle/R2WLocalisationPFUpdaterRange.hpp"
 
 namespace romea {
 
 //--------------------------------------------------------------------------
-R2WLocalisationPFUpdaterRange::R2WLocalisationPFUpdaterRange(const std::string & updaterName,
-                                                             const double & minimalRate,
-                                                             const TriggerMode & triggerMode,
-                                                             const size_t & numberOfParticles,
-                                                             const double &maximalMahalanobisDistance,
-                                                             const std::string & logFilename):
-  LocalisationUpdaterExteroceptive (updaterName,
-                                    minimalRate,
-                                    triggerMode,
-                                    logFilename),
+R2WLocalisationPFUpdaterRange::R2WLocalisationPFUpdaterRange(
+    const std::string & updaterName,
+    const double & minimalRate,
+    const TriggerMode & triggerMode,
+    const size_t & numberOfParticles,
+    const double &maximalMahalanobisDistance,
+    const std::string & logFilename):
+  LocalisationUpdaterExteroceptive(updaterName,
+                                   minimalRate,
+                                   triggerMode,
+                                   logFilename),
   PFGaussianUpdaterCore(numberOfParticles,
                         maximalMahalanobisDistance),
   cosCourses_(RowMajorVector::Zero(numberOfParticles_)),
@@ -28,10 +29,9 @@ void R2WLocalisationPFUpdaterRange::update(const Duration & duration,
                                            LocalisationFSMState & currentFSMState,
                                            MetaState &currentMetaState)
 {
-
-  if(currentFSMState == LocalisationFSMState::RUNNING)
+  if (currentFSMState  == LocalisationFSMState::RUNNING)
   {
-    if(triggerMode_==TriggerMode::ALWAYS)
+    if (triggerMode_ == TriggerMode::ALWAYS)
     {
       try{
         update_(duration,
@@ -56,8 +56,7 @@ void R2WLocalisationPFUpdaterRange::update_(const Duration & duration,
                                             State &currentState,
                                             AddOn &currentAddon)
 {
-
-  //compute antenna attitude compensation
+  // compute antenna attitude compensation
   levelArmCompensation_.compute(currentAddon.roll,
                                 currentAddon.pitch,
                                 currentAddon.rollPitchVariance,
@@ -68,7 +67,7 @@ void R2WLocalisationPFUpdaterRange::update_(const Duration & duration,
 
   const Eigen::Vector3d & tagAntennaPosition = levelArmCompensation_.getPosition();
 
-  //compute a priori observations
+  // compute a priori observations
   const double & eax =  tagAntennaPosition.x();
   const double & eay =  tagAntennaPosition.y();
   const double & eaz =  tagAntennaPosition.z()+currentObservation.terrainElevation;
@@ -88,17 +87,17 @@ void R2WLocalisationPFUpdaterRange::update_(const Duration & duration,
                          (y+(sinCourses_*eax+cosCourses_*eay)-iay).square()+
                          (eaz-iaz)*(eaz-iaz)).sqrt();
 
-  //update weights and resample
+  // update weights and resample
   currentObservation.R()+= levelArmCompensation_.getPositionCovariance().trace();
 
-  if(updateState_(currentState,currentObservation))
+  if (updateState_(currentState, currentObservation))
   {
-    currentAddon.lastExteroceptiveUpdate.time=duration;
+    currentAddon.lastExteroceptiveUpdate.time = duration;
     currentAddon.lastExteroceptiveUpdate.travelledDistance = currentAddon.travelledDistance;
   }
 }
 
-}
+}  // namespace romea
 
 
 

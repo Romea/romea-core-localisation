@@ -1,5 +1,5 @@
-#ifndef romea_UpdatesMonitoring_hpp
-#define romea_UpdatesMonitoring_hpp
+#ifndef ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATESMONITORING_HPP_
+#define ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATESMONITORING_HPP_
 
 // romea
 #include <romea_core_common/time/Time.hpp>
@@ -9,17 +9,14 @@ namespace romea {
 
 struct LocalisationUpdateMonitoring
 {
-
 public :
 
   LocalisationUpdateMonitoring();
 
   Duration time;
   double travelledDistance;
-
 };
 
-}
+}  // namespace romea
 
-
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATESMONITORING_HPP_

@@ -1,36 +1,35 @@
-#ifndef _R2HLocalisationKFResults_hpp
-#define _R2HLocalisationKFResults_hpp
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_KALMAN_R2HLOCALISATIONKFRESULTS_HPP_
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_KALMAN_R2HLOCALISATIONKFRESULTS_HPP_
 
 #include <romea_core_common/geometry/Position2D.hpp>
-#include "../R2HLocalisationResults.hpp"
-#include "R2HLocalisationKFMetaState.hpp"
+#include "romea_core_localisation/robot_to_human/R2HLocalisationResults.hpp"
+#include "romea_core_localisation/robot_to_human/kalman/R2HLocalisationKFMetaState.hpp"
 
 namespace romea {
 
 class R2HLocalisationKFResults : public R2HLocalisationResults<R2HLocalisationKFMetaState>
 {
-
 public :
 
   R2HLocalisationKFResults();
+  virtual ~R2HLocalisationKFResults() = default;
 
-  virtual const double & getLeaderX() const;
-  virtual const double & getLeaderY() const;
+  const double & getLeaderX() const override;
+  const double & getLeaderY() const override;
 
-  virtual Eigen::Vector2d getLeaderPosition() const;
-  virtual Eigen::Matrix2d getLeaderPositionCovariance() const;
+  Eigen::Vector2d getLeaderPosition() const override;
+  Eigen::Matrix2d getLeaderPositionCovariance() const override;
 
-  virtual const double & getLinearSpeed() const;
-  virtual const double & getLateralSpeed() const;
-  virtual const double & getAngularSpeed() const;
+  const double & getLinearSpeed() const override;
+  const double & getLateralSpeed() const override;
+  const double & getAngularSpeed() const override;
 
-  virtual Eigen::Vector3d getTwist() const;
-  virtual Eigen::Matrix3d getTwistCovariance() const;
+  Eigen::Vector3d getTwist() const override;
+  Eigen::Matrix3d getTwistCovariance() const override;
 
-  virtual Position2D toLeaderPosition2D() const override;
-
+  Position2D toLeaderPosition2D() const override;
 };
 
-}
+}  // namespace romea
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_KALMAN_R2HLOCALISATIONKFRESULTS_HPP_

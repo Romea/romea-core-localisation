@@ -1,9 +1,9 @@
-#ifndef romea_R2WLocalisationPFPredictor_hpp
-#define romea_R2WLocalisationPFPredictor_hpp
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_PARTICLE_R2WLOCALISATIONPFPREDICTOR_HPP
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_PARTICLE_R2WLOCALISATIONPFPREDICTOR_HPP
 
-//romea
-#include "../../LocalisationPredictor.hpp"
-#include "R2WLocalisationPFMetaState.hpp"
+// romea
+#include "romea_core_localisation/LocalisationPredictor.hpp"
+#include "romea_core_localisation/robot_to_world/particle/R2WLocalisationPFMetaState.hpp"
 
 namespace romea {
 
@@ -27,34 +27,30 @@ public :
 
 private :
 
-  virtual bool stop_(const Duration & duration,
-                     const MetaState & state)override;
+  bool stop_(const Duration & duration,
+             const MetaState & state)override;
 
-  virtual void predict_(const MetaState &previousMetaState,
-                        MetaState &currentMetaState)override;
+  void predict_(const MetaState &previousMetaState,
+                MetaState &currentMetaState)override;
 
-  virtual void reset_(MetaState &metaState)override;
+  void reset_(MetaState &metaState)override;
 
-  virtual void predictState_(const State &previousState,
-                             const Input &previousInput,
-                             State &currentState);
+  void predictState_(const State &previousState,
+                     const Input &previousInput,
+                     State &currentState);
 
-  virtual void predictAddOn_(const AddOn & previousAddOn,
-                             AddOn &currentAddOn);
+  void predictAddOn_(const AddOn & previousAddOn,
+                     AddOn &currentAddOn);
 
-  virtual void drawInputs(const Input &previousInput);
+  void drawInputs(const Input &previousInput);
 
 private:
-
   double vxdT_, vydT_;
   RowMajorVector cosCourses_;
   RowMajorVector sinCourses_;
   RowMajorMatrix randomU_;
-
 };
 
-}
+}  // namespace romea
 
-
-
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_PARTICLE_R2WLOCALISATIONPFPREDICTOR_HPP

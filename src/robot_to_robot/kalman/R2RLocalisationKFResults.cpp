@@ -6,7 +6,6 @@ namespace romea {
 R2RLocalisationKFResults::R2RLocalisationKFResults():
   R2RLocalisationResults()
 {
-
 }
 
 
@@ -85,9 +84,8 @@ Eigen::Vector3d R2RLocalisationKFResults::getLeaderTwist() const
 //--------------------------------------------------------------------------
 Eigen::Matrix3d R2RLocalisationKFResults::getLeaderTwistCovariance()const
 {
-  return input.QU().block<3,3>(LEADER_LINEAR_SPEED_X_BODY,LEADER_LINEAR_SPEED_X_BODY);
+  return input.QU().block<3, 3>(LEADER_LINEAR_SPEED_X_BODY, LEADER_LINEAR_SPEED_X_BODY);
 }
-
 
 //--------------------------------------------------------------------------
 Eigen::Vector3d R2RLocalisationKFResults::getLeaderPose() const
@@ -101,14 +99,13 @@ Eigen::Matrix3d R2RLocalisationKFResults::getLeaderPoseCovariance() const
   return state.P();
 }
 
-
 //-----------------------------------------------------------------------------
 Pose2D R2RLocalisationKFResults::toLeaderPose2D() const
 {
   Pose2D pose2d;
-  pose2d.position.x()=getLeaderX();
-  pose2d.position.y()=getLeaderY();
-  pose2d.yaw =getLeaderOrientation();
+  pose2d.position.x() = getLeaderX();
+  pose2d.position.y() = getLeaderY();
+  pose2d.yaw  = getLeaderOrientation();
   pose2d.covariance = getLeaderPoseCovariance();
   return pose2d;
 }
@@ -117,16 +114,16 @@ Pose2D R2RLocalisationKFResults::toLeaderPose2D() const
 PoseAndTwist2D R2RLocalisationKFResults::toLeaderPoseAndBodyTwist2D() const
 {
   PoseAndTwist2D poseAndTwist2D;
-  poseAndTwist2D.pose.position.x()=getLeaderX();
-  poseAndTwist2D.pose.position.y()=getLeaderY();
-  poseAndTwist2D.pose.yaw=getLeaderOrientation();
-  poseAndTwist2D.pose.covariance=getLeaderPoseCovariance();
-  poseAndTwist2D.twist.linearSpeeds.x()=getLeaderLinearSpeed();
-  poseAndTwist2D.twist.linearSpeeds.y()=getLeaderLateralSpeed();
-  poseAndTwist2D.twist.angularSpeed=getLeaderAngularSpeed();
-  poseAndTwist2D.twist.covariance=getLeaderTwistCovariance();
+  poseAndTwist2D.pose.position.x() = getLeaderX();
+  poseAndTwist2D.pose.position.y() = getLeaderY();
+  poseAndTwist2D.pose.yaw = getLeaderOrientation();
+  poseAndTwist2D.pose.covariance = getLeaderPoseCovariance();
+  poseAndTwist2D.twist.linearSpeeds.x() = getLeaderLinearSpeed();
+  poseAndTwist2D.twist.linearSpeeds.y() = getLeaderLateralSpeed();
+  poseAndTwist2D.twist.angularSpeed = getLeaderAngularSpeed();
+  poseAndTwist2D.twist.covariance = getLeaderTwistCovariance();
   return poseAndTwist2D;
 }
 
-}
+}  // namespace romea
 

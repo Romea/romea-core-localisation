@@ -1,24 +1,25 @@
-#ifndef _romea_LocalisationUpdaterLinearSpeed_HPP_
-#define _romea_LocalisationKalmanUpdaterLinearSpeed_HPP_
+#ifndef ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATERLINEARSPEED_HPP_ 
+#define ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATERLINEARSPEED_HPP_ 
 
+// std
+#include <string>
 
-//romea
+// romea
 #include <romea_core_common/time/Time.hpp>
-#include "LocalisationUpdaterProprioceptive.hpp"
-#include "ObservationLinearSpeed.hpp"
-#include "LocalisationFSMState.hpp"
+#include "romea_core_localisation/LocalisationUpdaterProprioceptive.hpp"
+#include "romea_core_localisation/ObservationLinearSpeed.hpp"
+#include "romea_core_localisation/LocalisationFSMState.hpp"
 
 namespace romea {
 
 template <class MetaState>
 class LocalisationUpdaterLinearSpeed : public LocalisationUpdaterProprioceptive
 {
-
 public :
 
   LocalisationUpdaterLinearSpeed(const std::string & updaterName,
                                  const double & minimalRate):
-    LocalisationUpdaterProprioceptive(updaterName,minimalRate)
+    LocalisationUpdaterProprioceptive(updaterName, minimalRate)
   {
   }
 
@@ -29,17 +30,17 @@ public :
               LocalisationFSMState & /*currentFSMState*/,
               MetaState &currentMetaState)
   {
-
     rateDiagnostic_.evaluate(duration);
 
-    currentMetaState.input.U().template segment<2>(MetaState::LINEAR_SPEED_X_BODY)<<currentObservation.Y(),0;
+    currentMetaState.input.U().template
+      segment<2>(MetaState::LINEAR_SPEED_X_BODY) << currentObservation.Y(), 0;
 
-    currentMetaState.input.QU().template block<2,2>(MetaState::LINEAR_SPEED_X_BODY,
-                                                    MetaState::LINEAR_SPEED_X_BODY)<<currentObservation.R(),0,0,0;
+    currentMetaState.input.QU().template
+      block<2, 2>(MetaState::LINEAR_SPEED_X_BODY,
+                  MetaState::LINEAR_SPEED_X_BODY) << currentObservation.R(), 0, 0, 0;
   }
-
 };
 
-}//romea
+}  // namespace romea
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATERLINEARSPEED_HPP_ 

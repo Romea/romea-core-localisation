@@ -9,4 +9,4 @@ R2RLocalisationKFMetaState::R2RLocalisationKFMetaState():
 {
 }
 
-}//romea
+}  // namespace romea

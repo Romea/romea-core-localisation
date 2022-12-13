@@ -1,24 +1,28 @@
-#ifndef romea_R2WLocalisationKFUpdaterPose_hpp
-#define romea_R2WLocalisationKFUpdaterPose_hpp
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_KALMAN_R2WLOCALISATIONKFUPDATERPOSE_HPP_
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_KALMAN_R2WLOCALISATIONKFUPDATERPOSE_HPP_
 
-//romea
+// std
+#include <string>
+
+// romea
 #include <romea_core_common/time/Time.hpp>
 #include <romea_core_common/math/EulerAngles.hpp>
 #include <romea_core_common/math/Matrix.hpp>
-
-#include "R2WLocalisationKFMetaState.hpp"
-#include "../R2WLevelArmCompensation.hpp"
-#include "../../ObservationPose.hpp"
-#include "../../LocalisationFSMState.hpp"
-#include "../../LocalisationUpdaterExteroceptive.hpp"
 #include <romea_core_filtering/kalman/KalmanFilterUpdaterCore.hpp>
+
+#include "romea_core_localisation/ObservationPose.hpp"
+#include "romea_core_localisation/LocalisationFSMState.hpp"
+#include "romea_core_localisation/LocalisationUpdaterExteroceptive.hpp"
+#include "romea_core_localisation/robot_to_world/R2WLevelArmCompensation.hpp"
+#include "romea_core_localisation/robot_to_world/kalman/R2WLocalisationKFMetaState.hpp"
 
 namespace romea {
 
 
-class R2WLocalisationKFUpdaterPose : public LocalisationUpdaterExteroceptive, public KFUpdaterCore<double,3,3>
+class R2WLocalisationKFUpdaterPose :
+  public LocalisationUpdaterExteroceptive,
+  public KFUpdaterCore<double, 3, 3>
 {
-
 public :
 
   using Observation = ObservationPose;
@@ -61,9 +65,9 @@ private :
   LevelArmCompensation levelArmCompensation_;
 };
 
-}
+}  // namespace romea
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_KALMAN_R2WLOCALISATIONKFUPDATERPOSE_HPP_
 
 
 

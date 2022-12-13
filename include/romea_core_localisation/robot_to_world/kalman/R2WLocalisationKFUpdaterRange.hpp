@@ -1,21 +1,24 @@
-#ifndef romea_R2WLocalisationKFUpdaterRange_hpp
-#define romea_R2WLocalisationKFUpdaterRange_hpp
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_KALMAN_R2WLOCALISATIONKFUPDATERRANGE_HPP_
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_KALMAN_R2WLOCALISATIONKFUPDATERRANGE_HPP_
 
-//romea
+// std
+#include <string>
+
+// romea
 #include <romea_core_common/time/Time.hpp>
-#include "R2WLocalisationKFMetaState.hpp"
-#include "../R2WLevelArmCompensation.hpp"
-#include "../../ObservationRange.hpp"
-#include "../../LocalisationFSMState.hpp"
-#include "../../LocalisationUpdaterExteroceptive.hpp"
 #include <romea_core_filtering/kalman/UnscentedKalmanFilterUpdaterCore.hpp>
+#include "romea_core_localisation/ObservationRange.hpp"
+#include "romea_core_localisation/LocalisationFSMState.hpp"
+#include "romea_core_localisation/LocalisationUpdaterExteroceptive.hpp"
+#include "romea_core_localisation/robot_to_world/R2WLevelArmCompensation.hpp"
+#include "romea_core_localisation/robot_to_world/kalman/R2WLocalisationKFMetaState.hpp"
 
 namespace romea {
 
-
-class R2WLocalisationKFUpdaterRange : public LocalisationUpdaterExteroceptive, public UKFUpdaterCore<double,3,1>
+class R2WLocalisationKFUpdaterRange :
+  public LocalisationUpdaterExteroceptive,
+  public UKFUpdaterCore<double, 3, 1>
 {
-
 public :
 
   using Observation = ObservationRange;
@@ -46,9 +49,8 @@ protected :
 protected :
 
   LevelArmCompensation antennaAtitudeCompensation_;
-
 };
 
-}
+}  // namespace romea
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_KALMAN_R2WLOCALISATIONKFUPDATERRANGE_HPP_

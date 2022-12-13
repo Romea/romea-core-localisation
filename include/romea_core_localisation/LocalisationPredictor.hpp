@@ -1,30 +1,30 @@
-#ifndef romea_LocalisationPredictor_hpp
-#define romea_LocalisationPredictor_hpp
+#ifndef ROMEA_CORE_LOCALISATION_LOCALISATIONPREDICTOR_HPP_
+#define ROMEA_CORE_LOCALISATION_LOCALISATIONPREDICTOR_HPP_
 
-//romea
-#include <romea_core_common/time/Time.hpp>
-#include <romea_core_filtering/FilterPredictor.hpp>
-#include "LocalisationFSMState.hpp"
-
-//std
+// std
 #include <limits>
 #include <iostream>
+
+// romea
+#include <romea_core_common/time/Time.hpp>
+#include <romea_core_filtering/FilterPredictor.hpp>
+#include "romea_core_localisation/LocalisationFSMState.hpp"
+
 
 namespace romea
 {
 
 
 template <class State>
-class LocalisationPredictor : public FilterPredictor<State,LocalisationFSMState,Duration>
+class LocalisationPredictor : public FilterPredictor<State, LocalisationFSMState, Duration>
 {
-
 public :
 
   LocalisationPredictor(const Duration &maximalDurationInDeadReckoning,
                         const double &maximalTravelledDistanceInDeadReckoning,
                         const double &maximalPositionCircularErrorProbable);
 
-  virtual ~LocalisationPredictor()=default;
+  virtual ~LocalisationPredictor() = default;
 
 public :
 
@@ -36,11 +36,11 @@ public :
                        State & currentState);
 protected :
 
-  virtual bool stop_(const Duration & previousDuration,const State & currentState)=0;
+  virtual bool stop_(const Duration & previousDuration, const State & currentState) = 0;
 
-  virtual void predict_(const State & previousStateVector,State & currentState)=0;
+  virtual void predict_(const State & previousStateVector, State & currentState) = 0;
 
-  virtual void reset_( State & currentFSMState)=0;
+  virtual void reset_(State & currentFSMState) = 0;
 
 protected :
 
@@ -50,14 +50,12 @@ protected :
   double dt_;
 };
 
-
-
-
 //-----------------------------------------------------------------------------
 template <class State>
-LocalisationPredictor<State>::LocalisationPredictor(const Duration & maximalDurationInDeadReckoning,
-                                                    const double & maximalTravelledDistanceInDeadReckoning,
-                                                    const double & maximalPositionCircularErrorProbable):
+LocalisationPredictor<State>::LocalisationPredictor(
+  const Duration & maximalDurationInDeadReckoning,
+  const double & maximalTravelledDistanceInDeadReckoning,
+  const double & maximalPositionCircularErrorProbable):
   maximalDurationInDeadReckoning_(maximalDurationInDeadReckoning),
   maximalTravelledDistanceInDeadReckoning_(maximalTravelledDistanceInDeadReckoning),
   maximalPositionCircularErrorProbable_(maximalPositionCircularErrorProbable),
@@ -74,33 +72,28 @@ void LocalisationPredictor<State>::predict(const Duration & previousDuration,
                                            LocalisationFSMState & currentFSMState,
                                            State &currentState)
 {
-  assert(currentduration>=previousDuration);
+  assert(currentduration >= previousDuration);
 
   currentFSMState = previousFSMState;
-  if(previousFSMState == LocalisationFSMState::RUNNING)
+  if (previousFSMState == LocalisationFSMState::RUNNING)
   {
-    dt_ =durationToSecond(currentduration-previousDuration);
+    dt_ = durationToSecond(currentduration-previousDuration);
 
-    if(dt_>0)
+    if (dt_ > 0)
     {
-      predict_(previousState,currentState);
-    }
-    else
-    {
-      currentState=previousState;
+      predict_(previousState, currentState);
+    } else {
+      currentState = previousState;
     }
 
-    if(stop_(currentduration,currentState))
+    if (stop_(currentduration, currentState))
     {
       std::cout << "FSM : TOO LONG IN DEAD RECKONING, RESET AND GO TO INIT "<< std::endl;
       reset_(currentState);
-      currentFSMState=LocalisationFSMState::INIT;
+      currentFSMState = LocalisationFSMState::INIT;
     }
-  }
-  else
-  {
+  } else {
     currentState = previousState;
-
   }
 
   //  std::cout << "predict current state "<<std::endl;
@@ -109,9 +102,8 @@ void LocalisationPredictor<State>::predict(const Duration & previousDuration,
   //  std::cout << currentState.input.U() <<std::endl;
   //  std::cout << currentState.input.QU() <<std::endl;
   //  std::cout << "fsm state " <<int(currentFSMState) <<std::endl;
-
 }
 
-}
+}  // namespace romea
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_LOCALISATIONPREDICTOR_HPP_

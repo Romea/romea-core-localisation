@@ -1,21 +1,21 @@
-#include "romea_core_localisation/robot_to_human/kalman/R2HLocalisationKFUpdaterRange.hpp"
-
-//Eigen
+// Eigen
 #include <Eigen/SVD>
 #include <iostream>
 
-//romea
+// romea
 #include <romea_core_common/math/Matrix.hpp>
+#include "romea_core_localisation/robot_to_human/kalman/R2HLocalisationKFUpdaterRange.hpp"
 
 namespace romea {
 
 //-----------------------------------------------------------------------------
-R2HLocalisationKFUpdaterRange::R2HLocalisationKFUpdaterRange(const std::string &updaterName,
-                                                             const double &minimalRate,
-                                                             const TriggerMode &triggerMode,
-                                                             const double &maximalMahalanobisDistance,
-                                                             const std::string &logFilename,
-                                                             const bool & usedConstraints):
+R2HLocalisationKFUpdaterRange::R2HLocalisationKFUpdaterRange(
+    const std::string &updaterName,
+    const double &minimalRate,
+    const TriggerMode &triggerMode,
+    const double &maximalMahalanobisDistance,
+    const std::string &logFilename,
+    const bool & usedConstraints):
   LocalisationUpdaterExteroceptive(updaterName,
                                    minimalRate,
                                    triggerMode,
@@ -35,7 +35,7 @@ R2HLocalisationKFUpdaterRange::R2HLocalisationKFUpdaterRange(const std::string &
 
   isConstraintsUsed_(usedConstraints)
 {
-  Dc_(1,1)=1;
+  Dc_(1, 1) = 1;
 
   setLogFileHeader_({"stamp",
                      "range",
@@ -62,7 +62,7 @@ void R2HLocalisationKFUpdaterRange::update(const Duration & duration,
 {
   rateDiagnostic_.evaluate(duration);
 
-  if(currentFSMState == LocalisationFSMState::RUNNING)
+  if (currentFSMState == LocalisationFSMState::RUNNING)
   {
     try
     {
@@ -87,47 +87,46 @@ void R2HLocalisationKFUpdaterRange::update_(const Duration &duration,
                                             State & currentState,
                                             AddOn & currentAddOn)
 {
-  //compute observation matrix
+  // compute observation matrix
   double aprioriRange = (currentState.X()-currentObservation.initiatorPosition.head<2>()).norm();
   H_ = (currentState.X()-currentObservation.initiatorPosition.head<2>()).transpose()/aprioriRange;
-  double aprioriRangeVariance = (H_*currentState.P()*H_.transpose())(0,0);
+  double aprioriRangeVariance = (H_*currentState.P()*H_.transpose())(0, 0);
 
-  //Compute innovation
+  // Compute innovation
   Inn_ = currentObservation.Y()-aprioriRange;
   QInn_ = currentObservation.R() + aprioriRangeVariance;
 
 
-  //Update state vector
+  // Update state vector
   bool success = updateState_(currentState);
 
-  if(logFile_.is_open())
+  if (logFile_.is_open())
   {
-    logFile_<< duration.count()<<" ";
-    logFile_<< currentObservation.Y() <<" ";
-    logFile_<< currentObservation.R() << " ";
-    logFile_<< currentState.X(0)<<",";
-    logFile_<< currentState.X(1)<<",";
-    logFile_<< currentState.P(0,0)<<",";
-    logFile_<< currentState.P(0,1)<<",";
-    logFile_<< currentState.P(1,1)<<",";
-    logFile_<< currentObservation.initiatorPosition(0) <<",";
-    logFile_<< currentObservation.initiatorPosition(1) <<",";
+    logFile_ << duration.count() << " ";
+    logFile_ << currentObservation.Y() << " ";
+    logFile_ << currentObservation.R() << " ";
+    logFile_ << currentState.X(0) << ",";
+    logFile_ << currentState.X(1) << ",";
+    logFile_ << currentState.P(0, 0) << ",";
+    logFile_ << currentState.P(0, 1) << ",";
+    logFile_ << currentState.P(1, 1) << ",";
+    logFile_ << currentObservation.initiatorPosition(0) << ",";
+    logFile_ << currentObservation.initiatorPosition(1) << ",";
   }
 
-  if(success){
-    currentAddOn.lastExteroceptiveUpdate.time=duration;
-    currentAddOn.lastExteroceptiveUpdate.travelledDistance=currentAddOn.travelledDistance;
+  if (success){
+    currentAddOn.lastExteroceptiveUpdate.time = duration;
+    currentAddOn.lastExteroceptiveUpdate.travelledDistance = currentAddOn.travelledDistance;
   }
 
-  //log
-  if(logFile_.is_open())
+  // log
+  if (logFile_.is_open())
   {
-    logFile_<< aprioriRange <<",";
-    logFile_<< aprioriRangeVariance <<",";
-    logFile_<< this->mahalanobisDistance_ <<",";
-    logFile_<< success <<",\n";
+    logFile_ << aprioriRange <<",";
+    logFile_ << aprioriRangeVariance <<",";
+    logFile_ << this->mahalanobisDistance_ <<",";
+    logFile_ << success <<",\n";
   }
-
 
   //  if(isConstraintsUsed_){
 
@@ -179,8 +178,8 @@ void R2HLocalisationKFUpdaterRange::update_(const Duration &duration,
   //  }
 
 
-  //std::cout <<  currentState.X() <<std::endl;
-  //std::cout <<  currentState.P() <<std::endl;
+  // std::cout <<  currentState.X() <<std::endl;
+  // std::cout <<  currentState.P() <<std::endl;
 
   assert(isPositiveSemiDefiniteMatrix(currentState.P()));
 }
@@ -188,7 +187,7 @@ void R2HLocalisationKFUpdaterRange::update_(const Duration &duration,
 //-----------------------------------------------------------------------------
 void R2HLocalisationKFUpdaterRange::useConstraints()
 {
-  isConstraintsUsed_=true;
+  isConstraintsUsed_ = true;
 }
 
-}//romea
+}  // romea

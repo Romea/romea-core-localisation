@@ -9,6 +9,5 @@ R2WLocalisationPFMetaState::R2WLocalisationPFMetaState(const size_t & numberOfPa
 {
 }
 
-
-}
+}  // namespace romea
 

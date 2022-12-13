@@ -1,8 +1,8 @@
-#ifndef _romea_R2HLocalisationKFPredictor_HPP_
-#define _romea_R2HLocalisationKFPredictor_HPP_
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_KALMAN_R2HLOCALISATIONKFPREDICTOR_HPP_
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_KALMAN_R2HLOCALISATIONKFPREDICTOR_HPP_
 
-#include "R2HLocalisationKFMetaState.hpp"
-#include "../../LocalisationPredictor.hpp"
+#include "romea_core_localisation/robot_to_human/kalman/R2HLocalisationKFMetaState.hpp"
+#include "romea_core_localisation/LocalisationPredictor.hpp"
 
 namespace romea {
 
@@ -22,17 +22,17 @@ public :
                              const double &maximalPositionCircularErrorProbable,
                              const Eigen::Matrix2d & leaderMotionCovariance);
 
-  virtual ~R2HLocalisationKFPredictor()=default;
+  virtual ~R2HLocalisationKFPredictor() = default;
 
 private :
 
-  virtual bool stop_(const Duration  & duration,
+  bool stop_(const Duration  & duration,
                      const MetaState &state)override;
 
-  virtual void predict_(const MetaState &previousMetaState,
+  void predict_(const MetaState &previousMetaState,
                         MetaState &currentMetaState)override;
 
-  virtual void reset_(MetaState & metaState)override;
+  void reset_(MetaState & metaState)override;
 
 
 private :
@@ -55,9 +55,8 @@ private :
   double vxdT_, vydT_, wdT_;
   double dT_cos_wdT_;
   double dT_sin_wdT_;
-
 };
 
-}//romea
+}  // namespace romea
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_KALMAN_R2HLOCALISATIONKFPREDICTOR_HPP

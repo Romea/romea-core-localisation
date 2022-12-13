@@ -1,29 +1,30 @@
-#include "romea_core_localisation/robot_to_robot/kalman/R2RLocalisationKFUpdaterRange.hpp"
-
-//Eigen
+// Eigen
 #include <Eigen/SVD>
 #include <Eigen/LU>
 
-//romea
-#include <romea_core_common/math/Matrix.hpp>
-
-//std
+// std
 #include <iostream>
 
+// romea
+#include <romea_core_common/math/Matrix.hpp>
+#include "romea_core_localisation/robot_to_robot/kalman/R2RLocalisationKFUpdaterRange.hpp"
+
+
 namespace {
-const double UNSCENTED_TRANSFORM_KAPPA=3;
-const double UNSCENTED_TRANSFORM_ALPHA=0.75;
-const double UNSCENTED_TRANSFORM_BETA=2;
+const double UNSCENTED_TRANSFORM_KAPPA = 3;
+const double UNSCENTED_TRANSFORM_ALPHA = 0.75;
+const double UNSCENTED_TRANSFORM_BETA = 2;
 }
 
 namespace romea {
 
 //-----------------------------------------------------------------------------
-R2RLocalisationKFUpdaterRange::R2RLocalisationKFUpdaterRange(const std::string &updaterName,
-                                                             const double &minimalRate,
-                                                             const TriggerMode &triggerMode,
-                                                             const double &maximalMahalanobisDistance,
-                                                             const std::string & logFilename):
+R2RLocalisationKFUpdaterRange::R2RLocalisationKFUpdaterRange(
+    const std::string &updaterName,
+    const double &minimalRate,
+    const TriggerMode &triggerMode,
+    const double &maximalMahalanobisDistance,
+    const std::string & logFilename):
   LocalisationUpdaterExteroceptive(updaterName,
                                    minimalRate,
                                    triggerMode,
@@ -56,7 +57,6 @@ R2RLocalisationKFUpdaterRange::R2RLocalisationKFUpdaterRange(const std::string &
                      "mahalanobis_distance",
                      "sucess"
                     });
-
 }
 
 //-----------------------------------------------------------------------------
@@ -65,7 +65,7 @@ void R2RLocalisationKFUpdaterRange::update(const Duration & duration,
                                            LocalisationFSMState & currentFSMState,
                                            MetaState & currentMetaState)
 {
-  if(currentFSMState == LocalisationFSMState::RUNNING)
+  if (currentFSMState  == LocalisationFSMState::RUNNING)
   {
     try
     {
@@ -84,58 +84,55 @@ void R2RLocalisationKFUpdaterRange::update(const Duration & duration,
   }
 }
 
-
 //-----------------------------------------------------------------------------
 void R2RLocalisationKFUpdaterRange::update_(const Duration &duration,
                                             const Observation & currentObservation,
                                             State & currentState,
                                             AddOn & currentAddOn)
 {
-
-  //compute sigma points
+  // compute sigma points
   computeStateSigmaPoints_(currentState);
 
-  //get position of the follower tag
+  // get position of the follower tag
   double ix = currentObservation.initiatorPosition.x();
   double iy = currentObservation.initiatorPosition.y();
   double iz = currentObservation.initiatorPosition.z();
 
-  //get the position of leader tag
+  // get the position of leader tag
   double rx = currentObservation.responderPosition.x();
   double ry = currentObservation.responderPosition.y();
   double rz = currentObservation.responderPosition.z();
 
-  //propagation of the sigma points
-  for(size_t n=0; n<7;++n)
+  // propagation of the sigma points
+  for (size_t n = 0; n < 7; ++n)
   {
     const double & x = stateSigmaPoints_[n](0);
     const double & y = stateSigmaPoints_[n](1);
     const double coso = std::cos(stateSigmaPoints_[n](2));
-        const double sino = std::sin(stateSigmaPoints_[n](2));
+    const double sino = std::sin(stateSigmaPoints_[n](2));
 
-        propagatedSigmaPoints_[n] = std::sqrt(std::pow(x+rx*coso-ry*sino-ix,2)+
-                                              std::pow(y+rx*sino+ry*coso-iy,2)+
-                                              (rz-iz)*(rz-iz));
-
+    propagatedSigmaPoints_[n] = std::sqrt(std::pow(x+rx*coso-ry*sino-ix, 2)+
+                                          std::pow(y+rx*sino+ry*coso-iy, 2)+
+                                          (rz-iz)*(rz-iz));
   }
 
-  //update state
-  bool success = updateState_(currentState,currentObservation);
+  // update state
+  bool success = updateState_(currentState, currentObservation);
 
-  if(logFile_.is_open())
+  if (logFile_.is_open())
   {
-    logFile_<< duration.count()<<" ";
-    logFile_<< currentObservation.Y() <<" ";
+    logFile_<< duration.count()<< " ";
+    logFile_<< currentObservation.Y() << " ";
     logFile_<< currentObservation.R() << " ";
-    logFile_<< currentState.X(0)<<",";
-    logFile_<< currentState.X(1)<<",";
-    logFile_<< currentState.X(2)<<",";
-    logFile_<< currentState.P(0,0)<<",";
-    logFile_<< currentState.P(0,1)<<",";
-    logFile_<< currentState.P(0,1)<<",";
-    logFile_<< currentState.P(1,1)<<",";
-    logFile_<< currentState.P(1,2)<<",";
-    logFile_<< currentState.P(2,2)<<",";
+    logFile_<< currentState.X(0)<< ",";
+    logFile_<< currentState.X(1)<< ",";
+    logFile_<< currentState.X(2)<< ",";
+    logFile_<< currentState.P(0, 0)<< ",";
+    logFile_<< currentState.P(0, 1)<< ",";
+    logFile_<< currentState.P(0, 1)<< ",";
+    logFile_<< currentState.P(1, 1)<< ",";
+    logFile_<< currentState.P(1, 2)<< ",";
+    logFile_<< currentState.P(2, 2)<< ",";
     logFile_<< ix <<",";
     logFile_<< iy <<",";
     logFile_<< iz <<",";
@@ -144,14 +141,14 @@ void R2RLocalisationKFUpdaterRange::update_(const Duration &duration,
     logFile_<< rz <<",";
   }
 
-  if(success)
+  if (success)
   {
-    currentAddOn.lastExteroceptiveUpdate.time=duration;
-    currentAddOn.lastExteroceptiveUpdate.travelledDistance=currentAddOn.travelledDistance;
+    currentAddOn.lastExteroceptiveUpdate.time = duration;
+    currentAddOn.lastExteroceptiveUpdate.travelledDistance = currentAddOn.travelledDistance;
   }
 
-  //log
-  if(logFile_.is_open())
+  // log
+  if (logFile_.is_open())
   {
     logFile_<< this->propagatedState_.Y() <<" ";
     logFile_<< this->propagatedState_.R() <<" ";
@@ -160,7 +157,6 @@ void R2RLocalisationKFUpdaterRange::update_(const Duration &duration,
   }
 
   assert(isPositiveSemiDefiniteMatrix(currentState.P()));
-
 }
 
-}//romea
+}  // namespace romea

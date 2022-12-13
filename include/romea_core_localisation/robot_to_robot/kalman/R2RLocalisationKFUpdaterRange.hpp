@@ -1,22 +1,24 @@
-#ifndef _romea_R2RLocalisationKFUpdaterRange_HPP_
-#define _romea_R2RLocalisationKFUpdaterRange_HPP_
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_KALMAN_R2RLOCALISATIONKFUPDATERRANGE_HPP_
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_KALMAN_R2RLOCALISATIONKFUPDATERRANGE_HPP_
 
+// std
+#include <string>
 
-//local
+// romea
 #include <romea_core_common/time/Time.hpp>
-#include "../../ObservationRange.hpp"
-#include "../../LocalisationFSMState.hpp"
-#include "../../LocalisationUpdaterExteroceptive.hpp"
 #include <romea_core_filtering/kalman/UnscentedKalmanFilterUpdaterCore.hpp>
-#include "R2RLocalisationKFMetaState.hpp"
+#include "romea_core_localisation/ObservationRange.hpp"
+#include "romea_core_localisation/LocalisationFSMState.hpp"
+#include "romea_core_localisation/LocalisationUpdaterExteroceptive.hpp"
+#include "romea_core_localisation/robot_to_robot/kalman/R2RLocalisationKFMetaState.hpp"
 
 
 namespace romea {
 
-
-class R2RLocalisationKFUpdaterRange : public LocalisationUpdaterExteroceptive, public UKFUpdaterCore<double,3,1>
+class R2RLocalisationKFUpdaterRange :
+  public LocalisationUpdaterExteroceptive,
+  public UKFUpdaterCore<double, 3, 1>
 {
-
 public :
 
   using Observation = ObservationRange;
@@ -43,8 +45,8 @@ protected :
                const Observation & currentObservation,
                State & currentState,
                AddOn & currentAddOn);
-
 };
 
-}//romea
-#endif
+}  // namespace romea
+
+#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_KALMAN_R2RLOCALISATIONKFUPDATERRANGE_HPP_

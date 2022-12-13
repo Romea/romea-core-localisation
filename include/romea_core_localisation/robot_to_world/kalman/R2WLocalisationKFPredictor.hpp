@@ -1,15 +1,14 @@
-#ifndef romea_R2WKalmanPredictor_hpp
-#define romea_R2WKalmanPredictor_hpp
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_KALMAN_R2WLOCALISATIONKFPREDICTOR_HPP_
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_KALMAN_R2WLOCALISATIONKFPREDICTOR_HPP_
 
-//romea
-#include "../../LocalisationPredictor.hpp"
-#include "R2WLocalisationKFMetaState.hpp"
+// romea
+#include "romea_core_localisation/LocalisationPredictor.hpp"
+#include "romea_core_localisation/robot_to_world/kalman/R2WLocalisationKFMetaState.hpp"
 
 namespace romea {
 
 class R2WLocalisationKFPredictor : public  LocalisationPredictor<R2WLocalisationKFMetaState>
 {
-
 public :
 
   using MetaState = R2WLocalisationKFMetaState;
@@ -25,35 +24,31 @@ public :
 
 protected :
 
-  virtual bool stop_(const Duration & duration,
-                     const MetaState & state)override;
+  bool stop_(const Duration & duration,
+             const MetaState & state)override;
 
-  virtual void predict_(const MetaState &previousState,
-                        MetaState &nextState)override;
+  void predict_(const MetaState &previousState,
+                MetaState &nextState)override;
 
-  virtual void reset_(MetaState &state)override;
+  void reset_(MetaState &state)override;
 
-  virtual void predictState_(const State &previousState,
-                             const Input &previousInput,
-                             State &currentState);
+  void predictState_(const State &previousState,
+                     const Input &previousInput,
+                     State &currentState);
 
-  virtual void predictAddOn_(const AddOn & previousAddOn,
-                             AddOn &currentAddOn);
+  void predictAddOn_(const AddOn & previousAddOn,
+                     AddOn &currentAddOn);
 
 private:
-
   Eigen::MatrixXd jF_;
   Eigen::MatrixXd jG_;
 
-  double x_, y_, theta_, vx_,vy_, w_;
+  double x_, y_, theta_, vx_, vy_, w_;
   double vxdT_, vydT_, wdT_;
   double dT_cos_theta_wdT_;
   double dT_sin_theta_wdT_;
-
 };
 
-}
+}  // namespace romea
 
-
-
-#endif
+#endif   // ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_KALMAN_R2WLOCALISATIONKFPREDICTOR_HPP_

@@ -1,26 +1,23 @@
-#ifndef _romea_R2HLocalisationKFState_HPP_
-#define _romea_R2HLocalisationKFState_HPP_
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_KALMAN_R2HLOCALISATIONKFMETASTATE_HPP_  
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_KALMAN_R2HLOCALISATIONKFMETASTATE_HPP_  
 
-//romea
+// namespace romea
 #include <romea_core_filtering/GaussianState.hpp>
-#include "../R2HLocalisationMetaState.hpp"
+#include "romea_core_localisation/robot_to_human/R2HLocalisationMetaState.hpp"
 
 namespace romea {
 
-
 struct R2HLocalisationKFMetaState : R2HLocalisationMetaState
 {
-
-  using State =GaussianState<double,STATE_SIZE>;
+  using State = GaussianState<double, STATE_SIZE>;
 
   R2HLocalisationKFMetaState();
 
-  virtual ~R2HLocalisationKFMetaState()=default;
+  virtual ~R2HLocalisationKFMetaState() = default;
 
   State state;
-
 };
 
-}//romea
+}  //namespace romea
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_KALMAN_R2HLOCALISATIONKFMETASTATE_HPP_  

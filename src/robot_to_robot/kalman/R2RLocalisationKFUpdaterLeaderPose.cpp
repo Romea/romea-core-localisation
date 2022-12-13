@@ -7,17 +7,17 @@ namespace romea
 
 //TODO add update stage
 //-----------------------------------------------------------------------------
-R2RLocalisationKFUpdaterLeaderPose::R2RLocalisationKFUpdaterLeaderPose(const std::string &updaterName,
-                                                                       const double &minimalRate,
-                                                                       const TriggerMode &triggerMode,
-                                                                       const double &maximalMahalanobisDistance,
-                                                                       const std::string &logFilename):
+R2RLocalisationKFUpdaterLeaderPose::R2RLocalisationKFUpdaterLeaderPose(
+    const std::string &updaterName,
+    const double &minimalRate,
+    const TriggerMode &triggerMode,
+    const double &maximalMahalanobisDistance,
+    const std::string &logFilename):
   LocalisationUpdaterExteroceptive(updaterName,
                                    minimalRate,
                                    triggerMode,
                                    logFilename)
 {
-
 }
 
 //--------------------------------------------------------------------------
@@ -26,10 +26,9 @@ void R2RLocalisationKFUpdaterLeaderPose::update(const Duration &duration,
                                                 LocalisationFSMState & currentFSMState,
                                                 MetaState &currentMetaState)
 {
-
   switch (currentFSMState) {
   case LocalisationFSMState::INIT:
-    if(set_(duration,
+    if (set_(duration,
             currentObservation,
             currentMetaState.input,
             currentMetaState.state,
@@ -51,26 +50,22 @@ bool R2RLocalisationKFUpdaterLeaderPose::set_(const Duration & duration,
                                               State &currentState,
                                               AddOn &currentAddOn)
 {
+  currentAddOn.lastExteroceptiveUpdate.time = duration;
+  currentAddOn.lastExteroceptiveUpdate.travelledDistance = currentAddOn.travelledDistance;
 
-  currentAddOn.lastExteroceptiveUpdate.time=duration;
-  currentAddOn.lastExteroceptiveUpdate.travelledDistance=currentAddOn.travelledDistance;
-
-  if(!std::isnan(currentInput.U(R2RLocalisationKFMetaState::LINEAR_SPEED_X_BODY))&&
-     !std::isnan(currentInput.U(R2RLocalisationKFMetaState::LINEAR_SPEED_Y_BODY))&&
-     !std::isnan(currentInput.U(R2RLocalisationKFMetaState::ANGULAR_SPEED_Z_BODY))&&
-     !std::isnan(currentInput.U(R2RLocalisationKFMetaState::LEADER_LINEAR_SPEED_X_BODY))&&
-     !std::isnan(currentInput.U(R2RLocalisationKFMetaState::LEADER_LINEAR_SPEED_X_BODY))&&
-     !std::isnan(currentInput.U(R2RLocalisationKFMetaState::LEADER_LINEAR_SPEED_X_BODY)))
+  if (!std::isnan(currentInput.U(R2RLocalisationKFMetaState::LINEAR_SPEED_X_BODY)) &&
+      !std::isnan(currentInput.U(R2RLocalisationKFMetaState::LINEAR_SPEED_Y_BODY)) &&
+      !std::isnan(currentInput.U(R2RLocalisationKFMetaState::ANGULAR_SPEED_Z_BODY)) &&
+      !std::isnan(currentInput.U(R2RLocalisationKFMetaState::LEADER_LINEAR_SPEED_X_BODY)) &&
+      !std::isnan(currentInput.U(R2RLocalisationKFMetaState::LEADER_LINEAR_SPEED_X_BODY)) &&
+      !std::isnan(currentInput.U(R2RLocalisationKFMetaState::LEADER_LINEAR_SPEED_X_BODY)))
   {
     currentState.X() = currentObservation.Y();
     currentState.P() = currentObservation.R();
     return true;
-  }
-  else
-  {
+  } else {
     return false;
   }
 }
 
-
-}
+}  // namespace romea

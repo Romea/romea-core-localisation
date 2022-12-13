@@ -1,23 +1,26 @@
-#ifndef romea_R2WLocalisationPFUpdaterPosition_hpp
-#define romea_R2WLocalisationPFUpdaterPosition_hpp
+#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_PARTICLE_R2WLOCALISATIONPFUPDATERPOSITION_HPP_
+#define ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_PARTICLE_R2WLOCALISATIONPFUPDATERPOSITION_HPP_
 
-//romea
+// std
+#include <string>
+
+// romea
 #include <romea_core_common/time/Time.hpp>
 #include <romea_core_common/math/NormalRandomMatrixGenerator.hpp>
 #include <romea_core_filtering/particle/ParticleFilterGaussianUpdaterCore.hpp>
-
-#include "R2WLocalisationPFMetaState.hpp"
-#include "../R2WLevelArmCompensation.hpp"
-#include "../../ObservationPosition.hpp"
-#include "../../LocalisationFSMState.hpp"
-#include "../../LocalisationUpdaterExteroceptive.hpp"
+#include "romea_core_localisation/ObservationPosition.hpp"
+#include "romea_core_localisation/LocalisationFSMState.hpp"
+#include "romea_core_localisation/LocalisationUpdaterExteroceptive.hpp"
+#include "romea_core_localisation/robot_to_world/particle/R2WLocalisationPFMetaState.hpp"
+#include "romea_core_localisation/robot_to_world/R2WLevelArmCompensation.hpp"
 
 namespace romea {
 
 
-class R2WLocalisationPFUpdaterPosition : public LocalisationUpdaterExteroceptive, public PFGaussianUpdaterCore<double,3,2>
+class R2WLocalisationPFUpdaterPosition :
+  public LocalisationUpdaterExteroceptive,
+  public PFGaussianUpdaterCore<double, 3, 2>
 {
-
 public :
 
   using Observation = ObservationPosition;
@@ -26,7 +29,7 @@ public :
   using Input = R2WLocalisationPFMetaState::Input;
   using AddOn = R2WLocalisationPFMetaState::AddOn;
   using RowMajorVector = R2WLocalisationPFMetaState::State::RowMajorVector;
-  using RowMajorMatrix = Eigen::Array<double,2,Eigen::Dynamic,Eigen::RowMajor>;
+  using RowMajorMatrix = Eigen::Array<double, 2, Eigen::Dynamic, Eigen::RowMajor>;
 
 public :
 
@@ -70,12 +73,11 @@ private :
   RowMajorVector cosCourses_;
   RowMajorVector sinCourses_;
   LevelArmCompensation levelArmCompensation_;
-
 };
 
-}
+}  // namespace romea
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_PARTICLE_R2WLOCALISATIONPFUPDATERPOSITION_HPP_
 
 
 
