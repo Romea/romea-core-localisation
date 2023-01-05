@@ -1,10 +1,14 @@
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
 #include "romea_core_localisation/robot_to_world/kalman/R2WLocalisationKFResults.hpp"
 
-namespace romea {
+namespace romea
+{
 
 //-----------------------------------------------------------------------------
-R2WLocalisationKFResults::R2WLocalisationKFResults():
-  R2WLocalisationResults()
+R2WLocalisationKFResults::R2WLocalisationKFResults()
+: R2WLocalisationResults()
 {
 }
 
@@ -68,19 +72,19 @@ PoseAndTwist3D R2WLocalisationKFResults::toPoseAndBodyTwist3D() const
 }
 
 //--------------------------------------------------------------------------
-const double &R2WLocalisationKFResults::getX() const
+const double & R2WLocalisationKFResults::getX() const
 {
   return state.X(POSITION_X);
 }
 
 //--------------------------------------------------------------------------
-const double &R2WLocalisationKFResults::getY() const
+const double & R2WLocalisationKFResults::getY() const
 {
   return state.X(POSITION_Y);
 }
 
 //--------------------------------------------------------------------------
-const double &R2WLocalisationKFResults::getYaw() const
+const double & R2WLocalisationKFResults::getYaw() const
 {
   return state.X(ORIENTATION_Z);
 }
@@ -92,7 +96,7 @@ const double & R2WLocalisationKFResults::getYawVariance() const
 }
 
 //--------------------------------------------------------------------------
-const double &R2WLocalisationKFResults::getLinearSpeed() const
+const double & R2WLocalisationKFResults::getLinearSpeed() const
 {
   return input.U(LINEAR_SPEED_X_BODY);
 }
@@ -104,7 +108,7 @@ const double & R2WLocalisationKFResults::getLateralSpeed() const
 }
 
 //--------------------------------------------------------------------------
-const double &R2WLocalisationKFResults::getAngularSpeed() const
+const double & R2WLocalisationKFResults::getAngularSpeed() const
 {
   return input.U(ANGULAR_SPEED_Z_BODY);
 }
@@ -134,4 +138,3 @@ Eigen::Matrix3d R2WLocalisationKFResults::getPoseCovariance() const
 }
 
 }  // namespace romea
-

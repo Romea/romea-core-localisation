@@ -1,11 +1,14 @@
-﻿// gtest
+﻿// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+// gtest
 #include <gtest/gtest.h>
-#include "../../test_utils.hpp"
 
 // std
 #include <memory>
 
-// romea
+// local
+#include "../../test_utils.hpp"
 #include "romea_core_localisation/LocalisationFSMState.hpp"
 #include "romea_core_localisation/robot_to_world/kalman/R2WLocalisationKFUpdaterPose.hpp"
 #include "romea_core_localisation/robot_to_world/R2WLocalisationMetaState.hpp"
@@ -14,37 +17,41 @@ using Updater = romea::R2WLocalisationKFUpdaterPose;
 using FSMState = romea::LocalisationFSMState;
 using MetaState = romea::R2WLocalisationKFMetaState;
 using Observation = romea::ObservationPose;
-using TriggerMode = romea::LocalisationUpdaterTriggerMode ;
+using TriggerMode = romea::LocalisationUpdaterTriggerMode;
 
 const Eigen::Vector3d initialPose = (Eigen::Vector3d() << 0.1, 0.2, 0.3).finished();
-const Eigen::Matrix3d initialPoseCovariance = (Eigen::Matrix3d() << 0.1, 0, 0, 0, 0.2, 0, 0, 0, 0.3).finished();
+const Eigen::Matrix3d initialPoseCovariance =
+  (Eigen::Matrix3d() << 0.1, 0, 0, 0, 0.2, 0, 0, 0, 0.3).finished();
 
 class TestPoseUpdater : public ::testing::Test
 {
 public:
-  TestPoseUpdater():
-    metastate(),
+  TestPoseUpdater()
+  : metastate(),
     fsmState(FSMState::INIT),
     updater(nullptr)
   {
   }
 
-  void init(const FSMState & fsmState_,
-            const TriggerMode & triggerMode_)
+  void init(
+    const FSMState & fsmState_,
+    const TriggerMode & triggerMode_)
   {
-    updater = std::make_unique<Updater>("course_updater",
-                                        100,
-                                        triggerMode_,
-                                        5,
-                                        "course_updater.dat");
+    updater = std::make_unique<Updater>(
+      "course_updater",
+      100,
+      triggerMode_,
+      5,
+      "course_updater.dat");
 
     metastate.state.X() << initialPose;
     metastate.state.P() << initialPoseCovariance;
     fsmState = fsmState_;
   }
 
-  void update(const romea::Duration & duration,
-              const Observation & observation)
+  void update(
+    const romea::Duration & duration,
+    const Observation & observation)
   {
     updater->update(duration, observation, fsmState, metastate);
   }
@@ -69,7 +76,7 @@ TEST_F(TestPoseUpdater, testSetObservation)
   isSame(metastate.state.X(), observation.Y());
   isSame(metastate.state.P(), observation.R());
   EXPECT_EQ(metastate.addon.lastExteroceptiveUpdate.time.count(), duration.count());
-  EXPECT_DOUBLE_EQ(metastate.addon.lastExteroceptiveUpdate.travelledDistance , 0);
+  EXPECT_DOUBLE_EQ(metastate.addon.lastExteroceptiveUpdate.travelledDistance, 0);
 }
 
 TEST_F(TestPoseUpdater, testUpdate)
@@ -92,7 +99,7 @@ TEST_F(TestPoseUpdater, testUpdate)
 //  EXPECT_DOUBLE_EQ(metastate.addon.lastExteroceptiveUpdate.travelledDistance,0);
 }
 
-//TEST_F(TestCourseUpdater, testMahalanobisRejection)
+// TEST_F(TestCourseUpdater, testMahalanobisRejection)
 //{
 //  init(FSMState::RUNNING,TriggerMode::ALWAYS);
 
@@ -111,7 +118,8 @@ TEST_F(TestPoseUpdater, testUpdate)
 //}
 
 //-----------------------------------------------------------------------------
-int main(int argc, char **argv){
+int main(int argc, char ** argv)
+{
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

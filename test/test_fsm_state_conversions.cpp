@@ -1,3 +1,6 @@
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
 // gtest
 #include <gtest/gtest.h>
 
@@ -18,18 +21,23 @@ TEST(TestFSMStateConversion, checkfsmStateToString)
 //-----------------------------------------------------------------------------
 TEST(TestFSMStateConversion, checkfsmStateToDiagnosticStatus)
 {
-  EXPECT_EQ(romea::toDiagnosticStatus(romea::LocalisationFSMState::ABORTED),
-            romea::DiagnosticStatus::ERROR);
-  EXPECT_EQ(romea::toDiagnosticStatus(romea::LocalisationFSMState::RUNNING),
-            romea::DiagnosticStatus::OK);
-  EXPECT_EQ(romea::toDiagnosticStatus(romea::LocalisationFSMState::RESET),
-            romea::DiagnosticStatus::WARN);
-  EXPECT_EQ(romea::toDiagnosticStatus(romea::LocalisationFSMState::INIT),
-            romea::DiagnosticStatus::WARN);
+  EXPECT_EQ(
+    romea::toDiagnosticStatus(romea::LocalisationFSMState::ABORTED),
+    romea::DiagnosticStatus::ERROR);
+  EXPECT_EQ(
+    romea::toDiagnosticStatus(romea::LocalisationFSMState::RUNNING),
+    romea::DiagnosticStatus::OK);
+  EXPECT_EQ(
+    romea::toDiagnosticStatus(romea::LocalisationFSMState::RESET),
+    romea::DiagnosticStatus::WARN);
+  EXPECT_EQ(
+    romea::toDiagnosticStatus(romea::LocalisationFSMState::INIT),
+    romea::DiagnosticStatus::WARN);
 }
 
 //-----------------------------------------------------------------------------
-int main(int argc, char **argv){
+int main(int argc, char ** argv)
+{
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

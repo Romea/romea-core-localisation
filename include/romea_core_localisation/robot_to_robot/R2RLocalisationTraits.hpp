@@ -1,5 +1,5 @@
-#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_R2RLOCALISATIONTRAITS_HPP_  
-#define ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_R2RLOCALISATIONTRAITS_HPP_  
+#ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__R2RLOCALISATIONTRAITS_HPP_
+#define ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__R2RLOCALISATIONTRAITS_HPP_
 
 
 // romea
@@ -17,7 +17,8 @@
 #include "romea_core_localisation/robot_to_robot/particle/R2RLocalisationPFPredictor.hpp"
 
 
-namespace romea {
+namespace romea
+{
 
 
 template<FilterType type>
@@ -52,5 +53,4 @@ struct R2RLocalisationTraits<PARTICLE>
 
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_R2RLOCALISATIONTRAITS_HPP_
-
+#endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__R2RLOCALISATIONTRAITS_HPP_

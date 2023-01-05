@@ -1,17 +1,21 @@
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
 // romea
 #include "romea_core_localisation/LocalisationUpdaterTriggerMode.hpp"
 
 // std
 #include <exception>
 #include <sstream>
+#include <string>
 
-namespace romea {
+namespace romea
+{
 
 //-----------------------------------------------------------------------------
 std::string toString(const LocalisationUpdaterTriggerMode & triggerMode)
 {
-  if ( triggerMode==LocalisationUpdaterTriggerMode::ALWAYS)
-  {
+  if (triggerMode == LocalisationUpdaterTriggerMode::ALWAYS) {
     return "always";
   } else {
     return "once";
@@ -21,8 +25,7 @@ std::string toString(const LocalisationUpdaterTriggerMode & triggerMode)
 //-----------------------------------------------------------------------------
 LocalisationUpdaterTriggerMode toTriggerMode(const std::string & triggerMode)
 {
-  if (triggerMode == "always")
-  {
+  if (triggerMode == "always") {
     return LocalisationUpdaterTriggerMode::ALWAYS;
   } else if (triggerMode == "once") {
     return LocalisationUpdaterTriggerMode::ONCE;
@@ -35,4 +38,3 @@ LocalisationUpdaterTriggerMode toTriggerMode(const std::string & triggerMode)
 }
 
 }  // namespace romea
-

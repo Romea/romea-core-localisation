@@ -1,13 +1,22 @@
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+// std
+#include <string>
+
+// local
 #include "romea_core_localisation/LocalisationUpdaterBase.hpp"
 
-namespace romea {
+namespace romea
+{
 
 //-----------------------------------------------------------------------------
-LocalisationUpdaterBase::LocalisationUpdaterBase(const std::string & updaterName,
-                                                 const double & minimalRate,
-                                                 const TriggerMode & triggerMode):
-  triggerMode_(triggerMode),
-  rateDiagnostic_(updaterName, minimalRate, 0.1*minimalRate),
+LocalisationUpdaterBase::LocalisationUpdaterBase(
+  const std::string & updaterName,
+  const double & minimalRate,
+  const TriggerMode & triggerMode)
+: triggerMode_(triggerMode),
+  rateDiagnostic_(updaterName, minimalRate, 0.1 * minimalRate),
   mutex_()
 {
 }
@@ -35,4 +44,3 @@ void LocalisationUpdaterBase::udapteDiagnostic_(const Duration & duration)
 }
 
 }  // namespace romea
-

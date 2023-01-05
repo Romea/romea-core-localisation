@@ -1,12 +1,18 @@
-#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_KALMAN_R2HLOCALISATIONKFUPDATERRANGE_HPP_
-#define ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_KALMAN_R2HLOCALISATIONKFUPDATERRANGE_HPP_
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
 
-// std
-#include <string>
+#ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_HUMAN__KALMAN__R2HLOCALISATIONKFUPDATERRANGE_HPP_
+#define ROMEA_CORE_LOCALISATION__ROBOT_TO_HUMAN__KALMAN__R2HLOCALISATIONKFUPDATERRANGE_HPP_
+
 
 // romea
 #include <romea_core_common/time/Time.hpp>
 #include <romea_core_filtering/kalman/KalmanFilterUpdaterCore.hpp>
+
+// std
+#include <string>
+
+//local
 #include "romea_core_localisation/ObservationRange.hpp"
 #include "romea_core_localisation/LocalisationFSMState.hpp"
 #include "romea_core_localisation/LocalisationUpdaterExteroceptive.hpp"
@@ -69,6 +75,6 @@ private :
   bool isConstraintsUsed_;
 };
 
-}  //namespace romea
+}  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_KALMAN_R2HLOCALISATIONKFUPDATERRANGE_HPP_ 
+#endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_HUMAN__KALMAN__R2HLOCALISATIONKFUPDATERRANGE_HPP_

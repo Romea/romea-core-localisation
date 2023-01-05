@@ -1,17 +1,20 @@
-#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_PARTICLE_R2WLOCALISATIONPFRESULTS_HPP_
-#define ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_PARTICLE_R2WLOCALISATIONPFRESULTS_HPP_
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+#ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__PARTICLE__R2WLOCALISATIONPFRESULTS_HPP_
+#define ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__PARTICLE__R2WLOCALISATIONPFRESULTS_HPP_
 
 // romea
 #include <romea_core_filtering/particle/ParticleFilterEstimator.hpp>
 #include "romea_core_localisation/robot_to_world/R2WLocalisationResults.hpp"
 #include "romea_core_localisation/robot_to_world/particle/R2WLocalisationPFMetaState.hpp"
 
-namespace romea {
+namespace romea
+{
 
 class R2WLocalisationPFResults : public R2WLocalisationResults<R2WLocalisationPFMetaState>
 {
-public :
-
+public:
   using  RowMajorMatrix = R2WLocalisationPFMetaState::State::RowMajorMatrix;
 
 public:
@@ -41,13 +44,11 @@ public:
 
   void reset(const Duration & duration);
 
-private :
-
+private:
   void lazyComputeEstimate_() const;
   void lazyComputeEstimateVovariance_() const;
 
-private :
-
+private:
   mutable double weightSum_;
 
   mutable Duration estimateStamp_;
@@ -61,4 +62,4 @@ private :
 
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_PARTICLE_R2WLOCALISATIONPFRESULTS_HPP_
+#endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__PARTICLE__R2WLOCALISATIONPFRESULTS_HPP_

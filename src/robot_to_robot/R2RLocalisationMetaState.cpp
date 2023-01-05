@@ -1,20 +1,23 @@
-// romea
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
 #include "romea_core_localisation/robot_to_robot/R2RLocalisationMetaState.hpp"
 
-namespace {
+namespace
+{
 const size_t MAXIMAL_TRAJECTORY_SIZE = 1000;
 }
 
-namespace romea {
+namespace romea
+{
 
 //-----------------------------------------------------------------------------
-R2RLocalisationMetaState::AddOn::AddOn():
-  lastExteroceptiveUpdate(),
+R2RLocalisationMetaState::AddOn::AddOn()
+: lastExteroceptiveUpdate(),
   leaderTrajectory(MAXIMAL_TRAJECTORY_SIZE),
   robotTrajectory(MAXIMAL_TRAJECTORY_SIZE),
   travelledDistance(0)
 {
-
 }
 
 //-----------------------------------------------------------------------------
@@ -27,11 +30,10 @@ void R2RLocalisationMetaState::AddOn::reset()
 }
 
 //-----------------------------------------------------------------------------
-R2RLocalisationMetaState::R2RLocalisationMetaState():
-  input(),
+R2RLocalisationMetaState::R2RLocalisationMetaState()
+: input(),
   addon()
 {
 }
 
 }  // namespace romea
-

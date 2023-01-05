@@ -1,79 +1,87 @@
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
 // Eigen
 #include <Eigen/SVD>
-#include <iostream>
 
 // romea
 #include <romea_core_common/math/Matrix.hpp>
+
+// std
+#include <iostream>
+#include <string>
+
+// local
 #include "romea_core_localisation/robot_to_human/kalman/R2HLocalisationKFUpdaterRange.hpp"
 
-namespace romea {
+namespace romea
+{
 
 //-----------------------------------------------------------------------------
 R2HLocalisationKFUpdaterRange::R2HLocalisationKFUpdaterRange(
-    const std::string &updaterName,
-    const double &minimalRate,
-    const TriggerMode &triggerMode,
-    const double &maximalMahalanobisDistance,
-    const std::string &logFilename,
-    const bool & usedConstraints):
-  LocalisationUpdaterExteroceptive(updaterName,
-                                   minimalRate,
-                                   triggerMode,
-                                   logFilename),
+  const std::string & updaterName,
+  const double & minimalRate,
+  const TriggerMode & triggerMode,
+  const double & maximalMahalanobisDistance,
+  const std::string & logFilename,
+  const bool & usedConstraints)
+: LocalisationUpdaterExteroceptive(updaterName,
+    minimalRate,
+    triggerMode,
+    logFilename),
   KFUpdaterCore(maximalMahalanobisDistance),
   U_(Eigen::VectorXd::Zero(MetaState::STATE_SIZE)),
   W_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE,
-                           MetaState::STATE_SIZE)),
+    MetaState::STATE_SIZE)),
   Amgs_(Eigen::Vector2d::Zero()),
   Tmgs_(Eigen::Matrix2d::Zero()),
   Wmgs_(0),
   Dc_(Eigen::Matrix2d::Zero(MetaState::STATE_SIZE,
-                            MetaState::STATE_SIZE)),
+    MetaState::STATE_SIZE)),
   Yc_(Eigen::VectorXd::Zero(MetaState::STATE_SIZE)),
   RYc_(Eigen::MatrixXd::Identity(MetaState::STATE_SIZE,
-                                 MetaState::STATE_SIZE)),
+    MetaState::STATE_SIZE)),
 
   isConstraintsUsed_(usedConstraints)
 {
   Dc_(1, 1) = 1;
 
-  setLogFileHeader_({"stamp",
-                     "range",
-                     "cov_range",
-                     "x",
-                     "y",
-                     "cov_x",
-                     "cov_xy",
-                     "cov_y",
-                     "ix",
-                     "iy",
-                     "apriori_range",
-                     "cov_apriori_range",
-                     "mahalanobis_distance",
-                     "sucess"
-                    });
+  setLogFileHeader_(
+    {"stamp",
+      "range",
+      "cov_range",
+      "x",
+      "y",
+      "cov_x",
+      "cov_xy",
+      "cov_y",
+      "ix",
+      "iy",
+      "apriori_range",
+      "cov_apriori_range",
+      "mahalanobis_distance",
+      "sucess"
+    });
 }
 
 //-----------------------------------------------------------------------------
-void R2HLocalisationKFUpdaterRange::update(const Duration & duration,
-                                           const Observation & currentObservation,
-                                           LocalisationFSMState & currentFSMState,
-                                           MetaState &currentMetaState)
+void R2HLocalisationKFUpdaterRange::update(
+  const Duration & duration,
+  const Observation & currentObservation,
+  LocalisationFSMState & currentFSMState,
+  MetaState & currentMetaState)
 {
   rateDiagnostic_.evaluate(duration);
 
-  if (currentFSMState == LocalisationFSMState::RUNNING)
-  {
-    try
-    {
-      update_(duration,
-              currentObservation,
-              currentMetaState.state,
-              currentMetaState.addon);
-    }
-    catch(...)
-    {
-      std::cout << " FSM : RANGE UPDATE HAS FAILED, RESET AND GO TO INIT MODE"<< std::endl;
+  if (currentFSMState == LocalisationFSMState::RUNNING) {
+    try {
+      update_(
+        duration,
+        currentObservation,
+        currentMetaState.state,
+        currentMetaState.addon);
+    } catch (...) {
+      std::cout << " FSM : RANGE UPDATE HAS FAILED, RESET AND GO TO INIT MODE" << std::endl;
       currentMetaState.state.reset();
       currentMetaState.addon.reset();
       currentFSMState = LocalisationFSMState::INIT;
@@ -82,26 +90,27 @@ void R2HLocalisationKFUpdaterRange::update(const Duration & duration,
 }
 
 //-----------------------------------------------------------------------------
-void R2HLocalisationKFUpdaterRange::update_(const Duration &duration,
-                                            const Observation & currentObservation,
-                                            State & currentState,
-                                            AddOn & currentAddOn)
+void R2HLocalisationKFUpdaterRange::update_(
+  const Duration & duration,
+  const Observation & currentObservation,
+  State & currentState,
+  AddOn & currentAddOn)
 {
   // compute observation matrix
-  double aprioriRange = (currentState.X()-currentObservation.initiatorPosition.head<2>()).norm();
-  H_ = (currentState.X()-currentObservation.initiatorPosition.head<2>()).transpose()/aprioriRange;
-  double aprioriRangeVariance = (H_*currentState.P()*H_.transpose())(0, 0);
+  double aprioriRange = (currentState.X() - currentObservation.initiatorPosition.head<2>()).norm();
+  H_ = (currentState.X() - currentObservation.initiatorPosition.head<2>()).transpose() /
+    aprioriRange;
+  double aprioriRangeVariance = (H_ * currentState.P() * H_.transpose())(0, 0);
 
   // Compute innovation
-  Inn_ = currentObservation.Y()-aprioriRange;
+  Inn_ = currentObservation.Y() - aprioriRange;
   QInn_ = currentObservation.R() + aprioriRangeVariance;
 
 
   // Update state vector
   bool success = updateState_(currentState);
 
-  if (logFile_.is_open())
-  {
+  if (logFile_.is_open()) {
     logFile_ << duration.count() << " ";
     logFile_ << currentObservation.Y() << " ";
     logFile_ << currentObservation.R() << " ";
@@ -114,18 +123,17 @@ void R2HLocalisationKFUpdaterRange::update_(const Duration &duration,
     logFile_ << currentObservation.initiatorPosition(1) << ",";
   }
 
-  if (success){
+  if (success) {
     currentAddOn.lastExteroceptiveUpdate.time = duration;
     currentAddOn.lastExteroceptiveUpdate.travelledDistance = currentAddOn.travelledDistance;
   }
 
   // log
-  if (logFile_.is_open())
-  {
-    logFile_ << aprioriRange <<",";
-    logFile_ << aprioriRangeVariance <<",";
-    logFile_ << this->mahalanobisDistance_ <<",";
-    logFile_ << success <<",\n";
+  if (logFile_.is_open()) {
+    logFile_ << aprioriRange << ",";
+    logFile_ << aprioriRangeVariance << ",";
+    logFile_ << this->mahalanobisDistance_ << ",";
+    logFile_ << success << ",\n";
   }
 
   //  if(isConstraintsUsed_){
@@ -190,4 +198,4 @@ void R2HLocalisationKFUpdaterRange::useConstraints()
   isConstraintsUsed_ = true;
 }
 
-}  // romea
+}  // namespace romea

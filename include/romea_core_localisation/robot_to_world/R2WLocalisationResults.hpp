@@ -1,22 +1,21 @@
-#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_R2WLOCALISATIONRESULTS_HPP_
-#define ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_R2WLOCALISATIONRESULTS_HPP_
-
+#ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__R2WLOCALISATIONRESULTS_HPP_
+#define ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__R2WLOCALISATIONRESULTS_HPP_
 
 // romea
 #include <romea_core_common/time/Time.hpp>
 #include <romea_core_common/geometry/PoseAndTwist3D.hpp>
 
-namespace romea {
+namespace romea
+{
 
-template <class State>
+template<class State>
 class R2WLocalisationResults : public State
 {
 
-public :
-
-  template <typename... Args>
-  R2WLocalisationResults(Args... args):
-    State(std::forward<Args>(args)...),
+public:
+  template<typename ... Args>
+  R2WLocalisationResults(Args... args)
+  : State(std::forward<Args>(args)...),
     duration_(Duration::zero())
   {
   }
@@ -43,17 +42,16 @@ public :
   virtual Eigen::Vector3d getTwist() const = 0;
   virtual Eigen::Matrix3d getTwistCovariance() const = 0;
 
-  virtual Pose2D toPose2D() const  = 0;
+  virtual Pose2D toPose2D() const = 0;
   virtual Pose3D toPose3D() const = 0;
 
   virtual PoseAndTwist2D toPoseAndBodyTwist2D() const = 0;
   virtual PoseAndTwist3D toPoseAndBodyTwist3D() const = 0;
 
-protected :
-
+protected:
   Duration duration_;
 };
 
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_R2WLOCALISATIONRESULTS_HPP_
+#endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__R2WLOCALISATIONRESULTS_HPP_

@@ -1,12 +1,16 @@
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
 // romea
 #include "romea_core_localisation/robot_to_world/particle/R2WLocalisationPFResults.hpp"
 #include <romea_core_common/math/EulerAngles.hpp>
 
-namespace romea {
+namespace romea
+{
 
 //-----------------------------------------------------------------------------
-R2WLocalisationPFResults::R2WLocalisationPFResults(const size_t & numberOfParticles):
-  R2WLocalisationResults<R2WLocalisationPFMetaState>(numberOfParticles),
+R2WLocalisationPFResults::R2WLocalisationPFResults(const size_t & numberOfParticles)
+: R2WLocalisationResults<R2WLocalisationPFMetaState>(numberOfParticles),
   weightSum_(0),
   estimateStamp_(Duration::zero()),
   estimate_(Eigen::Vector3d::Zero()),
@@ -63,7 +67,6 @@ Eigen::Vector3d R2WLocalisationPFResults::getPose() const
 {
   lazyComputeEstimate_();
   return estimate_;
-
 }
 
 //-----------------------------------------------------------------------------
@@ -108,13 +111,12 @@ Eigen::Matrix3d R2WLocalisationPFResults::getTwistCovariance() const
 //-----------------------------------------------------------------------------
 void R2WLocalisationPFResults::lazyComputeEstimate_()const
 {
-  if (estimateStamp_ != duration_)
-  {
+  if (estimateStamp_ != duration_) {
     weightSum_ = state.weights.sum();
-    this->estimate_(0) = (state.particles.row(0)*state.weights).sum()/weightSum_;
-    this->estimate_(1) = (state.particles.row(1)*state.weights).sum()/weightSum_;
-    double C = (state.particles.row(2).cos()*state.weights).sum()/weightSum_;
-    double S = (state.particles.row(2).sin()*state.weights).sum()/weightSum_;
+    this->estimate_(0) = (state.particles.row(0) * state.weights).sum() / weightSum_;
+    this->estimate_(1) = (state.particles.row(1) * state.weights).sum() / weightSum_;
+    double C = (state.particles.row(2).cos() * state.weights).sum() / weightSum_;
+    double S = (state.particles.row(2).sin() * state.weights).sum() / weightSum_;
     this->estimate_(2) = std::atan2(S, C);
     estimateStamp_ = duration_;
   }
@@ -124,23 +126,26 @@ void R2WLocalisationPFResults::lazyComputeEstimate_()const
 //-----------------------------------------------------------------------------
 void R2WLocalisationPFResults::lazyComputeEstimateVovariance_() const
 {
-  if (estimateCovarianceStamp_ != duration_)
-  {
-    for (int i = 0; i < STATE_SIZE; ++i)
-      this->meanCenteredParticles_.row(i) = state.particles.row(i)- this->estimate_(i);
+  if (estimateCovarianceStamp_ != duration_) {
+    for (int i = 0; i < STATE_SIZE; ++i) {
+      this->meanCenteredParticles_.row(i) = state.particles.row(i) - this->estimate_(i);
+    }
 
     // TODO(jean) à vectoriser
     auto courseRow = this->meanCenteredParticles_.row(2);
-    for (int n=0 ; n < state.particles.cols() ; ++n)
+    for (int n = 0; n < state.particles.cols(); ++n) {
       courseRow(n) = betweenMinusPiAndPi(courseRow(n));
+    }
 
 
-    for (int i = 0 ; i < STATE_SIZE ; ++i)
-      for (int j = i ; j < STATE_SIZE ; ++j)
-        this->estimateCovariance_(i , j) =
-          this->estimateCovariance_(j, i) = (this->meanCenteredParticles_.row(i)*
-                                            this->meanCenteredParticles_.row(j)*
-                                            state.weights).sum()/weightSum_;
+    for (int i = 0; i < STATE_SIZE; ++i) {
+      for (int j = i; j < STATE_SIZE; ++j) {
+        this->estimateCovariance_(i, j) =
+          this->estimateCovariance_(j, i) = (this->meanCenteredParticles_.row(i) *
+          this->meanCenteredParticles_.row(j) *
+          state.weights).sum() / weightSum_;
+      }
+    }
 
     estimateCovarianceStamp_ = duration_;
   }

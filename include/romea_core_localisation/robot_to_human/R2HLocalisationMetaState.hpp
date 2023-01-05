@@ -1,22 +1,28 @@
-#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_R2HLOCALISATIONMETASTATE_HPP_
-#define ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_R2HLOCALISATIONMETASTATE_HPP_
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+#ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_HUMAN__R2HLOCALISATIONMETASTATE_HPP_
+#define ROMEA_CORE_LOCALISATION__ROBOT_TO_HUMAN__R2HLOCALISATIONMETASTATE_HPP_
 
 // romea
 #include <romea_core_filtering/GaussianInput.hpp>
 #include <romea_core_common/containers/Eigen/RingOfEigenVector.hpp>
 #include "romea_core_localisation/LocalisationUpdatesMonitoring.hpp"
 
-namespace romea {
+namespace romea
+{
 
 struct R2HLocalisationMetaState
 {
-  enum StateIndex {
+  enum StateIndex
+  {
     LEADER_POSITION_X = 0,
     LEADER_POSITION_Y,
     STATE_SIZE
   };
 
-  enum InputIndex {
+  enum InputIndex
+  {
     LINEAR_SPEED_X_BODY = 0,
     LINEAR_SPEED_Y_BODY,
     ANGULAR_SPEED_Z_BODY,
@@ -46,4 +52,4 @@ struct R2HLocalisationMetaState
 
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_R2HLOCALISATIONMETASTATE_HPP_
+#endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_HUMAN__R2HLOCALISATIONMETASTATE_HPP_

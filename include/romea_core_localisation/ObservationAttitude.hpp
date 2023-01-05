@@ -1,13 +1,18 @@
-#ifndef ROMEA_CORE_LOCALISATION_OBSERVATIONATTITUDE_HPP_
-#define ROMEA_CORE_LOCALISATION_OBSERVATIONATTITUDE_HPP_
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+#ifndef ROMEA_CORE_LOCALISATION__OBSERVATIONATTITUDE_HPP_
+#define ROMEA_CORE_LOCALISATION__OBSERVATIONATTITUDE_HPP_
 
 #include <romea_core_filtering/GaussianObservation.hpp>
 
-namespace romea {
+namespace romea
+{
 
 struct ObservationAttitude : GaussianObservation<double, 2>
 {
-  enum Index {
+  enum Index
+  {
     ROLL = 0,
     PITCH,
     SIZE
@@ -16,5 +21,4 @@ struct ObservationAttitude : GaussianObservation<double, 2>
 
 }  // namespace romea
 
-
-#endif  // ROMEA_CORE_LOCALISATION_OBSERVATIONATTITUDE_HPP_
+#endif  // ROMEA_CORE_LOCALISATION__OBSERVATIONATTITUDE_HPP_

@@ -1,15 +1,18 @@
-#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_PARTICLE_R2RLOCALISATIONPFRESULTS_HPP
-#define ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_PARTICLE_R2RLOCALISATIONPFRESULTS_HPP
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+#ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__PARTICLE__R2RLOCALISATIONPFRESULTS_HPP
+#define ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__PARTICLE__R2RLOCALISATIONPFRESULTS_HPP
 
 #include "romea_core_localisation/robot_to_robot/R2RLocalisationResults.hpp"
 #include "romea_core_localisation/robot_to_robot/particle/R2RLocalisationPFMetaState.hpp"
 
-namespace romea {
+namespace romea
+{
 
 class R2RLocalisationPFResults : public R2RLocalisationResults<R2RLocalisationPFMetaState>
 {
-public :
-
+public:
   explicit R2RLocalisationPFResults(const size_t & numberOfParticles);
   virtual ~R2RLocalisationPFResults() = default;
 
@@ -37,13 +40,11 @@ public :
   Pose2D toLeaderPose2D() const override;
   PoseAndTwist2D toLeaderPoseAndBodyTwist2D() const override;
 
-private :
-
+private:
   void lazyComputeEstimate_() const;
   void lazyComputeEstimateVovariance_() const;
 
-private :
-
+private:
   mutable double weightSum_;
 
   mutable Duration estimateStamp_;
@@ -57,4 +58,4 @@ private :
 
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_PARTICLE_R2RLOCALISATIONPFRESULTS_HPP
+#endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__PARTICLE__R2RLOCALISATIONPFRESULTS_HPP

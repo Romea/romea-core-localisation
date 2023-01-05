@@ -1,11 +1,14 @@
-// romea
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
 #include "romea_core_localisation/robot_to_world/R2WLevelArmCompensation.hpp"
 
-namespace romea {
+namespace romea
+{
 
 //-----------------------------------------------------------------------------
-LevelArmCompensation::LevelArmCompensation():
-  position_(Eigen::Vector3d::Zero()),
+LevelArmCompensation::LevelArmCompensation()
+: position_(Eigen::Vector3d::Zero()),
   positionCovariance_(Eigen::Matrix3d::Zero()),
   vehicleAttitude_(),
   vehicleAttitudeCovariance_(Eigen::Matrix3d::Zero()),
@@ -14,12 +17,13 @@ LevelArmCompensation::LevelArmCompensation():
 }
 
 //-----------------------------------------------------------------------------
-void LevelArmCompensation::compute(const double & vehicleRollAngle,
-                                   const double & vehiclePitchAngle,
-                                   const double & vehicleRollPitchVariance,
-                                   const double & vehicleYawAngle,
-                                   const double & vehicleYawAngleVariance,
-                                   const Eigen::Vector3d & bodyAntennaPosition)
+void LevelArmCompensation::compute(
+  const double & vehicleRollAngle,
+  const double & vehiclePitchAngle,
+  const double & vehicleRollPitchVariance,
+  const double & vehicleYawAngle,
+  const double & vehicleYawAngleVariance,
+  const Eigen::Vector3d & bodyAntennaPosition)
 {
   // Compute full vehicle atiitude
   vehicleAttitudeCovariance_(0, 0) = vehicleRollPitchVariance;
@@ -29,7 +33,7 @@ void LevelArmCompensation::compute(const double & vehicleRollAngle,
   vehicleAttitude_.init(vehicleRollAngle, vehiclePitchAngle, vehicleYawAngle);
 
   // Compute antenna position and its covariance
-  position_ = vehicleAttitude_*bodyAntennaPosition;
+  position_ = vehicleAttitude_ * bodyAntennaPosition;
   jacobian_ = vehicleAttitude_.dRTdAngles(bodyAntennaPosition);
   positionCovariance_ = jacobian_ * vehicleAttitudeCovariance_ * jacobian_.transpose();
 }

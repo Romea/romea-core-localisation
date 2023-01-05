@@ -1,28 +1,34 @@
-#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_PARTICLE_R2WLOCALISATIONPFUPDATERPOSITION_HPP_
-#define ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_PARTICLE_R2WLOCALISATIONPFUPDATERPOSITION_HPP_
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
 
-// std
-#include <string>
+#ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__PARTICLE__R2WLOCALISATIONPFUPDATERPOSITION_HPP_
+#define ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__PARTICLE__R2WLOCALISATIONPFUPDATERPOSITION_HPP_
+
 
 // romea
 #include <romea_core_common/time/Time.hpp>
 #include <romea_core_common/math/NormalRandomMatrixGenerator.hpp>
 #include <romea_core_filtering/particle/ParticleFilterGaussianUpdaterCore.hpp>
+
+// std
+#include <string>
+
+// local
 #include "romea_core_localisation/ObservationPosition.hpp"
 #include "romea_core_localisation/LocalisationFSMState.hpp"
 #include "romea_core_localisation/LocalisationUpdaterExteroceptive.hpp"
 #include "romea_core_localisation/robot_to_world/particle/R2WLocalisationPFMetaState.hpp"
 #include "romea_core_localisation/robot_to_world/R2WLevelArmCompensation.hpp"
 
-namespace romea {
+namespace romea
+{
 
 
-class R2WLocalisationPFUpdaterPosition :
-  public LocalisationUpdaterExteroceptive,
+class R2WLocalisationPFUpdaterPosition
+  : public LocalisationUpdaterExteroceptive,
   public PFGaussianUpdaterCore<double, 3, 2>
 {
-public :
-
+public:
   using Observation = ObservationPosition;
   using MetaState = R2WLocalisationPFMetaState;
   using State = R2WLocalisationPFMetaState::State;
@@ -31,44 +37,46 @@ public :
   using RowMajorVector = R2WLocalisationPFMetaState::State::RowMajorVector;
   using RowMajorMatrix = Eigen::Array<double, 2, Eigen::Dynamic, Eigen::RowMajor>;
 
-public :
+public:
+  R2WLocalisationPFUpdaterPosition(
+    const std::string & updaterName,
+    const double & minimalRate,
+    const TriggerMode & triggerMode,
+    const size_t & numberOfParticles,
+    const double & maximalMahalanobisDistance,
+    const std::string & logFilename);
 
-  R2WLocalisationPFUpdaterPosition(const std::string & updaterName,
-                                   const double & minimalRate,
-                                   const TriggerMode & triggerMode,
-                                   const size_t & numberOfParticles,
-                                   const double &maximalMahalanobisDistance,
-                                   const std::string & logFilename);
+  void update(
+    const Duration & duration,
+    const Observation & currentObservation,
+    LocalisationFSMState & currentFSMState,
+    MetaState & currentMetaState);
 
-  void update(const Duration & duration,
-              const Observation & currentObservation,
-              LocalisationFSMState & currentFSMState,
-              MetaState & currentMetaState);
+private:
+  void update_(
+    const Duration & duration,
+    Observation currentObservation,
+    State & currentState,
+    AddOn & currentAddon);
 
-private :
+  bool set_(
+    const Duration & duration,
+    const Observation & currentObservation,
+    const Input & currentInput,
+    State & currentState,
+    AddOn & currentAddon);
 
-  void update_(const Duration & duration,
-               Observation currentObservation,
-               State &currentState,
-               AddOn &currentAddon);
+  void computeLevelArms_(
+    const Observation & ObservationPosition,
+    const AddOn & currentAddon);
 
-  bool set_(const Duration & duration,
-            const Observation & currentObservation,
-            const Input & currentInput,
-            State &currentState,
-            AddOn &currentAddon);
-
-  void computeLevelArms_(const Observation & ObservationPosition,
-                         const AddOn & currentAddon);
-
-  void setParticlePositions_(const Observation &ObservationPosition,
-                             State &currentState);
+  void setParticlePositions_(
+    const Observation & ObservationPosition,
+    State & currentState);
 
   void applyLevelArmCompentations_(State & currentState);
 
-
-private :
-
+private:
   RowMajorMatrix levelArms_;
   RowMajorVector cosCourses_;
   RowMajorVector sinCourses_;
@@ -77,9 +85,4 @@ private :
 
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_PARTICLE_R2WLOCALISATIONPFUPDATERPOSITION_HPP_
-
-
-
-
-
+#endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__PARTICLE__R2WLOCALISATIONPFUPDATERPOSITION_HPP_

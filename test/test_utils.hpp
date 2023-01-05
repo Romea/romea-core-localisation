@@ -1,3 +1,9 @@
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+#ifndef TEST_TEST_UTILS_HPP_
+#define TEST_TEST_UTILS_HPP_
+
 //-----------------------------------------------------------------------------
 template <typename MsgCovType>
 void fillMsgCovariance(MsgCovType & covariance, size_t start = 0)
@@ -37,3 +43,6 @@ void isSame(const EigenType & obj1, const EigenType & obj2)
     EXPECT_DOUBLE_EQ(obj2(n), obj2(n));
   }
 }
+
+
+#endif  // TEST_TEST_UTILS_HPP_

@@ -1,28 +1,32 @@
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
 #include "romea_core_localisation/robot_to_human/kalman/R2HLocalisationKFResults.hpp"
 
-namespace romea {
+namespace romea
+{
 
 //-----------------------------------------------------------------------------
-R2HLocalisationKFResults::R2HLocalisationKFResults():
-  R2HLocalisationResults()
+R2HLocalisationKFResults::R2HLocalisationKFResults()
+: R2HLocalisationResults()
 {
 }
 
 //--------------------------------------------------------------------------
-const double &R2HLocalisationKFResults::getLeaderX() const
+const double & R2HLocalisationKFResults::getLeaderX() const
 {
   return state.X(R2HLocalisationKFMetaState::LEADER_POSITION_X);
 }
 
 //--------------------------------------------------------------------------
-const double &R2HLocalisationKFResults::getLeaderY() const
+const double & R2HLocalisationKFResults::getLeaderY() const
 {
   return state.X(R2HLocalisationKFMetaState::LEADER_POSITION_Y);
 }
 
 
 //--------------------------------------------------------------------------
-const double &R2HLocalisationKFResults::getLinearSpeed() const
+const double & R2HLocalisationKFResults::getLinearSpeed() const
 {
   return input.U(R2HLocalisationKFMetaState::LINEAR_SPEED_X_BODY);
 }
@@ -34,7 +38,7 @@ const double & R2HLocalisationKFResults::getLateralSpeed() const
 }
 
 //--------------------------------------------------------------------------
-const double &R2HLocalisationKFResults::getAngularSpeed() const
+const double & R2HLocalisationKFResults::getAngularSpeed() const
 {
   return input.U(R2HLocalisationKFMetaState::ANGULAR_SPEED_Z_BODY);
 }
@@ -73,5 +77,4 @@ Position2D R2HLocalisationKFResults::toLeaderPosition2D() const
   return position2d;
 }
 
-}
-
+}  // namespace romea

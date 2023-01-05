@@ -1,50 +1,57 @@
-#ifndef romea_R2WLocalisationUpdaterAttitude_hpp
-#define romea_R2WLocalisationUpdaterAttitude_hpp
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
 
-//romea
+#ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__R2WLOCALISATIONUPDATERATTITUDE_HPP_ 
+#define ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__R2WLOCALISATIONUPDATERATTITUDE_HPP_ 
+
+// romea
 #include <romea_core_common/time/Time.hpp>
 #include <romea_core_common/math/Algorithm.hpp>
+
+// std
+#include <string>
+
+// local
 #include "../LocalisationUpdaterProprioceptive.hpp"
 #include "../ObservationAttitude.hpp"
 #include "../LocalisationFSMState.hpp"
 
 
-namespace romea {
-
-
-template <class MetaState>
-class R2WLocalisationUpdaterAttitude : public LocalisationUpdaterProprioceptive
+namespace romea
 {
 
-public :
 
-  using Observation=ObservationAttitude;
+template<class MetaState>
+class R2WLocalisationUpdaterAttitude : public LocalisationUpdaterProprioceptive
+{
+public:
+  using Observation = ObservationAttitude;
 
-  R2WLocalisationUpdaterAttitude(const std::string & updaterName,
-                                 const double & minimalRate):
-    LocalisationUpdaterProprioceptive(updaterName,minimalRate)
+  R2WLocalisationUpdaterAttitude(
+    const std::string & updaterName,
+    const double & minimalRate)
+  : LocalisationUpdaterProprioceptive(updaterName, minimalRate)
   {
   }
 
-  void update(const Duration & duration,
-              const Observation &currentObservation,
-              LocalisationFSMState & /*currentFSMState*/,
-              MetaState &currentMetaState)
+  void update(
+    const Duration & duration,
+    const Observation & currentObservation,
+    LocalisationFSMState & /*currentFSMState*/,
+    MetaState & currentMetaState)
   {
     rateDiagnostic_.evaluate(duration);
 
-    assert(near(currentObservation.R(0,0),currentObservation.R(1,1)));
-    currentMetaState.addon.roll=currentObservation.Y(ObservationAttitude::ROLL);
-    currentMetaState.addon.pitch=currentObservation.Y(ObservationAttitude::PITCH);
-    currentMetaState.addon.rollPitchVariance=currentObservation.R(ObservationAttitude::ROLL,
-                                                                  ObservationAttitude::ROLL);
+    assert(near(currentObservation.R(0, 0), currentObservation.R(1, 1)));
+    currentMetaState.addon.roll = currentObservation.Y(ObservationAttitude::ROLL);
+    currentMetaState.addon.pitch = currentObservation.Y(ObservationAttitude::PITCH);
+    currentMetaState.addon.rollPitchVariance = currentObservation.R(
+      ObservationAttitude::ROLL,
+      ObservationAttitude::ROLL);
   }
-
-
 };
 
-}
+}  // namespace romea
 
 
-
-#endif
+#endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__R2WLOCALISATIONUPDATERATTITUDE_HPP_

@@ -1,97 +1,105 @@
-//romea
-#include "romea_core_localisation/robot_to_world/kalman/R2WLocalisationKFUpdaterCourse.hpp"
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+// romea
 #include <romea_core_common/math/EulerAngles.hpp>
 
+// std
 #include <iostream>
+#include <string>
 
-namespace romea {
+// local
+#include "romea_core_localisation/robot_to_world/kalman/R2WLocalisationKFUpdaterCourse.hpp"
+
+namespace romea
+{
 
 //--------------------------------------------------------------------------
 R2WLocalisationKFUpdaterCourse::R2WLocalisationKFUpdaterCourse(
-    const std::string & updaterName,
-    const double & minimalRate,
-    const TriggerMode & triggerMode,
-    const double & maximalMahalanobisDistance,
-    const std::string & logFilename):
-  LocalisationUpdaterExteroceptive(updaterName,
-                                   minimalRate,
-                                   triggerMode,
-                                   logFilename),
+  const std::string & updaterName,
+  const double & minimalRate,
+  const TriggerMode & triggerMode,
+  const double & maximalMahalanobisDistance,
+  const std::string & logFilename)
+: LocalisationUpdaterExteroceptive(updaterName,
+    minimalRate,
+    triggerMode,
+    logFilename),
   KFUpdaterCore(maximalMahalanobisDistance)
 {
   H_(0, MetaState::ORIENTATION_Z) = 1;
-  setLogFileHeader_({"stamp",
-                     "course",
-                     "cov_course",
-                     "theta",
-                     "cov_theta"
-                    });
+  setLogFileHeader_(
+    {"stamp",
+      "course",
+      "cov_course",
+      "theta",
+      "cov_theta"
+    });
 }
 
 //--------------------------------------------------------------------------
-void R2WLocalisationKFUpdaterCourse::update(const Duration & duration,
-                                            const Observation &currentObservation,
-                                            LocalisationFSMState & currentFSMState,
-                                            MetaState & currentMetaState)
+void R2WLocalisationKFUpdaterCourse::update(
+  const Duration & duration,
+  const Observation & currentObservation,
+  LocalisationFSMState & currentFSMState,
+  MetaState & currentMetaState)
 {
   assert(currentObservation.R() > 0);
 
   rateDiagnostic_.evaluate(duration);
 
   switch (currentFSMState) {
-  case LocalisationFSMState::INIT:
-    set_(duration,
-         currentObservation,
-         currentMetaState.state,
-         currentMetaState.addon);
-    break;
-  case LocalisationFSMState::RUNNING:
-    if (triggerMode_ == TriggerMode::ALWAYS)
-    {
-      try
-      {
-        update_(duration,
-                currentObservation,
-                currentMetaState.state,
-                currentMetaState.addon);
+    case LocalisationFSMState::INIT:
+      set_(
+        duration,
+        currentObservation,
+        currentMetaState.state,
+        currentMetaState.addon);
+      break;
+    case LocalisationFSMState::RUNNING:
+      if (triggerMode_ == TriggerMode::ALWAYS) {
+        try {
+          update_(
+            duration,
+            currentObservation,
+            currentMetaState.state,
+            currentMetaState.addon);
+        } catch (...) {
+          std::cout << " FSM : COURSE UPDATE HAS FAILED, RESET AND GO TO INIT MODE" << std::endl;
+          currentFSMState = LocalisationFSMState::INIT;
+          currentMetaState.state.reset();
+          currentMetaState.addon.reset();
+        }
       }
-      catch(...)
-      {
-        std::cout << " FSM : COURSE UPDATE HAS FAILED, RESET AND GO TO INIT MODE"<< std::endl;
-        currentFSMState = LocalisationFSMState::INIT;
-        currentMetaState.state.reset();
-        currentMetaState.addon.reset();
-      }
-    }
-    break;
-  default:
-    break;
+      break;
+    default:
+      break;
   }
 }
 //--------------------------------------------------------------------------
-void R2WLocalisationKFUpdaterCourse::update_(const Duration & duration,
-                                             const Observation & currentObservation,
-                                             State & currentState,
-                                             AddOn & currentAddon)
+void R2WLocalisationKFUpdaterCourse::update_(
+  const Duration & duration,
+  const Observation & currentObservation,
+  State & currentState,
+  AddOn & currentAddon)
 {
-  Inn_ = betweenMinusPiAndPi(currentObservation.Y()-currentState.X(MetaState::ORIENTATION_Z));
+  Inn_ = betweenMinusPiAndPi(currentObservation.Y() - currentState.X(MetaState::ORIENTATION_Z));
 
-  QInn_  = currentObservation.R() + currentState.P(MetaState::ORIENTATION_Z,
-                                                         MetaState::ORIENTATION_Z);
+  QInn_ = currentObservation.R() + currentState.P(
+    MetaState::ORIENTATION_Z,
+    MetaState::ORIENTATION_Z);
 
   // log
-  if (logFile_.is_open())
-  {
-    logFile_ << duration.count() <<",";
-    logFile_ << currentObservation.Y() <<",";
-    logFile_ << currentObservation.R() <<",";
-    logFile_ << currentState.X(2) <<",";
-    logFile_ << currentState.P(2, 2) <<",/n";
+  if (logFile_.is_open()) {
+    logFile_ << duration.count() << ",";
+    logFile_ << currentObservation.Y() << ",";
+    logFile_ << currentObservation.R() << ",";
+    logFile_ << currentState.X(2) << ",";
+    logFile_ << currentState.P(2, 2) << ",/n";
   }
 
-  if (!updateState_(currentState))
-  {
-      // TODO(jean) renvoyer un throw
+  if (!updateState_(currentState)) {
+    // TODO(jean) renvoyer un throw
   }
 
   currentAddon.lastExteroceptiveUpdate.time = duration;
@@ -99,15 +107,17 @@ void R2WLocalisationKFUpdaterCourse::update_(const Duration & duration,
 }
 
 //--------------------------------------------------------------------------
-void R2WLocalisationKFUpdaterCourse::set_(const Duration & /*duration*/,
-                                          const Observation & currentObservation,
-                                          State & currentState,
-                                          AddOn & /*currentAddon*/)
+void R2WLocalisationKFUpdaterCourse::set_(
+  const Duration & /*duration*/,
+  const Observation & currentObservation,
+  State & currentState,
+  AddOn & /*currentAddon*/)
 {
   currentState.X(MetaState::ORIENTATION_Z) = currentObservation.Y();
 
-  currentState.P(MetaState::ORIENTATION_Z,
-                 MetaState::ORIENTATION_Z) = currentObservation.R();
+  currentState.P(
+    MetaState::ORIENTATION_Z,
+    MetaState::ORIENTATION_Z) = currentObservation.R();
 
 
 //  currentAddon.lastExteroceptiveUpdate.time=duration;

@@ -1,11 +1,15 @@
-#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_KALMAN_R2HLOCALISATIONKFMETASTATE_HPP_  
-#define ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_KALMAN_R2HLOCALISATIONKFMETASTATE_HPP_  
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+#ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_HUMAN__KALMAN__R2HLOCALISATIONKFMETASTATE_HPP_
+#define ROMEA_CORE_LOCALISATION__ROBOT_TO_HUMAN__KALMAN__R2HLOCALISATIONKFMETASTATE_HPP_
 
 // namespace romea
 #include <romea_core_filtering/GaussianState.hpp>
 #include "romea_core_localisation/robot_to_human/R2HLocalisationMetaState.hpp"
 
-namespace romea {
+namespace romea
+{
 
 struct R2HLocalisationKFMetaState : R2HLocalisationMetaState
 {
@@ -18,6 +22,6 @@ struct R2HLocalisationKFMetaState : R2HLocalisationMetaState
   State state;
 };
 
-}  //namespace romea
+}  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_KALMAN_R2HLOCALISATIONKFMETASTATE_HPP_  
+#endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_HUMAN__KALMAN__R2HLOCALISATIONKFMETASTATE_HPP_

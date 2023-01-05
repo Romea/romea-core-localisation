@@ -1,6 +1,8 @@
-#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_R2WLOCALISATIONTRAITS_HPP_
-#define ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_R2WLOCALISATIONTRAITS_HPP_
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
 
+#ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__R2WLOCALISATIONTRAITS_HPP_
+#define ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__R2WLOCALISATIONTRAITS_HPP_
 
 // romea
 #include <romea_core_filtering/kalman/KalmanFilter.hpp>
@@ -22,7 +24,8 @@
 #include "romea_core_localisation/robot_to_world/particle/R2WLocalisationPFUpdaterPosition.hpp"
 #include "romea_core_localisation/robot_to_world/particle/R2WLocalisationPFPredictor.hpp"
 
-namespace romea {
+namespace romea
+{
 
 template<FilterType type>
 struct R2WLocalisationTraits
@@ -33,7 +36,7 @@ struct R2WLocalisationTraits
 template<>
 struct R2WLocalisationTraits<KALMAN>
 {
-  using Filter = KalmanFilter<R2WLocalisationKFMetaState,LocalisationFSMState,Duration>;
+  using Filter = KalmanFilter<R2WLocalisationKFMetaState, LocalisationFSMState, Duration>;
   using UpdaterLinearSpeed = LocalisationUpdaterLinearSpeed<R2WLocalisationKFMetaState>;
   using UpdaterLinearSpeeds = LocalisationUpdaterLinearSpeeds<R2WLocalisationKFMetaState>;
   using UpdaterAngularSpeed = LocalisationUpdaterAngularSpeed<R2WLocalisationKFMetaState>;
@@ -64,5 +67,4 @@ struct R2WLocalisationTraits<PARTICLE>
 
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_R2WLOCALISATIONTRAITS_HPP_
-
+#endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__R2WLOCALISATIONTRAITS_HPP_

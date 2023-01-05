@@ -1,34 +1,37 @@
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
 #include "romea_core_localisation/robot_to_robot/kalman/R2RLocalisationKFResults.hpp"
 
-namespace romea {
+namespace romea
+{
 
 //-----------------------------------------------------------------------------
-R2RLocalisationKFResults::R2RLocalisationKFResults():
-  R2RLocalisationResults()
+R2RLocalisationKFResults::R2RLocalisationKFResults()
+: R2RLocalisationResults()
 {
 }
 
-
 //--------------------------------------------------------------------------
-const double &R2RLocalisationKFResults::getLeaderX() const
+const double & R2RLocalisationKFResults::getLeaderX() const
 {
   return state.X(LEADER_POSITION_X);
 }
 
 //--------------------------------------------------------------------------
-const double &R2RLocalisationKFResults::getLeaderY() const
+const double & R2RLocalisationKFResults::getLeaderY() const
 {
   return state.X(LEADER_POSITION_Y);
 }
 
 //--------------------------------------------------------------------------
-const double &R2RLocalisationKFResults::getLeaderOrientation() const
+const double & R2RLocalisationKFResults::getLeaderOrientation() const
 {
   return state.X(LEADER_ORIENTATION_Z);
 }
 
 //--------------------------------------------------------------------------
-const double &R2RLocalisationKFResults::getLinearSpeed() const
+const double & R2RLocalisationKFResults::getLinearSpeed() const
 {
   return input.U(LINEAR_SPEED_X_BODY);
 }
@@ -40,7 +43,7 @@ const double & R2RLocalisationKFResults::getLateralSpeed() const
 }
 
 //--------------------------------------------------------------------------
-const double &R2RLocalisationKFResults::getAngularSpeed() const
+const double & R2RLocalisationKFResults::getAngularSpeed() const
 {
   return input.U(ANGULAR_SPEED_Z_BODY);
 }
@@ -54,11 +57,11 @@ Eigen::Vector3d R2RLocalisationKFResults::getTwist() const
 //--------------------------------------------------------------------------
 Eigen::Matrix3d R2RLocalisationKFResults::getTwistCovariance()const
 {
-  return input.QU().block<3,3>(LINEAR_SPEED_X_BODY,LINEAR_SPEED_X_BODY);
+  return input.QU().block<3, 3>(LINEAR_SPEED_X_BODY, LINEAR_SPEED_X_BODY);
 }
 
 //--------------------------------------------------------------------------
-const double &R2RLocalisationKFResults::getLeaderLinearSpeed() const
+const double & R2RLocalisationKFResults::getLeaderLinearSpeed() const
 {
   return input.U(LEADER_LINEAR_SPEED_X_BODY);
 }
@@ -70,7 +73,7 @@ const double & R2RLocalisationKFResults::getLeaderLateralSpeed() const
 }
 
 //--------------------------------------------------------------------------
-const double &R2RLocalisationKFResults::getLeaderAngularSpeed() const
+const double & R2RLocalisationKFResults::getLeaderAngularSpeed() const
 {
   return input.U(LEADER_ANGULAR_SPEED_Z_BODY);
 }
@@ -105,7 +108,7 @@ Pose2D R2RLocalisationKFResults::toLeaderPose2D() const
   Pose2D pose2d;
   pose2d.position.x() = getLeaderX();
   pose2d.position.y() = getLeaderY();
-  pose2d.yaw  = getLeaderOrientation();
+  pose2d.yaw = getLeaderOrientation();
   pose2d.covariance = getLeaderPoseCovariance();
   return pose2d;
 }
@@ -126,4 +129,3 @@ PoseAndTwist2D R2RLocalisationKFResults::toLeaderPoseAndBodyTwist2D() const
 }
 
 }  // namespace romea
-

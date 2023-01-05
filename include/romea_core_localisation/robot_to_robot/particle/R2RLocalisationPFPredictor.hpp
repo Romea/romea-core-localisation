@@ -1,13 +1,17 @@
-#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_PARTICLE_R2RLOCALISATIONPFPREDICTOR_HPP_
-#define ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_PARTICLE_R2RLOCALISATIONPFPREDICTOR_HPP_
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+#ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__PARTICLE__R2RLOCALISATIONPFPREDICTOR_HPP_
+#define ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__PARTICLE__R2RLOCALISATIONPFPREDICTOR_HPP_
 
 // romea
 #include "romea_core_localisation/LocalisationPredictor.hpp"
 #include "romea_core_localisation/robot_to_robot/particle/R2RLocalisationPFMetaState.hpp"
 
-namespace romea {
+namespace romea
+{
 
-class R2RLocalisationPFPredictor : public  LocalisationPredictor<R2RLocalisationPFMetaState>
+class R2RLocalisationPFPredictor : public LocalisationPredictor<R2RLocalisationPFMetaState>
 {
 public:
   using MetaState = R2RLocalisationPFMetaState;
@@ -17,30 +21,33 @@ public:
   using RowMajorVector = R2RLocalisationPFMetaState::State::RowMajorVector;
   using RowMajorMatrix = R2RLocalisationPFMetaState::State::RowMajorMatrix;
 
-public :
+public:
+  R2RLocalisationPFPredictor(
+    const Duration & maximalDurationInDeadReckoning,
+    const double & maximalTravelledDistanceInDeadReckoning,
+    const double & maximalPositionCircularErrorProbable,
+    const size_t & numberOfParticles);
 
-  R2RLocalisationPFPredictor(const Duration &maximalDurationInDeadReckoning,
-                             const double &maximalTravelledDistanceInDeadReckoning,
-                             const double &maximalPositionCircularErrorProbable,
-                             const size_t & numberOfParticles);
+private:
+  bool stop_(
+    const Duration & duration,
+    const MetaState & meatastate)override;
 
-private :
+  void predict_(
+    const MetaState & previousMetaState,
+    MetaState & currentMetaState)override;
 
-  bool stop_(const Duration & duration,
-             const MetaState & meatastate)override;
+  void reset_(MetaState & metaState)override;
 
-  void predict_(const MetaState &previousMetaState,
-                MetaState &currentMetaState)override;
+  void predictState_(
+    const State & previousState,
+    const Input & previousInput,
+    State & currentState);
 
-  void reset_(MetaState &metaState)override;
-
-  void predictState_(const State &previousState,
-                     const Input &previousInput,
-                     State &currentState);
-
-  void predictAddOn_(const AddOn & previousAddOn,
-                     const State &currentState,
-                     AddOn &currentAddOn);
+  void predictAddOn_(
+    const AddOn & previousAddOn,
+    const State & currentState,
+    AddOn & currentAddOn);
 
 
   void drawFollowerInputs(const Input & previousInput);
@@ -65,4 +72,4 @@ private:
 
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_PARTICLE_R2RLOCALISATIONPFPREDICTOR_HPP_
+#endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__PARTICLE__R2RLOCALISATIONPFPREDICTOR_HPP_

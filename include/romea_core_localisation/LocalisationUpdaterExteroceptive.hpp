@@ -1,5 +1,8 @@
-#ifndef ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATEREXTEROCEPTIVE_HPP_
-#define ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATEREXTEROCEPTIVE_HPP_
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+#ifndef ROMEA_CORE_LOCALISATION__LOCALISATIONUPDATEREXTEROCEPTIVE_HPP_
+#define ROMEA_CORE_LOCALISATION__LOCALISATIONUPDATEREXTEROCEPTIVE_HPP_
 
 // std
 #include <fstream>
@@ -9,15 +12,17 @@
 // romea
 #include "romea_core_localisation/LocalisationUpdaterBase.hpp"
 
-namespace romea {
+namespace romea
+{
 
 class LocalisationUpdaterExteroceptive : public LocalisationUpdaterBase
 {
 public:
-  LocalisationUpdaterExteroceptive(const std::string & updaterName,
-                                   const double & minimalRate,
-                                   const TriggerMode & triggerMode,
-                                   const std::string & logFilename);
+  LocalisationUpdaterExteroceptive(
+    const std::string & updaterName,
+    const double & minimalRate,
+    const TriggerMode & triggerMode,
+    const std::string & logFilename);
 
   virtual ~LocalisationUpdaterExteroceptive() = default;
 
@@ -25,11 +30,10 @@ public:
 
   void setLogFileHeader_(const std::vector<std::string> & logColumnNames);
 
-protected :
-
+protected:
   std::ofstream logFile_;
 };
 
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_LOCALISATIONUPDATEREXTEROCEPTIVE_HPP_  
+#endif  // ROMEA_CORE_LOCALISATION__LOCALISATIONUPDATEREXTEROCEPTIVE_HPP_

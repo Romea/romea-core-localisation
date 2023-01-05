@@ -1,8 +1,14 @@
-#ifndef ROMEA_CORE_LOCALISATION_LOCALISATIONFSMSTATE_HPP_
-#define ROMEA_CORE_LOCALISATION_LOCALISATIONFSMSTATE_HPP_
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
 
-#include <string>
+#ifndef ROMEA_CORE_LOCALISATION__LOCALISATIONFSMSTATE_HPP_
+#define ROMEA_CORE_LOCALISATION__LOCALISATIONFSMSTATE_HPP_
+
+// romea
 #include <romea_core_common/diagnostic/DiagnosticStatus.hpp>
+
+// std
+#include <string>
 
 namespace romea
 {
@@ -21,4 +27,4 @@ DiagnosticStatus toDiagnosticStatus(const LocalisationFSMState & fmsState);
 
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_LOCALISATIONFSMSTATE_HPP_
+#endif  // ROMEA_CORE_LOCALISATION__LOCALISATIONFSMSTATE_HPP_

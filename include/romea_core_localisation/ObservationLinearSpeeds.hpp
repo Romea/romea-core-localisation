@@ -1,10 +1,13 @@
-#ifndef ROMEA_CORE_LOCALISATION_OBSERVATIONLINEARSPEEDS_HPP_
-#define ROMEA_CORE_LOCALISATION_OBSERVATIONLINEARSPEEDS_HPP_
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+#ifndef ROMEA_CORE_LOCALISATION__OBSERVATIONLINEARSPEEDS_HPP_
+#define ROMEA_CORE_LOCALISATION__OBSERVATIONLINEARSPEEDS_HPP_
 
 #include <romea_core_filtering/GaussianObservation.hpp>
 
-namespace romea {
-
+namespace romea
+{
 
 struct ObservationLinearSpeeds : GaussianObservation<double, 2>
 {
@@ -16,6 +19,6 @@ struct ObservationLinearSpeeds : GaussianObservation<double, 2>
   };
 };
 
-}  //namespace romea
+}  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_OBSERVATIONLINEARSPEEDS_HPP_
+#endif  // ROMEA_CORE_LOCALISATION__OBSERVATIONLINEARSPEEDS_HPP_

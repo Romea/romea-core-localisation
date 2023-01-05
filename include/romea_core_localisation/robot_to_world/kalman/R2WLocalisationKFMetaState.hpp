@@ -1,11 +1,17 @@
-#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_KALMAN_R2WLOCALISATIONKFMETASTATE_HPP_
-#define ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_KALMAN_R2WLOCALISATIONKFMETASTATE_HPP_
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+#ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__KALMAN__R2WLOCALISATIONKFMETASTATE_HPP_
+#define ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__KALMAN__R2WLOCALISATIONKFMETASTATE_HPP_
+
+
+// romea
+#include <romea_core_filtering/GaussianState.hpp>
 
 // std
 #include <memory>
 
-// romea
-#include <romea_core_filtering/GaussianState.hpp>
+// local
 #include "romea_core_localisation/robot_to_world/R2WLocalisationMetaState.hpp"
 #include "romea_core_localisation/robot_to_world/R2WLevelArmCompensation.hpp"
 
@@ -30,4 +36,4 @@ void applyLevelArmCompensation(R2WLocalisationKFMetaState::State & currentState,
 
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_WORLD_KALMAN_R2WLOCALISATIONKFMETASTATE_HPP_
+#endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__KALMAN__R2WLOCALISATIONKFMETASTATE_HPP_

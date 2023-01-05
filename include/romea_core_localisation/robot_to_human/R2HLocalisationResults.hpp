@@ -1,3 +1,6 @@
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
 #ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_R2HLOCALISATIONRESULTS_HPP_
 #define ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_R2HLOCALISATIONRESULTS_HPP_
 
@@ -5,16 +8,16 @@
 #include <romea_core_common/geometry/PoseAndTwist3D.hpp>
 #include <romea_core_common/geometry/Position2D.hpp>
 
-namespace romea {
+namespace romea
+{
 
-template <class MetaState>
+template<class MetaState>
 class R2HLocalisationResults : public MetaState
 {
-public :
-
-  template <typename ...Args>
-  R2HLocalisationResults(Args ...args):
-    MetaState(std::forward<Args>(args)...)
+public:
+  template<typename ... Args>
+  R2HLocalisationResults(Args ... args)
+  : MetaState(std::forward<Args>(args)...)
   {
   }
 
@@ -38,4 +41,4 @@ public :
 
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_R2HLOCALISATIONRESULTS_HPP_ 
+#endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_HUMAN__R2HLOCALISATIONRESULTS_HPP_

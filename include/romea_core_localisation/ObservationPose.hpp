@@ -1,6 +1,8 @@
-#ifndef ROMEA_CORE_LOCALISATION_OBSERVATIONPOSE_HPP_
-#define ROMEA_CORE_LOCALISATION_OBSERVATIONPOSE_HPP_
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
 
+#ifndef ROMEA_CORE_LOCALISATION__OBSERVATIONPOSE_HPP_
+#define ROMEA_CORE_LOCALISATION__OBSERVATIONPOSE_HPP_
 
 #include <romea_core_filtering/GaussianObservation.hpp>
 
@@ -8,7 +10,8 @@ namespace romea
 {
 struct ObservationPose : GaussianObservation<double, 3>
 {
-  enum Index {
+  enum Index
+  {
     POSITION_X = 0,
     POSITION_Y,
     ORIENTATION_Z,
@@ -16,8 +19,8 @@ struct ObservationPose : GaussianObservation<double, 3>
   };
 
 
-  ObservationPose():
-    GaussianObservation(),
+  ObservationPose()
+  : GaussianObservation(),
     levelArm(Eigen::Vector3d::Zero())
   {
   }
@@ -27,4 +30,4 @@ struct ObservationPose : GaussianObservation<double, 3>
 
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_OBSERVATIONPOSE_HPP_
+#endif  // ROMEA_CORE_LOCALISATION__OBSERVATIONPOSE_HPP_

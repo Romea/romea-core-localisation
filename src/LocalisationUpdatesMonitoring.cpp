@@ -1,15 +1,20 @@
-// romea
-#include "romea_core_localisation/LocalisationUpdatesMonitoring.hpp"
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
 
 // std
 #include <cmath>
 
-namespace romea {
+// romea
+#include "romea_core_localisation/LocalisationUpdatesMonitoring.hpp"
+
+
+namespace romea
+{
 
 
 //---------------------------------------------------------------------------
-LocalisationUpdateMonitoring::LocalisationUpdateMonitoring():
-  time(Duration::zero()),
+LocalisationUpdateMonitoring::LocalisationUpdateMonitoring()
+: time(Duration::zero()),
   travelledDistance(NAN)
 {
 }

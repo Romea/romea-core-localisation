@@ -1,10 +1,14 @@
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
 #include "romea_core_localisation/robot_to_robot/kalman/R2RLocalisationKFMetaState.hpp"
 
-namespace romea {
+namespace romea
+{
 
 //-----------------------------------------------------------------------------
-R2RLocalisationKFMetaState::R2RLocalisationKFMetaState():
-  R2RLocalisationMetaState(),
+R2RLocalisationKFMetaState::R2RLocalisationKFMetaState()
+: R2RLocalisationMetaState(),
   state()
 {
 }

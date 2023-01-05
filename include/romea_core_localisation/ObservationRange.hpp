@@ -1,14 +1,18 @@
-#ifndef ROMEA_CORE_LOCALISATION_OBSERVATIONRANGE_HPP_
-#define ROMEA_CORE_LOCALISATION_OBSERVATIONRANGE_HPP_
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+#ifndef ROMEA_CORE_LOCALISATION__OBSERVATIONRANGE_HPP_
+#define ROMEA_CORE_LOCALISATION__OBSERVATIONRANGE_HPP_
 
 #include <romea_core_filtering/GaussianObservation.hpp>
 
-namespace romea {
+namespace romea
+{
 
 struct ObservationRange : GaussianObservation<double, 1>
 {
-  ObservationRange():
-    responderPosition(Eigen::Vector3d::Zero()),
+  ObservationRange()
+  : responderPosition(Eigen::Vector3d::Zero()),
     initiatorPosition(Eigen::Vector3d::Zero()),
     terrainElevation(0)
   {
@@ -21,4 +25,4 @@ struct ObservationRange : GaussianObservation<double, 1>
 
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_OBSERVATIONRANGE_HPP_
+#endif  // ROMEA_CORE_LOCALISATION__OBSERVATIONRANGE_HPP_

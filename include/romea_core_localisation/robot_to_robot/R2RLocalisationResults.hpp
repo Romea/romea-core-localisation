@@ -1,27 +1,30 @@
-#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_R2RLOCALISATIONRESULTS_HPP
-#define ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_R2RLOCALISATIONRESULTS_HPP
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+#ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__R2RLOCALISATIONRESULTS_HPP
+#define ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__R2RLOCALISATIONRESULTS_HPP
 
 // romea
 #include <romea_core_common/time/Time.hpp>
 #include <romea_core_common/geometry/PoseAndTwist3D.hpp>
 
-namespace romea {
+namespace romea
+{
 
-template <class State>
+template<class State>
 class R2RLocalisationResults : public State
 {
-public :
-
-  template <typename... Args>
-  R2RLocalisationResults(Args... args):
-    State(std::forward<Args>(args)...),
+public:
+  template<typename ... Args>
+  R2RLocalisationResults(Args... args)
+  : State(std::forward<Args>(args)...),
     duration_(Duration::zero())
   {
   }
 
   virtual ~R2RLocalisationResults() = default;
 
-  virtual void setDuration(const Duration &duration)
+  virtual void setDuration(const Duration & duration)
   {
     duration_ = duration;
   }
@@ -50,11 +53,10 @@ public :
   virtual Pose2D toLeaderPose2D() const = 0;
   virtual PoseAndTwist2D toLeaderPoseAndBodyTwist2D() const = 0;
 
-protected :
-
+protected:
   Duration duration_;
 };
 
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_ROBOT_TO_ROBOT_R2RLOCALISATIONRESULTS_HPP
+#endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__R2RLOCALISATIONRESULTS_HPP
