@@ -5,6 +5,6 @@ repositories:
     romea_core/romea_filtering:
         type: git
         url: git@gitlab-ssh.irstea.fr:romea_core/romea_filtering.git
-    romea_core/romea_control:
+    romea_core/romea_localisation:
         type: git
         url: git@gitlab-ssh.irstea.fr:romea_core/romea_localisation.git

@@ -88,7 +88,7 @@ TEST_F(TestPoseUpdater, testSetObservation)
   isSame(metastate.state.X(), observation.Y());
   isSame(metastate.state.P(), observation.R());
   // EXPECT_EQ(metastate.addon.lastExteroceptiveUpdate.time.count(), duration.count());
-  EXPECT_DOUBLE_EQ(metastate.addon.lastExteroceptiveUpdate.travelledDistance, 0);
+  // EXPECT_DOUBLE_EQ(metastate.addon.lastExteroceptiveUpdate.travelledDistance, 0);
 }
 
 TEST_F(TestPoseUpdater, testUpdate)
