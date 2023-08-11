@@ -35,7 +35,7 @@ public:
     const Duration & maximalDurationInDeadReckoning,
     const double & maximalTravelledDistanceInDeadReckoning,
     const double & maximalPositionCircularErrorProbable,
-    const Eigen::Matrix2d & leaderMotionCovariance);
+    const double & leaderMotionStd);
 
   virtual ~R2HLocalisationKFPredictor() = default;
 

@@ -34,13 +34,13 @@ R2HLocalisationKFPredictor::R2HLocalisationKFPredictor(
   const Duration & maximalDurationInDeadReckoning,
   const double & maximalTravelledDistanceInDeadReckoning,
   const double & maximalPositionCircularErrorProbable,
-  const Eigen::Matrix2d & leaderMotionCovariance)
+  const double & leaderMotionStd)
 : LocalisationPredictor(maximalDurationInDeadReckoning,
     maximalTravelledDistanceInDeadReckoning,
     maximalPositionCircularErrorProbable),
   jF_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE, MetaState::STATE_SIZE)),
   jG_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE, MetaState::INPUT_SIZE)),
-  leaderMotionCovariance_(leaderMotionCovariance),
+  leaderMotionCovariance_(Eigen::Matrix2d::Identity() * leaderMotionStd * leaderMotionStd),
   vx_(0),
   vy_(0),
   w_(0),
