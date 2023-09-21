@@ -19,6 +19,7 @@
 // romea
 #include <romea_core_filtering/kalman/KalmanFilter.hpp>
 #include <romea_core_filtering/particle/ParticleFilter.hpp>
+#include "romea_core_localisation/LocalisationUpdaterTwist.hpp"
 #include "romea_core_localisation/LocalisationUpdaterLinearSpeed.hpp"
 #include "romea_core_localisation/LocalisationUpdaterLinearSpeeds.hpp"
 #include "romea_core_localisation/LocalisationUpdaterAngularSpeed.hpp"
@@ -49,6 +50,7 @@ template<>
 struct R2WLocalisationTraits<KALMAN>
 {
   using Filter = KalmanFilter<R2WLocalisationKFMetaState, LocalisationFSMState, Duration>;
+  using UpdaterTwist = LocalisationUpdaterTwist<R2WLocalisationKFMetaState>;
   using UpdaterLinearSpeed = LocalisationUpdaterLinearSpeed<R2WLocalisationKFMetaState>;
   using UpdaterLinearSpeeds = LocalisationUpdaterLinearSpeeds<R2WLocalisationKFMetaState>;
   using UpdaterAngularSpeed = LocalisationUpdaterAngularSpeed<R2WLocalisationKFMetaState>;
@@ -65,6 +67,7 @@ template<>
 struct R2WLocalisationTraits<PARTICLE>
 {
   using Filter = ParticleFilter<R2WLocalisationPFMetaState, LocalisationFSMState, Duration>;
+  using UpdaterTwist = LocalisationUpdaterTwist<R2WLocalisationPFMetaState>;
   using UpdaterLinearSpeed = LocalisationUpdaterLinearSpeed<R2WLocalisationPFMetaState>;
   using UpdaterLinearSpeeds = LocalisationUpdaterLinearSpeeds<R2WLocalisationPFMetaState>;
   using UpdaterAngularSpeed = LocalisationUpdaterAngularSpeed<R2WLocalisationPFMetaState>;
