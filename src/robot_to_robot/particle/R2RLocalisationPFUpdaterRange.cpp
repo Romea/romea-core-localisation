@@ -48,6 +48,8 @@ void R2RLocalisationPFUpdaterRange::update(
   LocalisationFSMState & currentFSMState,
   MetaState & currentMetaState)
 {
+  rateDiagnostic_.evaluate(duration);
+
   if (currentFSMState == LocalisationFSMState::RUNNING) {
     try {
       update_(

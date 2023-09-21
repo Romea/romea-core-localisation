@@ -46,6 +46,8 @@ void R2RLocalisationKFUpdaterLeaderPose::update(
   LocalisationFSMState & currentFSMState,
   MetaState & currentMetaState)
 {
+  rateDiagnostic_.evaluate(duration);
+
   switch (currentFSMState) {
     case LocalisationFSMState::INIT:
       if (set_(
