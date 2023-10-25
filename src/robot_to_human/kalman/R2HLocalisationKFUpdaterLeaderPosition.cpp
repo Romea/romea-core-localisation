@@ -29,7 +29,7 @@ R2HLocalisationKFUpdaterLeaderPosition::R2HLocalisationKFUpdaterLeaderPosition(
   const std::string & updaterName,
   const double & minimalRate,
   const TriggerMode & triggerMode,
-  const double & maximalMahalanobisDistance,
+  const double & /*maximalMahalanobisDistance*/,
   const std::string & logFilename)
 : LocalisationUpdaterExteroceptive(updaterName,
     minimalRate,
