@@ -20,7 +20,13 @@
 
 namespace romea
 {
+namespace core
+{
+
 using ObservationCourse = GaussianObservation<double, 1>;
-}
+
+
+}  // namespace core
+}  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__OBSERVATIONCOURSE_HPP_

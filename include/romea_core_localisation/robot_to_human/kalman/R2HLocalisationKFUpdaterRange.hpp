@@ -30,46 +30,47 @@
 #include "romea_core_localisation/LocalisationUpdaterExteroceptive.hpp"
 #include "romea_core_localisation/robot_to_human/kalman/R2HLocalisationKFMetaState.hpp"
 
-namespace romea {
+namespace romea
+{
+namespace core
+{
 
-class R2HLocalisationKFUpdaterRange :
-  public LocalisationUpdaterExteroceptive,
+class R2HLocalisationKFUpdaterRange
+  : public LocalisationUpdaterExteroceptive,
   public KFUpdaterCore<double, 2, 1>
 {
-public :
-
+public:
   using Observation = ObservationRange;
   using MetaState = R2HLocalisationKFMetaState;
   using State = R2HLocalisationKFMetaState::State;
   using Input = R2HLocalisationKFMetaState::Input;
   using AddOn = R2HLocalisationKFMetaState::AddOn;
 
-public :
+public:
+  R2HLocalisationKFUpdaterRange(
+    const std::string & updaterName,
+    const double & minimalRate,
+    const TriggerMode & triggerMode,
+    const double & maximalMahalanobisDistance,
+    const std::string & logFilename,
+    const bool & usedConstraints);
 
-  R2HLocalisationKFUpdaterRange(const std::string & updaterName,
-                                const double & minimalRate,
-                                const TriggerMode & triggerMode,
-                                const double &maximalMahalanobisDistance,
-                                const std::string & logFilename,
-                                const bool & usedConstraints);
-
-  void update(const Duration & duration,
-              const Observation & currentObservation,
-              LocalisationFSMState & currentFSMState,
-              MetaState & currentMetaState);
+  void update(
+    const Duration & duration,
+    const Observation & currentObservation,
+    LocalisationFSMState & currentFSMState,
+    MetaState & currentMetaState);
 
   void useConstraints();
 
-private :
+private:
+  void update_(
+    const Duration & duration,
+    const Observation & currentObservation,
+    State & currentState,
+    AddOn & currentAddOn);
 
-  void update_(const Duration & duration,
-               const Observation & currentObservation,
-               State & currentState,
-               AddOn & currentAddOn);
-
-
-private :
-
+private:
   // Covariance Eigen Vector decomposition
   Eigen::MatrixXd U_;
   Eigen::MatrixXd W_;
@@ -87,6 +88,7 @@ private :
   bool isConstraintsUsed_;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_HUMAN__KALMAN__R2HLOCALISATIONKFUPDATERRANGE_HPP_

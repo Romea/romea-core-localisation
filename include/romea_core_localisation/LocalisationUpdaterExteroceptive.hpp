@@ -26,6 +26,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 class LocalisationUpdaterExteroceptive : public LocalisationUpdaterBase
 {
@@ -46,6 +48,7 @@ protected:
   std::ofstream logFile_;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__LOCALISATIONUPDATEREXTEROCEPTIVE_HPP_

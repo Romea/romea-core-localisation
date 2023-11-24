@@ -17,6 +17,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 R2HLocalisationKFResults::R2HLocalisationKFResults()
@@ -89,4 +91,5 @@ Position2D R2HLocalisationKFResults::toLeaderPosition2D() const
   return position2d;
 }
 
+}  // namespace core
 }  // namespace romea

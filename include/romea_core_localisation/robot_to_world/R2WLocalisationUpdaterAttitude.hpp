@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-#ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__R2WLOCALISATIONUPDATERATTITUDE_HPP_ 
-#define ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__R2WLOCALISATIONUPDATERATTITUDE_HPP_ 
+#ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__R2WLOCALISATIONUPDATERATTITUDE_HPP_
+#define ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__R2WLOCALISATIONUPDATERATTITUDE_HPP_
 
 // romea
 #include <romea_core_common/time/Time.hpp>
@@ -30,6 +30,8 @@
 
 
 namespace romea
+{
+namespace core
 {
 
 
@@ -63,6 +65,7 @@ public:
   }
 };
 
+}  // namespace core
 }  // namespace romea
 
 

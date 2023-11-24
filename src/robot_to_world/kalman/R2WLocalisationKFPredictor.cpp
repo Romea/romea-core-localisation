@@ -20,6 +20,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //--------------------------------------------------------------------------
 R2WLocalisationKFPredictor::R2WLocalisationKFPredictor(
@@ -190,4 +192,5 @@ void R2WLocalisationKFPredictor::reset_(MetaState & metaState)
   metaState.addon.reset();
 }
 
+}  // namespace core
 }  // namespace romea

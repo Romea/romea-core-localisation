@@ -21,6 +21,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 class R2HLocalisationKFPredictor : public LocalisationPredictor<R2HLocalisationKFMetaState>
 {
@@ -72,6 +74,7 @@ private:
   double dT_sin_wdT_;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_HUMAN__KALMAN__R2HLOCALISATIONKFPREDICTOR_HPP

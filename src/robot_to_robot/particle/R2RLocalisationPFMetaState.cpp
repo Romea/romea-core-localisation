@@ -17,6 +17,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //--------------------------------------------------------------------------
 R2RLocalisationPFMetaState::R2RLocalisationPFMetaState(const size_t & numberOfParticles)
@@ -25,4 +27,5 @@ R2RLocalisationPFMetaState::R2RLocalisationPFMetaState(const size_t & numberOfPa
 {
 }
 
+}  // namespace core
 }  // namespace romea

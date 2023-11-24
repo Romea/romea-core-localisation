@@ -22,6 +22,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //--------------------------------------------------------------------------
 R2RLocalisationPFPredictor::R2RLocalisationPFPredictor(
@@ -222,4 +224,5 @@ void R2RLocalisationPFPredictor::reset_(MetaState & metaState)
   metaState.addon.reset();
 }
 
+}  // namespace core
 }  // namespace romea

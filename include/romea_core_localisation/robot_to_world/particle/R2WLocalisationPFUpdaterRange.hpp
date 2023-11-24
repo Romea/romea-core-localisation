@@ -33,6 +33,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 
 class R2WLocalisationPFUpdaterRange
@@ -75,6 +77,7 @@ protected:
   LevelArmCompensation levelArmCompensation_;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__PARTICLE__R2WLOCALISATIONPFUPDATERRANGE_HPP_

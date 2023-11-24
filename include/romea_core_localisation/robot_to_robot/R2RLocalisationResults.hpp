@@ -22,6 +22,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 template<class State>
 class R2RLocalisationResults : public State
@@ -69,6 +71,7 @@ protected:
   Duration duration_;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__R2RLOCALISATIONRESULTS_HPP

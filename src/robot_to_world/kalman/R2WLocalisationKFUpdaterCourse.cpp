@@ -25,6 +25,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //--------------------------------------------------------------------------
 R2WLocalisationKFUpdaterCourse::R2WLocalisationKFUpdaterCourse(
@@ -136,4 +138,5 @@ void R2WLocalisationKFUpdaterCourse::set_(
 //  currentAddon.lastExteroceptiveUpdate.travelledDistance=currentAddon.travelledDistance;
 }
 
+}  // namespace core
 }  // namespace romea

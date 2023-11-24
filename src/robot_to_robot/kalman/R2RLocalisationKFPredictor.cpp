@@ -24,6 +24,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 R2RLocalisationKFPredictor::R2RLocalisationKFPredictor(
@@ -251,4 +253,5 @@ void R2RLocalisationKFPredictor::reset_(R2RLocalisationKFMetaState & metaState)
   metaState.addon.reset();
 }
 
+}  // namespace core
 }  // namespace romea

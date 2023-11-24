@@ -23,6 +23,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 class R2WLocalisationPFResults : public R2WLocalisationResults<R2WLocalisationPFMetaState>
 {
@@ -72,6 +74,7 @@ private:
   mutable RowMajorMatrix meanCenteredParticles_;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__PARTICLE__R2WLOCALISATIONPFRESULTS_HPP_

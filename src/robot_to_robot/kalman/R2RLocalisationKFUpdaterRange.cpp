@@ -37,6 +37,8 @@ const double UNSCENTED_TRANSFORM_BETA = 2;
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 R2RLocalisationKFUpdaterRange::R2RLocalisationKFUpdaterRange(
@@ -178,4 +180,5 @@ void R2RLocalisationKFUpdaterRange::update_(
   assert(isPositiveSemiDefiniteMatrix(currentState.P()));
 }
 
+}  // namespace core
 }  // namespace romea

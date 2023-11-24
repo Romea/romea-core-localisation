@@ -21,7 +21,8 @@
 
 namespace romea
 {
-
+namespace core
+{
 
 struct LocalisationUpdateMonitoring
 {
@@ -32,6 +33,7 @@ public:
   double travelledDistance;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__LOCALISATIONUPDATESMONITORING_HPP_

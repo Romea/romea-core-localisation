@@ -21,6 +21,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 class LevelArmCompensation
 {
@@ -48,6 +50,7 @@ private:
   Eigen::Matrix3d jacobian_;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__R2WLEVELARMCOMPENSATION_HPP_

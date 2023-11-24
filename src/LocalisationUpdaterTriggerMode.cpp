@@ -23,6 +23,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 std::string toString(const LocalisationUpdaterTriggerMode & triggerMode)
@@ -49,4 +51,5 @@ LocalisationUpdaterTriggerMode toTriggerMode(const std::string & triggerMode)
   }
 }
 
+}  // namespace core
 }  // namespace romea

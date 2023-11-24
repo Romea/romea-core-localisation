@@ -24,27 +24,31 @@
 //-----------------------------------------------------------------------------
 TEST(TestFSMStateConversion, checkfsmStateToString)
 {
-  EXPECT_STREQ(romea::toString(romea::LocalisationFSMState::ABORTED).c_str(), "ABORTED");
-  EXPECT_STREQ(romea::toString(romea::LocalisationFSMState::RUNNING).c_str(), "RUNNING");
-  EXPECT_STREQ(romea::toString(romea::LocalisationFSMState::RESET).c_str(), "RESET");
-  EXPECT_STREQ(romea::toString(romea::LocalisationFSMState::INIT).c_str(), "INIT");
+  EXPECT_STREQ(
+    romea::core::toString(romea::core::LocalisationFSMState::ABORTED).c_str(), "ABORTED");
+  EXPECT_STREQ(
+    romea::core::toString(romea::core::LocalisationFSMState::RUNNING).c_str(), "RUNNING");
+  EXPECT_STREQ(
+    romea::core::toString(romea::core::LocalisationFSMState::RESET).c_str(), "RESET");
+  EXPECT_STREQ(
+    romea::core::toString(romea::core::LocalisationFSMState::INIT).c_str(), "INIT");
 }
 
 //-----------------------------------------------------------------------------
 TEST(TestFSMStateConversion, checkfsmStateToDiagnosticStatus)
 {
   EXPECT_EQ(
-    romea::toDiagnosticStatus(romea::LocalisationFSMState::ABORTED),
-    romea::DiagnosticStatus::ERROR);
+    romea::core::toDiagnosticStatus(romea::core::LocalisationFSMState::ABORTED),
+    romea::core::DiagnosticStatus::ERROR);
   EXPECT_EQ(
-    romea::toDiagnosticStatus(romea::LocalisationFSMState::RUNNING),
-    romea::DiagnosticStatus::OK);
+    romea::core::toDiagnosticStatus(romea::core::LocalisationFSMState::RUNNING),
+    romea::core::DiagnosticStatus::OK);
   EXPECT_EQ(
-    romea::toDiagnosticStatus(romea::LocalisationFSMState::RESET),
-    romea::DiagnosticStatus::WARN);
+    romea::core::toDiagnosticStatus(romea::core::LocalisationFSMState::RESET),
+    romea::core::DiagnosticStatus::WARN);
   EXPECT_EQ(
-    romea::toDiagnosticStatus(romea::LocalisationFSMState::INIT),
-    romea::DiagnosticStatus::WARN);
+    romea::core::toDiagnosticStatus(romea::core::LocalisationFSMState::INIT),
+    romea::core::DiagnosticStatus::WARN);
 }
 
 //-----------------------------------------------------------------------------

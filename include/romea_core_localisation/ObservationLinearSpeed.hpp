@@ -20,7 +20,12 @@
 
 namespace romea
 {
+namespace core
+{
+
 using  ObservationLinearSpeed = GaussianObservation<double, 1>;
-}
+
+}  // namespace core
+}  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__OBSERVATIONLINEARSPEED_HPP_

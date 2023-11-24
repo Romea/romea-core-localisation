@@ -17,6 +17,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 R2WLocalisationMetaState::AddOn::AddOn()
@@ -46,4 +48,5 @@ R2WLocalisationMetaState::R2WLocalisationMetaState()
 {
 }
 
+}  // namespace core
 }  // namespace romea

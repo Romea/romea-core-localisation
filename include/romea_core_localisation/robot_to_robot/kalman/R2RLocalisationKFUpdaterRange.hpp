@@ -32,6 +32,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 class R2RLocalisationKFUpdaterRange
   : public LocalisationUpdaterExteroceptive,
@@ -66,6 +68,7 @@ protected:
     AddOn & currentAddOn);
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__KALMAN__R2RLOCALISATIONKFUPDATERRANGE_HPP_

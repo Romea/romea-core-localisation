@@ -23,6 +23,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 // TODO(Jean) add update stage
 //-----------------------------------------------------------------------------
@@ -92,4 +94,5 @@ bool R2RLocalisationKFUpdaterLeaderPose::set_(
   }
 }
 
+}  // namespace core
 }  // namespace romea

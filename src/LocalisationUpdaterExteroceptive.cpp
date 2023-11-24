@@ -22,6 +22,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 LocalisationUpdaterExteroceptive::LocalisationUpdaterExteroceptive(
@@ -62,5 +64,5 @@ void LocalisationUpdaterExteroceptive::setLogFileHeader_(
   }
 }
 
-
+}  // namespace core
 }  // namespace romea

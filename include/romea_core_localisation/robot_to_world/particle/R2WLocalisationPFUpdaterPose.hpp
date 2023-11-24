@@ -33,6 +33,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 class R2WLocalisationPFUpdaterPose
   : public LocalisationUpdaterExteroceptive,
@@ -85,6 +87,7 @@ private:
   LevelArmCompensation levelArmCompensation_;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__PARTICLE__R2WLOCALISATIONPFUPDATERPOSE_HPP_

@@ -22,6 +22,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 struct R2RLocalisationKFMetaState : public R2RLocalisationMetaState
 {
@@ -34,7 +36,7 @@ struct R2RLocalisationKFMetaState : public R2RLocalisationMetaState
   State state;
 };
 
-
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__KALMAN__R2RLOCALISATIONKFMETASTATE_HPP_

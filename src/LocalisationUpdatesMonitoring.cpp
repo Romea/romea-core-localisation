@@ -22,6 +22,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 
 //---------------------------------------------------------------------------
@@ -31,4 +33,5 @@ LocalisationUpdateMonitoring::LocalisationUpdateMonitoring()
 {
 }
 
+}  // namespace core
 }  // namespace romea

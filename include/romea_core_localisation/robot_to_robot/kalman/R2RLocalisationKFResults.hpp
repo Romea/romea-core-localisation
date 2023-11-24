@@ -21,6 +21,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 class R2RLocalisationKFResults : public R2RLocalisationResults<R2RLocalisationKFMetaState>
 {
@@ -53,6 +55,7 @@ public:
   PoseAndTwist2D toLeaderPoseAndBodyTwist2D() const override;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__KALMAN__R2RLOCALISATIONKFRESULTS_HPP_

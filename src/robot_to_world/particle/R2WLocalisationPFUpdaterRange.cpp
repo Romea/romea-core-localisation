@@ -21,6 +21,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //--------------------------------------------------------------------------
 R2WLocalisationPFUpdaterRange::R2WLocalisationPFUpdaterRange(
@@ -115,4 +117,5 @@ void R2WLocalisationPFUpdaterRange::update_(
   }
 }
 
+}  // namespace core
 }  // namespace romea

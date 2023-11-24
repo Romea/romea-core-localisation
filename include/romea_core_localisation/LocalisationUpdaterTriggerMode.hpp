@@ -20,6 +20,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 enum class LocalisationUpdaterTriggerMode
 {
@@ -31,6 +33,7 @@ std::string toString(const LocalisationUpdaterTriggerMode & triggerMode);
 
 LocalisationUpdaterTriggerMode toTriggerMode(const std::string & triggerMode);
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__LOCALISATIONUPDATERTRIGGERMODE_HPP_

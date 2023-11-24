@@ -25,11 +25,11 @@
 #include "romea_core_localisation/robot_to_world/kalman/R2WLocalisationKFUpdaterPose.hpp"
 #include "romea_core_localisation/robot_to_world/R2WLocalisationMetaState.hpp"
 
-using Updater = romea::R2WLocalisationKFUpdaterPose;
-using FSMState = romea::LocalisationFSMState;
-using MetaState = romea::R2WLocalisationKFMetaState;
-using Observation = romea::ObservationPose;
-using TriggerMode = romea::LocalisationUpdaterTriggerMode;
+using Updater = romea::core::R2WLocalisationKFUpdaterPose;
+using FSMState = romea::core::LocalisationFSMState;
+using MetaState = romea::core::R2WLocalisationKFMetaState;
+using Observation = romea::core::ObservationPose;
+using TriggerMode = romea::core::LocalisationUpdaterTriggerMode;
 
 const Eigen::Vector3d initialPose = (Eigen::Vector3d() << 0.1, 0.2, 0.3).finished();
 const Eigen::Matrix3d initialPoseCovariance =
@@ -62,7 +62,7 @@ public:
   }
 
   void update(
-    const romea::Duration & duration,
+    const romea::core::Duration & duration,
     const Observation & observation)
   {
     updater->update(duration, observation, fsmState, metastate);
@@ -77,7 +77,7 @@ TEST_F(TestPoseUpdater, testSetObservation)
 {
   init(FSMState::INIT, TriggerMode::ALWAYS);
 
-  romea::Duration duration = romea::durationFromSecond(2);
+  romea::core::Duration duration = romea::core::durationFromSecond(2);
 
   Observation observation;
   observation.Y() << -0.1, -0.2, 0.4;
@@ -95,7 +95,7 @@ TEST_F(TestPoseUpdater, testUpdate)
 {
   init(FSMState::RUNNING, TriggerMode::ALWAYS);
 
-  romea::Duration duration = romea::durationFromSecond(2);
+  romea::core::Duration duration = romea::core::durationFromSecond(2);
   Observation observation;
   observation.Y() = initialPose;
   observation.R() = initialPoseCovariance;

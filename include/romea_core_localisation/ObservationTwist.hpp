@@ -21,6 +21,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 struct ObservationTwist : GaussianObservation<double, 3>
 {
@@ -35,6 +37,7 @@ struct ObservationTwist : GaussianObservation<double, 3>
   Eigen::Vector3d levelArm;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__OBSERVATIONTWIST_HPP_

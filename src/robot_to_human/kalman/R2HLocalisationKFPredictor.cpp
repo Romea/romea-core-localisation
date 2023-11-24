@@ -28,6 +28,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 R2HLocalisationKFPredictor::R2HLocalisationKFPredictor(
@@ -170,4 +172,5 @@ void R2HLocalisationKFPredictor::reset_(R2HLocalisationKFMetaState & metaState)
 }
 
 
+}  // namespace core
 }  // namespace romea

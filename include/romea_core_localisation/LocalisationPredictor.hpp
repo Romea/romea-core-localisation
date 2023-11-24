@@ -31,7 +31,8 @@
 
 namespace romea
 {
-
+namespace core
+{
 
 template<class State>
 class LocalisationPredictor : public FilterPredictor<State, LocalisationFSMState, Duration>
@@ -119,6 +120,7 @@ void LocalisationPredictor<State>::predict(
   //  std::cout << "fsm state " <<int(currentFSMState) <<std::endl;
 }
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__LOCALISATIONPREDICTOR_HPP_

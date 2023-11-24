@@ -22,6 +22,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 
 template<FilterType type>
@@ -60,6 +62,7 @@ struct R2RLocalisationTraits<PARTICLE>
   using Results = R2RLocalisationPFResults;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__R2RLOCALISATIONTRAITS_HPP_

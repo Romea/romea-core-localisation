@@ -17,6 +17,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 R2WLocalisationKFResults::R2WLocalisationKFResults()
@@ -149,4 +151,5 @@ Eigen::Matrix3d R2WLocalisationKFResults::getPoseCovariance() const
   return state.P();
 }
 
+}  // namespace core
 }  // namespace romea

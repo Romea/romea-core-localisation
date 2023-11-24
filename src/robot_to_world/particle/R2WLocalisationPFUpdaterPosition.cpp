@@ -3,6 +3,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 R2WLocalisationPFUpdaterPosition::R2WLocalisationPFUpdaterPosition(
@@ -183,4 +185,5 @@ void R2WLocalisationPFUpdaterPosition::applyLevelArmCompentations_(State & curre
     cosCourses_ * levelArms_.row(MetaState::POSITION_Y);
 }
 
+}  // namespace core
 }  // namespace romea

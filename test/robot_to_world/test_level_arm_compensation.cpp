@@ -42,7 +42,7 @@ public:
       antenna_position);
   }
 
-  romea::LevelArmCompensation level_arm_compensation;
+  romea::core::LevelArmCompensation level_arm_compensation;
   Eigen::Vector3d antenna_position;
   double angle_variance;
 };

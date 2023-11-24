@@ -28,6 +28,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 R2HLocalisationKFUpdaterRange::R2HLocalisationKFUpdaterRange(
@@ -210,4 +212,5 @@ void R2HLocalisationKFUpdaterRange::useConstraints()
   isConstraintsUsed_ = true;
 }
 
+}  // namespace core
 }  // namespace romea

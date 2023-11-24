@@ -20,6 +20,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 struct ObservationLinearSpeeds : GaussianObservation<double, 2>
 {
@@ -31,6 +33,7 @@ struct ObservationLinearSpeeds : GaussianObservation<double, 2>
   };
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__OBSERVATIONLINEARSPEEDS_HPP_

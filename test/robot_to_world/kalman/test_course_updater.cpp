@@ -1,4 +1,4 @@
-﻿// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,11 +24,11 @@
 #include "romea_core_localisation/robot_to_world/kalman/R2WLocalisationKFUpdaterCourse.hpp"
 #include "romea_core_localisation/robot_to_world/R2WLocalisationMetaState.hpp"
 
-using Updater = romea::R2WLocalisationKFUpdaterCourse;
-using FSMState = romea::LocalisationFSMState;
-using MetaState = romea::R2WLocalisationKFMetaState;
-using Observation = romea::ObservationCourse;
-using TriggerMode = romea::LocalisationUpdaterTriggerMode;
+using Updater = romea::core::R2WLocalisationKFUpdaterCourse;
+using FSMState = romea::core::LocalisationFSMState;
+using MetaState = romea::core::R2WLocalisationKFMetaState;
+using Observation = romea::core::ObservationCourse;
+using TriggerMode = romea::core::LocalisationUpdaterTriggerMode;
 
 const double initialCourse = 0.1;
 const double initialCourseVariance = 0.1;
@@ -60,7 +60,7 @@ public:
   }
 
   void update(
-    const romea::Duration & duration,
+    const romea::core::Duration & duration,
     const Observation & observation)
   {
     updater->update(duration, observation, fsmState, metastate);
@@ -75,7 +75,7 @@ TEST_F(TestCourseUpdater, testSetObservation)
 {
   init(FSMState::INIT, TriggerMode::ALWAYS);
 
-  romea::Duration duration = romea::durationFromSecond(2);
+  romea::core::Duration duration = romea::core::durationFromSecond(2);
 
   Observation observation;
   observation.Y() = -0.1;
@@ -93,7 +93,7 @@ TEST_F(TestCourseUpdater, testUpdate)
 {
   init(FSMState::RUNNING, TriggerMode::ALWAYS);
 
-  romea::Duration duration = romea::durationFromSecond(2);
+  romea::core::Duration duration = romea::core::durationFromSecond(2);
   Observation observation;
   observation.Y() = initialCourse;
   observation.R() = initialCourseVariance;
@@ -110,7 +110,7 @@ TEST_F(TestCourseUpdater, testMahalanobisRejection)
 {
   init(FSMState::RUNNING, TriggerMode::ALWAYS);
 
-  romea::Duration duration = romea::durationFromSecond(2);
+  romea::core::Duration duration = romea::core::durationFromSecond(2);
   Observation observation;
   observation.Y() = 10;
   observation.R() = 0.1;

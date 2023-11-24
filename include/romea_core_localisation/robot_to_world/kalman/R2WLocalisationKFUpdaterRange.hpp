@@ -32,6 +32,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 class R2WLocalisationKFUpdaterRange
   : public LocalisationUpdaterExteroceptive,
@@ -69,6 +71,7 @@ protected:
   LevelArmCompensation antennaAtitudeCompensation_;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__KALMAN__R2WLOCALISATIONKFUPDATERRANGE_HPP_

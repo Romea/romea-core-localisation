@@ -21,6 +21,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 LocalisationUpdaterProprioceptive::LocalisationUpdaterProprioceptive(
@@ -32,4 +34,5 @@ LocalisationUpdaterProprioceptive::LocalisationUpdaterProprioceptive(
 {
 }
 
+}  // namespace core
 }  // namespace romea

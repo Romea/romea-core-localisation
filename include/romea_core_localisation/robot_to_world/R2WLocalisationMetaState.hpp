@@ -23,6 +23,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 struct R2WLocalisationMetaState
 {
@@ -65,6 +67,7 @@ struct R2WLocalisationMetaState
   AddOn addon;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__R2WLOCALISATIONMETASTATE_HPP_

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 
-
 // gtest
 #include <gtest/gtest.h>
 
@@ -22,7 +21,7 @@
 #include "romea_core_localisation/robot_to_world/R2WLocalisationUpdaterAttitude.hpp"
 #include "romea_core_localisation/robot_to_world/R2WLocalisationMetaState.hpp"
 
-using namespace romea;
+using namespace romea::core;
 
 TEST(TestAttitudeUpdater, checkUpdate)
 {

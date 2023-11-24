@@ -21,6 +21,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 LocalisationUpdaterBase::LocalisationUpdaterBase(
@@ -55,4 +57,5 @@ void LocalisationUpdaterBase::udapteDiagnostic_(const Duration & duration)
   rateDiagnostic_.evaluate(duration);
 }
 
+}  // namespace core
 }  // namespace romea

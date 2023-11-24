@@ -17,6 +17,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 LevelArmCompensation::LevelArmCompensation()
@@ -68,4 +70,5 @@ const Eigen::Matrix3d & LevelArmCompensation::getJacobian()const
   return jacobian_;
 }
 
+}  // namespace core
 }  // namespace romea

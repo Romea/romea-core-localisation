@@ -30,6 +30,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 class R2RLocalisationPFUpdaterLeaderPose : public LocalisationUpdaterExteroceptive
 {
@@ -65,6 +67,7 @@ private:
 };
 
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__PARTICLE__R2RLOCALISATIONPFUPDATERLEADERPOSE_HPP_

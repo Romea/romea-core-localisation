@@ -28,7 +28,10 @@
 #include "romea_core_localisation/robot_to_world/R2WLevelArmCompensation.hpp"
 
 
-namespace romea {
+namespace romea
+{
+namespace core
+{
 
 struct R2WLocalisationKFMetaState : R2WLocalisationMetaState
 {
@@ -41,11 +44,13 @@ struct R2WLocalisationKFMetaState : R2WLocalisationMetaState
   State state;
 };
 
-void applyLevelArmCompensation(R2WLocalisationKFMetaState::State & currentState,
-                               R2WLocalisationKFMetaState::AddOn & currentAddOn,
-                               LevelArmCompensation & levelArmCompensation,
-                               const Eigen::Vector3d & levelArm);
+void applyLevelArmCompensation(
+  R2WLocalisationKFMetaState::State & currentState,
+  R2WLocalisationKFMetaState::AddOn & currentAddOn,
+  LevelArmCompensation & levelArmCompensation,
+  const Eigen::Vector3d & levelArm);
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__KALMAN__R2WLOCALISATIONKFMETASTATE_HPP_

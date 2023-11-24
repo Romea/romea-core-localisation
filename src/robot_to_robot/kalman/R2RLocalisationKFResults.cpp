@@ -17,6 +17,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 R2RLocalisationKFResults::R2RLocalisationKFResults()
@@ -140,4 +142,5 @@ PoseAndTwist2D R2RLocalisationKFResults::toLeaderPoseAndBodyTwist2D() const
   return poseAndTwist2D;
 }
 
+}  // namespace core
 }  // namespace romea

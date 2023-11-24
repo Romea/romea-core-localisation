@@ -20,6 +20,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 struct ObservationRange : GaussianObservation<double, 1>
 {
@@ -35,6 +37,7 @@ struct ObservationRange : GaussianObservation<double, 1>
   double terrainElevation;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__OBSERVATIONRANGE_HPP_

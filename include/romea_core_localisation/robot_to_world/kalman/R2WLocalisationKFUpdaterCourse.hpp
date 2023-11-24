@@ -32,6 +32,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 class R2WLocalisationKFUpdaterCourse
   : public LocalisationUpdaterExteroceptive,
@@ -72,6 +74,7 @@ private:
     AddOn & currentAddon);
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__KALMAN__R2WLOCALISATIONKFUPDATERCOURSE_HPP_

@@ -20,6 +20,9 @@
 
 namespace romea
 {
+namespace core
+{
+
 struct ObservationPose : GaussianObservation<double, 3>
 {
   enum Index
@@ -40,6 +43,7 @@ struct ObservationPose : GaussianObservation<double, 3>
   Eigen::Vector3d levelArm;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__OBSERVATIONPOSE_HPP_

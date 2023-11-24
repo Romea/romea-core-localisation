@@ -25,6 +25,9 @@
 namespace romea
 {
 
+namespace core
+{
+
 enum class LocalisationFSMState
 {
   INIT = 0,
@@ -37,6 +40,7 @@ std::string toString(const LocalisationFSMState & fmsState);
 
 DiagnosticStatus toDiagnosticStatus(const LocalisationFSMState & fmsState);
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__LOCALISATIONFSMSTATE_HPP_

@@ -18,6 +18,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //--------------------------------------------------------------------------
 R2WLocalisationKFMetaState::R2WLocalisationKFMetaState()
@@ -57,4 +59,5 @@ void applyLevelArmCompensation(
   assert(isPositiveSemiDefiniteMatrix(currentState.P()));
 }
 
+}  // namespace core
 }  // namespace romea

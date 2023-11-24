@@ -30,6 +30,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 template<class MetaState>
 class LocalisationUpdaterLinearSpeeds : public LocalisationUpdaterProprioceptive
@@ -63,6 +65,7 @@ public:
   }
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__LOCALISATIONUPDATERLINEARSPEEDS_HPP

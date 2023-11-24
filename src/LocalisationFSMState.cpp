@@ -21,6 +21,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 std::string toString(const LocalisationFSMState & fmsState)
@@ -56,4 +58,5 @@ DiagnosticStatus toDiagnosticStatus(const LocalisationFSMState & fmsState)
   }
 }
 
+}  // namespace core
 }  // namespace romea

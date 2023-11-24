@@ -22,6 +22,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 template<class MetaState>
 class R2HLocalisationResults : public MetaState
@@ -51,6 +53,7 @@ public:
   virtual Position2D toLeaderPosition2D() const = 0;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_HUMAN__R2HLOCALISATIONRESULTS_HPP_

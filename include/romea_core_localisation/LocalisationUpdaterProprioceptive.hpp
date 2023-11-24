@@ -24,6 +24,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 class LocalisationUpdaterProprioceptive : public LocalisationUpdaterBase
 {
@@ -35,6 +37,7 @@ public:
   virtual ~LocalisationUpdaterProprioceptive() = default;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__LOCALISATIONUPDATERPROPRIOCEPTIVE_HPP_

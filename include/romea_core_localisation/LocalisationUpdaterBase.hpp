@@ -29,6 +29,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 class LocalisationUpdaterBase
 {
@@ -54,6 +56,7 @@ protected:
   mutable std::mutex mutex_;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__LOCALISATIONUPDATERBASE_HPP_

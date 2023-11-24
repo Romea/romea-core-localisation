@@ -33,6 +33,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 class R2RLocalisationPFUpdaterRange
   : public LocalisationUpdaterExteroceptive,
@@ -73,6 +75,7 @@ protected:
   RowMajorVector sinCourses_;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__PARTICLE__R2RLOCALISATIONPFUPDATERRANGE_HPP_

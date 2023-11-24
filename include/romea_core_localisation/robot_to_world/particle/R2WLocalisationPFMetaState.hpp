@@ -28,6 +28,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 struct R2WLocalisationPFMetaState : R2WLocalisationMetaState
 {
@@ -41,6 +43,7 @@ public:
   State state;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__PARTICLE__R2WLOCALISATIONPFMETASTATE_HPP

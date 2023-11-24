@@ -15,6 +15,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 template<class MetaState>
 class R2RLocalisationUpdaterLeaderTwist : public LocalisationUpdaterProprioceptive
@@ -47,6 +49,7 @@ public:
   }
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__R2RLOCALISATIONUPDATERLEADERTWIST_HPP_

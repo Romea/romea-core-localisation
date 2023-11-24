@@ -30,6 +30,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 template<class MetaState>
 class LocalisationUpdaterTwist : public LocalisationUpdaterProprioceptive
@@ -62,6 +64,7 @@ public:
   }
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__LOCALISATIONUPDATERTWIST_HPP_

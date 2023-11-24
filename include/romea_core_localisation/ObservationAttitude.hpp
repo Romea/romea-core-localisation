@@ -20,6 +20,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 struct ObservationAttitude : GaussianObservation<double, 2>
 {
@@ -31,6 +33,7 @@ struct ObservationAttitude : GaussianObservation<double, 2>
   };
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__OBSERVATIONATTITUDE_HPP_

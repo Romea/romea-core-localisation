@@ -22,6 +22,8 @@ const size_t MAXIMAL_TRAJECTORY_SIZE = 1000;
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 R2HLocalisationMetaState::AddOn::AddOn()
@@ -49,4 +51,5 @@ R2HLocalisationMetaState::R2HLocalisationMetaState()
 {
 }
 
+}  // namespace core
 }  // namespace romea

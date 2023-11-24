@@ -26,6 +26,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //--------------------------------------------------------------------------
 R2WLocalisationPFUpdaterCourse::R2WLocalisationPFUpdaterCourse(
@@ -109,4 +111,5 @@ void R2WLocalisationPFUpdaterCourse::set_(
   currentAddon.lastExteroceptiveUpdate.travelledDistance = currentAddon.travelledDistance;
 }
 
+}  // namespace core
 }  // namespace romea

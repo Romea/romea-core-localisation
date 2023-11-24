@@ -19,6 +19,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 R2RLocalisationPFResults::R2RLocalisationPFResults(const size_t & numberOfParticles)
@@ -210,4 +212,5 @@ PoseAndTwist2D R2RLocalisationPFResults::toLeaderPoseAndBodyTwist2D() const
   return poseAndTwist2D;
 }
 
+}  // namespace core
 }  // namespace romea

@@ -17,6 +17,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 R2HLocalisationKFMetaState::R2HLocalisationKFMetaState()
@@ -25,4 +27,5 @@ R2HLocalisationKFMetaState::R2HLocalisationKFMetaState()
 {
 }
 
+}  // namespace core
 }  // namespace romea

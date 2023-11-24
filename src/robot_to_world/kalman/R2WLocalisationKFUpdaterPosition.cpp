@@ -21,6 +21,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 R2WLocalisationKFUpdaterPosition::R2WLocalisationKFUpdaterPosition(
@@ -241,4 +243,5 @@ bool R2WLocalisationKFUpdaterPosition::set_(
   }
 }
 
+}  // namespace core
 }  // namespace romea

@@ -21,7 +21,7 @@
 #include "romea_core_localisation/LocalisationUpdaterTwist.hpp"
 #include "romea_core_localisation/robot_to_world/R2WLocalisationMetaState.hpp"
 
-using namespace romea;
+using namespace romea::core;
 
 TEST(TestAngularSpeedUpdater, checkUpdate)
 {

@@ -22,6 +22,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 class R2RLocalisationPFPredictor : public LocalisationPredictor<R2RLocalisationPFMetaState>
 {
@@ -82,6 +84,7 @@ private:
   RowMajorMatrix randomUl_;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__PARTICLE__R2RLOCALISATIONPFPREDICTOR_HPP_
