@@ -15,13 +15,16 @@
 
 // gtest
 #include <gtest/gtest.h>
+
+// std
 #include <cmath>
 
+// romea
 #include "romea_core_localisation/LocalisationFSMState.hpp"
 #include "romea_core_localisation/LocalisationUpdaterAngularSpeed.hpp"
 #include "romea_core_localisation/robot_to_world/R2WLocalisationMetaState.hpp"
 
-using namespace romea::core;
+using namespace romea::core;  //NOLINT
 
 TEST(TestAngularSpeedUpdater, checkUpdate)
 {

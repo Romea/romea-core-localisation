@@ -237,8 +237,12 @@ bool R2RLocalisationKFPredictor::stop_(
     metaState.state.P(MetaState::LEADER_POSITION_X, MetaState::LEADER_POSITION_X) +
     metaState.state.P(MetaState::LEADER_POSITION_Y, MetaState::LEADER_POSITION_Y));
 
-  //  std::cout << " kalman dr elapsed time "<< durationToSecond(duration) <<" "<< durationToSecond(state.lastExteroceptiveUpdate.time) <<" " <<  durationToSecond(shutoffParameters_.maximalDurationInDeadReckoning)<< std::endl;
-  //  std::cout << " kalman dr elapsed distance "<< state.travelledDistance <<" " <<state.lastExteroceptiveUpdate.travelledDistance <<" " <<  shutoffParameters_.maximalTravelledDistanceInDeadReckoning<< std::endl;
+  // std::cout << " kalman dr elapsed time " << durationToSecond(duration) << " " <<
+  //   durationToSecond(state.lastExteroceptiveUpdate.time) << " " <<
+  //   durationToSecond(shutoffParameters_.maximalDurationInDeadReckoning) << std::endl;
+  // std::cout << " kalman dr elapsed distance " << state.travelledDistance << " " <<
+  //   state.lastExteroceptiveUpdate.travelledDistance << " " <<
+  //   shutoffParameters_.maximalTravelledDistanceInDeadReckoning << std::endl;
 
   return positionCircularErrorProbability > maximalPositionCircularErrorProbable_ ||
          travelledDistanceInDeadReckoningMode > maximalTravelledDistanceInDeadReckoning_ ||

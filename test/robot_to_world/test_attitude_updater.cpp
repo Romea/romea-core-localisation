@@ -21,7 +21,7 @@
 #include "romea_core_localisation/robot_to_world/R2WLocalisationUpdaterAttitude.hpp"
 #include "romea_core_localisation/robot_to_world/R2WLocalisationMetaState.hpp"
 
-using namespace romea::core;
+using namespace romea::core;  //NOLINT
 
 TEST(TestAttitudeUpdater, checkUpdate)
 {

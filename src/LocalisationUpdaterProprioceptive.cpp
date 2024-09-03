@@ -16,7 +16,7 @@
 // std
 #include <string>
 
-//local
+// local
 #include "romea_core_localisation/LocalisationUpdaterProprioceptive.hpp"
 
 namespace romea

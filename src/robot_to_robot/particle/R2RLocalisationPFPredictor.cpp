@@ -201,16 +201,18 @@ bool R2RLocalisationPFPredictor::stop_(
   double travelledDistanceInDeadReckoningMode =
     meatastate.addon.travelledDistance - meatastate.addon.lastExteroceptiveUpdate.travelledDistance;
 
-
-  //  double positionCircularErrorProbability = std::sqrt(state.P(R2RKalmanLocalisationState::POSITION_X,
-  //                                                              R2RKalmanLocalisationState::POSITION_X)+
-  //                                                      state.P(R2RKalmanLocalisationState::POSITION_Y,
-  //                                                              R2RKalmanLocalisationState::POSITION_Y));
+  // double positionCircularErrorProbability = std::sqrt(
+  //   state.P(R2RKalmanLocalisationState::POSITION_X, R2RKalmanLocalisationState::POSITION_X) +
+  //   state.P(R2RKalmanLocalisationState::POSITION_Y, R2RKalmanLocalisationState::POSITION_Y));
 
   double positionCircularErrorProbability = 0;
 
-  // std::cout << " particle dr elapsed time "<< durationToSecond(duration) <<" "<< durationToSecond(state.lastExteroceptiveUpdate.time) <<" " <<  durationToSecond(shutoffParameters_.maximalDurationInDeadReckoning)<< std::endl;
-  // std::cout << " particle dr elapsed distance "<< state.travelledDistance <<" " <<state.lastExteroceptiveUpdate.travelledDistance <<" " <<  shutoffParameters_.maximalTravelledDistanceInDeadReckoning<< std::endl;
+  // std::cout << " particle dr elapsed time " << durationToSecond(duration) << " " <<
+  //       durationToSecond(state.lastExteroceptiveUpdate.time) << " " << durationToSecond(
+  //   shutoffParameters_.maximalDurationInDeadReckoning) << std::endl;
+  // std::cout << " particle dr elapsed distance " << state.travelledDistance << " " <<
+  //       state.lastExteroceptiveUpdate.travelledDistance << " " <<
+  //       shutoffParameters_.maximalTravelledDistanceInDeadReckoning << std::endl;
 
   return positionCircularErrorProbability > maximalPositionCircularErrorProbable_ ||
          travelledDistanceInDeadReckoningMode > maximalTravelledDistanceInDeadReckoning_ ||

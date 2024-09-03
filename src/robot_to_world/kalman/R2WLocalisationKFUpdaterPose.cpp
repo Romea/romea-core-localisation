@@ -141,13 +141,14 @@ void R2WLocalisationKFUpdaterPose::update_(
   Inn_.template segment<2>(0) -= levelArmCompensation_.getPosition().segment<2>(0);
 
   // Compute innovation covariance
-  //  this->R_ = currentObservation.R();
-  //  this->R_.template block<2,2>(0,0) += levelArmCompensation_.getPositionCovariance().block<2,2>(0,0);
+  // this->R_ = currentObservation.R();
+  // this->R_.template block<2, 2>(0, 0) +=
+  //   levelArmCompensation_.getPositionCovariance().block<2, 2>(0, 0);
   H_.template block<2, 1>(0, 2) = levelArmCompensation_.getJacobian().block<2, 1>(0, 2);
+
   QInn_ = H_ * currentState.P() * H_.transpose() + currentObservation.R();
-  QInn_.template block<2, 2>(
-    0,
-    0) += levelArmCompensation_.getPositionCovariance().block<2, 2>(0, 0);
+  QInn_.template block<2, 2>(0, 0) +=
+    levelArmCompensation_.getPositionCovariance().block<2, 2>(0, 0);
 
   // log
   if (logFile_.is_open()) {

@@ -13,8 +13,11 @@
 // limitations under the License.
 
 
-#ifndef ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_R2HLOCALISATIONRESULTS_HPP_
-#define ROMEA_CORE_LOCALISATION_ROBOT_TO_HUMAN_R2HLOCALISATIONRESULTS_HPP_
+#ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_HUMAN__R2HLOCALISATIONRESULTS_HPP_
+#define ROMEA_CORE_LOCALISATION__ROBOT_TO_HUMAN__R2HLOCALISATIONRESULTS_HPP_
+
+// std
+#include <utility>
 
 // romea
 #include <romea_core_common/geometry/PoseAndTwist3D.hpp>
@@ -30,7 +33,7 @@ class R2HLocalisationResults : public MetaState
 {
 public:
   template<typename ... Args>
-  R2HLocalisationResults(Args ... args)
+  explicit R2HLocalisationResults(Args ... args)
   : MetaState(std::forward<Args>(args)...)
   {
   }

@@ -13,10 +13,10 @@
 // limitations under the License.
 
 
-//std
+// std
 #include <string>
 
-//local
+//  local
 #include "romea_core_localisation/LocalisationFSMState.hpp"
 
 namespace romea
