@@ -17,7 +17,7 @@ Built on the **romea_core_filtering** library, this package supports asynchronou
 2. cd worskpace
 3. mkdir src
 4. wget https://raw.githubusercontent.com/Romea/romea-core-localisation/refs/heads/main/romea_localisation_public.repos
-5. vcs import src < romea_romea_control_public.repos
+5. vcs import src < romea_localisation_public.repos
 6. build packages
    - catkin build for ROS1
    - colcon build for ROS2
