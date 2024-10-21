@@ -1,6 +1,6 @@
-## Romea Core Localisation Library
+# romea_core_localisation #
 
-This library provides robust implementations of three key localization algorithms:
+This project is a C++ library that provides robust implementations of three key localization algorithms:
 
 - **Robot-to-World Localization:**
   Localizes a robot within the global environment using sensor data from odometry, IMU, GPS, LIDAR (coming soon), RADAR, and RTLS (Real-Time Locating Systems). This allows for accurate indoor/outdoor localization, even in challenging environments.
@@ -42,7 +42,7 @@ This project is released under the Apache License 2.0. See the LICENSE file for 
 
 ## **Authors**
 
-The Romea Core Localization library, written by **Jean Laneurit**, was developed within the framework of several research projects, including robot-to-human localization as part of the ANR Baudet ROB project, robot-to-world localization within the ANR Baudet Rob 2 project, and robot-to-robot localization in the context of the ANR Adap2E project. Several individuals contributed scientifically to the development of this library:
+The romea_core_localisation library, written by **Jean Laneurit**, was developed within the framework of several research projects, including robot-to-human localization as part of the ANR Baudet ROB project, robot-to-world localization within the ANR Baudet Rob 2 project, and robot-to-robot localization in the context of the ANR Adap2E project. Several individuals contributed scientifically to the development of this library:
 
 **Jean Laneurit**  
 **Christophe Debain**  
@@ -51,4 +51,4 @@ The Romea Core Localization library, written by **Jean Laneurit**, was developed
 
 ## **Contact**
 
-If you have any questions or comments about Romea Core Localisation library, please contact **[Jean Laneurit](mailto:jean.laneurit@inrae.fr)**.
+If you have any questions or comments about romea_core_localisation library, please contact **[Jean Laneurit](mailto:jean.laneurit@inrae.fr)**.
