@@ -17,7 +17,7 @@
 #include <gtest/gtest.h>
 
 // romea
-#include "romea_core_localisation/robot_to_world/R2WLevelArmCompensation.hpp"
+#include "romea_core_localisation/robot_to_world/level_arm_compensation.hpp"
 
 class TestLevelArmCompensation : public ::testing::Test
 {
@@ -43,7 +43,7 @@ public:
       antenna_position);
   }
 
-  romea::core::LevelArmCompensation level_arm_compensation;
+  romea::core::localisation::LevelArmCompensation level_arm_compensation;
   Eigen::Vector3d antenna_position;
   double angle_variance;
 };

@@ -17,73 +17,76 @@
 #include <gtest/gtest.h>
 #include <cmath>
 
-#include "romea_core_localisation/LocalisationFSMState.hpp"
-#include "romea_core_localisation/LocalisationUpdaterTwist.hpp"
-#include "romea_core_localisation/robot_to_world/R2WLocalisationMetaState.hpp"
+#include "romea_core_localisation/fsm_state.hpp"
+#include "romea_core_localisation/updater_twist.hpp"
+#include "romea_core_localisation/robot_to_world/meta_state_base.hpp"
 
-using namespace romea::core;  //NOLINT
+using FSMState = romea::core::localisation::FSMState;
+using MetaState = romea::core::localisation::R2WMetaStateBase;
+using Observation = romea::core::localisation::ObservationTwist;
+using Updater = romea::core::localisation::UpdaterTwist<MetaState>;
 
 TEST(TestAngularSpeedUpdater, checkUpdate)
 {
-  ObservationTwist observation;
-  observation.Y(ObservationTwist::LINEAR_SPEED_X_BODY) = 1;
-  observation.Y(ObservationTwist::LINEAR_SPEED_Y_BODY) = 2;
-  observation.Y(ObservationTwist::ANGULAR_SPEED_Z_BODY) = 3;
+  Observation observation;
+  observation.Y(Observation::LINEAR_SPEED_X_BODY) = 1;
+  observation.Y(Observation::LINEAR_SPEED_Y_BODY) = 2;
+  observation.Y(Observation::ANGULAR_SPEED_Z_BODY) = 3;
 
   observation.R(
-    ObservationTwist::LINEAR_SPEED_X_BODY,
-    ObservationTwist::LINEAR_SPEED_X_BODY) = 4;
+    Observation::LINEAR_SPEED_X_BODY,
+    Observation::LINEAR_SPEED_X_BODY) = 4;
+
+    observation.R(
+    Observation::LINEAR_SPEED_X_BODY,
+    Observation::LINEAR_SPEED_Y_BODY) = 5;
 
   observation.R(
-    ObservationTwist::LINEAR_SPEED_X_BODY,
-    ObservationTwist::LINEAR_SPEED_Y_BODY) = 5;
+    Observation::LINEAR_SPEED_X_BODY,
+    Observation::ANGULAR_SPEED_Z_BODY) = 6;
 
   observation.R(
-    ObservationTwist::LINEAR_SPEED_X_BODY,
-    ObservationTwist::ANGULAR_SPEED_Z_BODY) = 6;
+    Observation::LINEAR_SPEED_Y_BODY,
+    Observation::LINEAR_SPEED_X_BODY) = 7;
 
   observation.R(
-    ObservationTwist::LINEAR_SPEED_Y_BODY,
-    ObservationTwist::LINEAR_SPEED_X_BODY) = 7;
+    Observation::LINEAR_SPEED_Y_BODY,
+    Observation::LINEAR_SPEED_Y_BODY) = 8;
 
   observation.R(
-    ObservationTwist::LINEAR_SPEED_Y_BODY,
-    ObservationTwist::LINEAR_SPEED_Y_BODY) = 8;
+    Observation::LINEAR_SPEED_Y_BODY,
+    Observation::ANGULAR_SPEED_Z_BODY) = 9;
 
   observation.R(
-    ObservationTwist::LINEAR_SPEED_Y_BODY,
-    ObservationTwist::ANGULAR_SPEED_Z_BODY) = 9;
+    Observation::ANGULAR_SPEED_Z_BODY,
+    Observation::LINEAR_SPEED_X_BODY) = 10;
 
   observation.R(
-    ObservationTwist::ANGULAR_SPEED_Z_BODY,
-    ObservationTwist::LINEAR_SPEED_X_BODY) = 10;
+    Observation::ANGULAR_SPEED_Z_BODY,
+    Observation::LINEAR_SPEED_Y_BODY) = 11;
 
   observation.R(
-    ObservationTwist::ANGULAR_SPEED_Z_BODY,
-    ObservationTwist::LINEAR_SPEED_Y_BODY) = 11;
+    Observation::ANGULAR_SPEED_Z_BODY,
+    Observation::ANGULAR_SPEED_Z_BODY) = 12;
 
-  observation.R(
-    ObservationTwist::ANGULAR_SPEED_Z_BODY,
-    ObservationTwist::ANGULAR_SPEED_Z_BODY) = 12;
-
-  Duration t(1000);
-  R2WLocalisationMetaState metaState;
-  LocalisationFSMState fsmState = LocalisationFSMState::INIT;
-  LocalisationUpdaterTwist<R2WLocalisationMetaState> updater("twist_updater", 10);
+  romea::core::Duration t(1000);
+  MetaState metaState;
+  FSMState fsmState = FSMState::INIT;
+  Updater updater("twist_updater", 10);
 
   updater.update(t, observation, fsmState, metaState);
 
-  EXPECT_EQ(fsmState, LocalisationFSMState::INIT);
+  EXPECT_EQ(fsmState, FSMState::INIT);
 
   EXPECT_EQ(
-    metaState.input.U(R2WLocalisationMetaState::InputIndex::LINEAR_SPEED_X_BODY),
-    observation.Y(ObservationTwist::LINEAR_SPEED_X_BODY));
+    metaState.input.U(MetaState::InputIndex::LINEAR_SPEED_X_BODY),
+    observation.Y(Observation::LINEAR_SPEED_X_BODY));
   EXPECT_EQ(
-    metaState.input.U(R2WLocalisationMetaState::InputIndex::LINEAR_SPEED_Y_BODY),
-    observation.Y(ObservationTwist::LINEAR_SPEED_Y_BODY));
+    metaState.input.U(MetaState::InputIndex::LINEAR_SPEED_Y_BODY),
+    observation.Y(Observation::LINEAR_SPEED_Y_BODY));
   EXPECT_EQ(
-    metaState.input.U(R2WLocalisationMetaState::InputIndex::ANGULAR_SPEED_Z_BODY),
-    observation.Y(ObservationTwist::ANGULAR_SPEED_Z_BODY));
+    metaState.input.U(MetaState::InputIndex::ANGULAR_SPEED_Z_BODY),
+    observation.Y(Observation::ANGULAR_SPEED_Z_BODY));
 }
 
 //-----------------------------------------------------------------------------

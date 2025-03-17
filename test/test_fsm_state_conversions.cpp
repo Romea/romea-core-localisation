@@ -18,37 +18,26 @@
 
 // romea
 #include "test_utils.hpp"
-#include "romea_core_localisation/LocalisationFSMState.hpp"
+#include "romea_core_localisation/fsm_state.hpp"
 
+using namespace romea::core::localisation;  //NOLINT
 
 //-----------------------------------------------------------------------------
 TEST(TestFSMStateConversion, checkfsmStateToString)
 {
-  EXPECT_STREQ(
-    romea::core::toString(romea::core::LocalisationFSMState::ABORTED).c_str(), "ABORTED");
-  EXPECT_STREQ(
-    romea::core::toString(romea::core::LocalisationFSMState::RUNNING).c_str(), "RUNNING");
-  EXPECT_STREQ(
-    romea::core::toString(romea::core::LocalisationFSMState::RESET).c_str(), "RESET");
-  EXPECT_STREQ(
-    romea::core::toString(romea::core::LocalisationFSMState::INIT).c_str(), "INIT");
+  EXPECT_STREQ(to_string(FSMState::ABORTED).c_str(), "ABORTED");
+  EXPECT_STREQ(to_string(FSMState::RUNNING).c_str(), "RUNNING");
+  EXPECT_STREQ(to_string(FSMState::RESET).c_str(), "RESET");
+  EXPECT_STREQ(to_string(FSMState::INIT).c_str(), "INIT");
 }
 
 //-----------------------------------------------------------------------------
 TEST(TestFSMStateConversion, checkfsmStateToDiagnosticStatus)
 {
-  EXPECT_EQ(
-    romea::core::toDiagnosticStatus(romea::core::LocalisationFSMState::ABORTED),
-    romea::core::DiagnosticStatus::ERROR);
-  EXPECT_EQ(
-    romea::core::toDiagnosticStatus(romea::core::LocalisationFSMState::RUNNING),
-    romea::core::DiagnosticStatus::OK);
-  EXPECT_EQ(
-    romea::core::toDiagnosticStatus(romea::core::LocalisationFSMState::RESET),
-    romea::core::DiagnosticStatus::WARN);
-  EXPECT_EQ(
-    romea::core::toDiagnosticStatus(romea::core::LocalisationFSMState::INIT),
-    romea::core::DiagnosticStatus::WARN);
+  EXPECT_EQ(to_diagnostic_status(FSMState::ABORTED), romea::core::DiagnosticStatus::ERROR);
+  EXPECT_EQ(to_diagnostic_status(FSMState::RUNNING), romea::core::DiagnosticStatus::OK);
+  EXPECT_EQ(to_diagnostic_status(FSMState::RESET), romea::core::DiagnosticStatus::WARN);
+  EXPECT_EQ(to_diagnostic_status(FSMState::INIT), romea::core::DiagnosticStatus::WARN);
 }
 
 //-----------------------------------------------------------------------------

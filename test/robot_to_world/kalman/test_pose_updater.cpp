@@ -21,15 +21,15 @@
 
 // local
 #include "../../test_utils.hpp"
-#include "romea_core_localisation/LocalisationFSMState.hpp"
-#include "romea_core_localisation/robot_to_world/kalman/R2WLocalisationKFUpdaterPose.hpp"
-#include "romea_core_localisation/robot_to_world/R2WLocalisationMetaState.hpp"
+#include "romea_core_localisation/fsm_state.hpp"
+#include "romea_core_localisation/robot_to_world/kalman/updater_pose.hpp"
+#include "romea_core_localisation/robot_to_world/kalman/meta_state.hpp"
 
-using Updater = romea::core::R2WLocalisationKFUpdaterPose;
-using FSMState = romea::core::LocalisationFSMState;
-using MetaState = romea::core::R2WLocalisationKFMetaState;
-using Observation = romea::core::ObservationPose;
-using TriggerMode = romea::core::LocalisationUpdaterTriggerMode;
+using Updater = romea::core::localisation::R2WKFUpdaterPose;
+using FSMState = romea::core::localisation::FSMState;
+using MetaState = romea::core::localisation::R2WKFMetaState;
+using Observation = romea::core::localisation::ObservationPose;
+using TriggerMode = romea::core::localisation::UpdaterTriggerMode;
 
 const Eigen::Vector3d initialPose = (Eigen::Vector3d() << 0.1, 0.2, 0.3).finished();
 const Eigen::Matrix3d initialPoseCovariance =

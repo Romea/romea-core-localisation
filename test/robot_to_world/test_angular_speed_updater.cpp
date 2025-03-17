@@ -20,87 +20,78 @@
 #include <cmath>
 
 // romea
-#include "romea_core_localisation/LocalisationFSMState.hpp"
-#include "romea_core_localisation/LocalisationUpdaterAngularSpeed.hpp"
-#include "romea_core_localisation/robot_to_world/R2WLocalisationMetaState.hpp"
+#include "romea_core_localisation/fsm_state.hpp"
+#include "romea_core_localisation/updater_angular_speed.hpp"
+#include "romea_core_localisation/robot_to_world/meta_state_base.hpp"
 
-using namespace romea::core;  //NOLINT
+
+using FSMState = romea::core::localisation::FSMState;
+using MetaState = romea::core::localisation::R2WMetaStateBase;
+using Observation = romea::core::localisation::ObservationAngularSpeed;
+using Updater = romea::core::localisation::UpdaterAngularSpeed<MetaState>;
 
 TEST(TestAngularSpeedUpdater, checkUpdate)
 {
-  ObservationAngularSpeed observation;
+  Observation observation;
   observation.Y() = 1;
   observation.R() = 2;
 
-  Duration t(1000);
-  R2WLocalisationMetaState metaState;
-  LocalisationFSMState fsmState = LocalisationFSMState::INIT;
-  LocalisationUpdaterAngularSpeed<R2WLocalisationMetaState> updater("angular_speed_updater", 100);
+  romea::core::Duration t(1000);
+  MetaState metaState;
+  FSMState fsmState = FSMState::INIT;
+  Updater updater("angular_speed_updater", 100);
 
   updater.update(t, observation, fsmState, metaState);
 
-  EXPECT_EQ(fsmState, LocalisationFSMState::INIT);
-
-  EXPECT_FALSE(
-    std::isfinite(
-      metaState.input.U(
-        R2WLocalisationMetaState::InputIndex::
-        LINEAR_SPEED_X_BODY)));
-
-  EXPECT_FALSE(
-    std::isfinite(
-      metaState.input.U(
-        R2WLocalisationMetaState::InputIndex::
-        LINEAR_SPEED_Y_BODY)));
-
-  EXPECT_EQ(
-    metaState.input.U(
-      R2WLocalisationMetaState::InputIndex::ANGULAR_SPEED_Z_BODY), observation.Y());
+  EXPECT_EQ(fsmState, FSMState::INIT);
+  EXPECT_FALSE(std::isfinite(metaState.input.U(MetaState::InputIndex::LINEAR_SPEED_X_BODY)));
+  EXPECT_FALSE(std::isfinite(metaState.input.U(MetaState::InputIndex::LINEAR_SPEED_Y_BODY)));
+  EXPECT_EQ(metaState.input.U(MetaState::InputIndex::ANGULAR_SPEED_Z_BODY), observation.Y());
 
   EXPECT_EQ(
     metaState.input.QU(
-      R2WLocalisationMetaState::InputIndex::LINEAR_SPEED_X_BODY,
-      R2WLocalisationMetaState::InputIndex::LINEAR_SPEED_X_BODY), 0);
+      MetaState::InputIndex::LINEAR_SPEED_X_BODY,
+      MetaState::InputIndex::LINEAR_SPEED_X_BODY), 0);
 
   EXPECT_EQ(
     metaState.input.QU(
-      R2WLocalisationMetaState::InputIndex::LINEAR_SPEED_X_BODY,
-      R2WLocalisationMetaState::InputIndex::LINEAR_SPEED_Y_BODY), 0);
+      MetaState::InputIndex::LINEAR_SPEED_X_BODY,
+      MetaState::InputIndex::LINEAR_SPEED_Y_BODY), 0);
 
   EXPECT_EQ(
     metaState.input.QU(
-      R2WLocalisationMetaState::InputIndex::LINEAR_SPEED_X_BODY,
-      R2WLocalisationMetaState::InputIndex::ANGULAR_SPEED_Z_BODY), 0);
+      MetaState::InputIndex::LINEAR_SPEED_X_BODY,
+      MetaState::InputIndex::ANGULAR_SPEED_Z_BODY), 0);
 
   EXPECT_EQ(
     metaState.input.QU(
-      R2WLocalisationMetaState::InputIndex::LINEAR_SPEED_Y_BODY,
-      R2WLocalisationMetaState::InputIndex::LINEAR_SPEED_X_BODY), 0);
+      MetaState::InputIndex::LINEAR_SPEED_Y_BODY,
+      MetaState::InputIndex::LINEAR_SPEED_X_BODY), 0);
 
   EXPECT_EQ(
     metaState.input.QU(
-      R2WLocalisationMetaState::InputIndex::LINEAR_SPEED_Y_BODY,
-      R2WLocalisationMetaState::InputIndex::LINEAR_SPEED_Y_BODY), 0);
+      MetaState::InputIndex::LINEAR_SPEED_Y_BODY,
+      MetaState::InputIndex::LINEAR_SPEED_Y_BODY), 0);
 
   EXPECT_EQ(
     metaState.input.QU(
-      R2WLocalisationMetaState::InputIndex::LINEAR_SPEED_Y_BODY,
-      R2WLocalisationMetaState::InputIndex::ANGULAR_SPEED_Z_BODY), 0);
+      MetaState::InputIndex::LINEAR_SPEED_Y_BODY,
+      MetaState::InputIndex::ANGULAR_SPEED_Z_BODY), 0);
 
   EXPECT_EQ(
     metaState.input.QU(
-      R2WLocalisationMetaState::InputIndex::ANGULAR_SPEED_Z_BODY,
-      R2WLocalisationMetaState::InputIndex::LINEAR_SPEED_X_BODY), 0);
+      MetaState::InputIndex::ANGULAR_SPEED_Z_BODY,
+      MetaState::InputIndex::LINEAR_SPEED_X_BODY), 0);
 
   EXPECT_EQ(
     metaState.input.QU(
-      R2WLocalisationMetaState::InputIndex::ANGULAR_SPEED_Z_BODY,
-      R2WLocalisationMetaState::InputIndex::LINEAR_SPEED_Y_BODY), 0);
+      MetaState::InputIndex::ANGULAR_SPEED_Z_BODY,
+      MetaState::InputIndex::LINEAR_SPEED_Y_BODY), 0);
 
   EXPECT_EQ(
     metaState.input.QU(
-      R2WLocalisationMetaState::InputIndex::ANGULAR_SPEED_Z_BODY,
-      R2WLocalisationMetaState::InputIndex::ANGULAR_SPEED_Z_BODY), observation.R());
+      MetaState::InputIndex::ANGULAR_SPEED_Z_BODY,
+      MetaState::InputIndex::ANGULAR_SPEED_Z_BODY), observation.R());
 }
 
 //-----------------------------------------------------------------------------

@@ -20,15 +20,15 @@
 #include <memory>
 
 // romea
-#include "romea_core_localisation/LocalisationFSMState.hpp"
-#include "romea_core_localisation/robot_to_world/kalman/R2WLocalisationKFUpdaterCourse.hpp"
-#include "romea_core_localisation/robot_to_world/R2WLocalisationMetaState.hpp"
+#include "romea_core_localisation/fsm_state.hpp"
+#include "romea_core_localisation/robot_to_world/kalman/updater_course.hpp"
+#include "romea_core_localisation/robot_to_world/kalman/meta_state.hpp"
 
-using Updater = romea::core::R2WLocalisationKFUpdaterCourse;
-using FSMState = romea::core::LocalisationFSMState;
-using MetaState = romea::core::R2WLocalisationKFMetaState;
-using Observation = romea::core::ObservationCourse;
-using TriggerMode = romea::core::LocalisationUpdaterTriggerMode;
+using Updater = romea::core::localisation::R2WKFUpdaterCourse;
+using FSMState = romea::core::localisation::FSMState;
+using MetaState = romea::core::localisation::R2WKFMetaState;
+using Observation = romea::core::localisation::ObservationCourse;
+using TriggerMode = romea::core::localisation::UpdaterTriggerMode;
 
 const double initialCourse = 0.1;
 const double initialCourseVariance = 0.1;
@@ -102,8 +102,8 @@ TEST_F(TestCourseUpdater, testUpdate)
   EXPECT_EQ(fsmState, FSMState::RUNNING);
   EXPECT_EQ(metastate.state.X(MetaState::ORIENTATION_Z), initialCourse);
   EXPECT_EQ(metastate.state.P(MetaState::ORIENTATION_Z, MetaState::ORIENTATION_Z), 0.05);
-  EXPECT_EQ(metastate.addon.lastExteroceptiveUpdate.time.count(), duration.count());
-  EXPECT_DOUBLE_EQ(metastate.addon.lastExteroceptiveUpdate.travelledDistance, 0);
+  EXPECT_EQ(metastate.addon.last_exteroceptive_update.time.count(), duration.count());
+  EXPECT_DOUBLE_EQ(metastate.addon.last_exteroceptive_update.travelled_distance, 0);
 }
 
 TEST_F(TestCourseUpdater, testMahalanobisRejection)
@@ -122,8 +122,8 @@ TEST_F(TestCourseUpdater, testMahalanobisRejection)
     metastate.state.P(
       MetaState::ORIENTATION_Z,
       MetaState::ORIENTATION_Z), initialCourseVariance);
-  EXPECT_EQ(metastate.addon.lastExteroceptiveUpdate.time.count(), duration.count());
-  EXPECT_DOUBLE_EQ(metastate.addon.lastExteroceptiveUpdate.travelledDistance, 0);
+  EXPECT_EQ(metastate.addon.last_exteroceptive_update.time.count(), duration.count());
+  EXPECT_DOUBLE_EQ(metastate.addon.last_exteroceptive_update.travelled_distance, 0);
 }
 
 //-----------------------------------------------------------------------------
