@@ -34,7 +34,7 @@ add_library(${PROJECT_NAME} SHARED
   src/robot_to_robot/particle/predictor.cpp
   src/robot_to_robot/particle/updater_range.cpp
   src/robot_to_robot/particle/updater_leader_pose.cpp
-  src/robot_to_world/level_arm_compensation.cpp
+  src/robot_to_world/lever_arm_compensation.cpp
   src/robot_to_world/meta_state_base.cpp
   src/robot_to_world/kalman/results.cpp
   src/robot_to_world/kalman/meta_state.cpp

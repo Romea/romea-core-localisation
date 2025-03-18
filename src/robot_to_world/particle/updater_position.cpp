@@ -97,7 +97,7 @@ void R2WPFUpdaterPosition::update_(
     currentAddon.roll_pitch_variance,
     0,
     0,
-    currentObservation.level_arm);
+    currentObservation.lever_arm);
 
 
   double varxyantenna = levelArmCompensation_.getPositionCovariance().block<2, 2>(0, 0).trace();
@@ -164,7 +164,7 @@ void R2WPFUpdaterPosition::computeLevelArms_(
     currentAddon.roll_pitch_variance,
     0,
     0,
-    currentObservation.level_arm);
+    currentObservation.lever_arm);
 
   randomGenerator.init(
     levelArmCompensation_.getPosition().segment<2>(0),

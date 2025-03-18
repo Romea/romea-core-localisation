@@ -36,7 +36,7 @@ struct ObservationTwist : GaussianObservation<double, 3>
     SIZE
   };
 
-  Eigen::Vector3d level_arm;
+  Eigen::Vector3d lever_arm;
 };
 
 }  // namespace localisation

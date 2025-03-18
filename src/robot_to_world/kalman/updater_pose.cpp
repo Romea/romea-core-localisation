@@ -61,8 +61,8 @@ R2WKFUpdaterPose::R2WKFUpdaterPose(
       "cov_y",
       "cov_ytheta",
       "cov_theta",
-      "level_arm_x",
-      "level_arm_y"
+      "lever_arm_x",
+      "lever_arm_y"
       "mahalanobis_distance",
       "success"
     });
@@ -125,7 +125,7 @@ void R2WKFUpdaterPose::update_(
     currentAddon.roll_pitch_variance,
     currentState.X(MetaState::ORIENTATION_Z),
     0,                             // orientation covariance is already in state covariance
-    currentObservation.level_arm);
+    currentObservation.lever_arm);
 
 
   // Compute innovation
@@ -202,7 +202,7 @@ bool R2WKFUpdaterPose::set_(
       currentState,
       currentAddon,
       levelArmCompensation_,
-      currentObservation.level_arm);
+      currentObservation.lever_arm);
 
     currentAddon.last_exteroceptive_update.time = duration;
     currentAddon.last_exteroceptive_update.travelled_distance = currentAddon.travelled_distance;

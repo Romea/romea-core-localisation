@@ -35,7 +35,7 @@ namespace core
 {
 namespace localisation
 {
-  
+
 class R2WPFUpdaterCourse : public UpdaterExteroceptive, public PFUpdaterCore<double, 3, 1>
 {
 public:

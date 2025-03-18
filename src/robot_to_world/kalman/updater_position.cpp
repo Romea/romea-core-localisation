@@ -58,9 +58,9 @@ R2WKFUpdaterPosition::R2WKFUpdaterPosition(
       "cov_theta",
       "roll",
       "pitch"
-      "level_arm_x",
-      "level_arm_y",
-      "level_arm_z",
+      "lever_arm_x",
+      "lever_arm_y",
+      "lever_arm_z",
       "x_ant_a_priori",
       "y_ant_a_priori",
       "inn_x",
@@ -130,7 +130,7 @@ void R2WKFUpdaterPosition::update_(
     currentAddon.roll_pitch_variance,
     currentState.X(MetaState::ORIENTATION_Z),
     0,                             // orientation covariance is already in state covariance
-    currentObservation.level_arm);
+    currentObservation.lever_arm);
 
   // Compute innovation
   Inn_ = currentObservation.Y();
@@ -146,7 +146,7 @@ void R2WKFUpdaterPosition::update_(
 
   // log
   if (log_file_.is_open()) {
-    log_file_ << std::setprecision(10) <<  duration.count() << ",";
+    log_file_ << std::setprecision(10) << duration.count() << ",";
     log_file_ << currentObservation.Y(0) << ",";
     log_file_ << currentObservation.Y(1) << ",";
     log_file_ << currentObservation.R(0, 0) << ",";
@@ -232,7 +232,7 @@ bool R2WKFUpdaterPosition::set_(
       currentState,
       currentAddon,
       levelArmCompensation_,
-      currentObservation.level_arm);
+      currentObservation.lever_arm);
 
     currentAddon.last_exteroceptive_update.time = duration;
     currentAddon.last_exteroceptive_update.travelled_distance = currentAddon.travelled_distance;

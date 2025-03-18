@@ -25,7 +25,7 @@
 
 // local
 #include "romea_core_localisation/robot_to_world/meta_state_base.hpp"
-#include "romea_core_localisation/robot_to_world/level_arm_compensation.hpp"
+#include "romea_core_localisation/robot_to_world/lever_arm_compensation.hpp"
 
 
 namespace romea

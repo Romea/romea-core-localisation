@@ -104,7 +104,7 @@ void R2WPFUpdaterPose::update_(
     currentAddon.roll_pitch_variance,
     0,
     0,
-    currentObservation.level_arm);
+    currentObservation.lever_arm);
 
   double varxyantenna = levelArmCompensation_.getPositionCovariance().block<2, 2>(0, 0).trace();
   const Eigen::Vector3d & antennaPosition = levelArmCompensation_.getPosition();
@@ -197,7 +197,7 @@ bool R2WPFUpdaterPose::set_(
       currentObservation.R(
         ObservationPose::ORIENTATION_Z,
         ObservationPose::ORIENTATION_Z),
-      currentObservation.level_arm);
+      currentObservation.lever_arm);
 
     pose.segment<2>(0) -= levelArmCompensation_.getPosition().segment<2>(0);
     poseCovariance.block<2, 2>(0, 0) += levelArmCompensation_.getPositionCovariance().block<2, 2>(

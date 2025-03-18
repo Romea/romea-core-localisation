@@ -28,7 +28,7 @@
 #include "romea_core_localisation/fsm_state.hpp"
 #include "romea_core_localisation/observation_pose.hpp"
 #include "romea_core_localisation/updater_exteroceptive.hpp"
-#include "romea_core_localisation/robot_to_world/level_arm_compensation.hpp"
+#include "romea_core_localisation/robot_to_world/lever_arm_compensation.hpp"
 #include "romea_core_localisation/robot_to_world/particle/meta_state.hpp"
 
 namespace romea
@@ -38,7 +38,7 @@ namespace core
 namespace localisation
 {
 
-class R2WPFUpdaterPose: public UpdaterExteroceptive, public PFGaussianUpdaterCore<double, 3, 3>
+class R2WPFUpdaterPose : public UpdaterExteroceptive, public PFGaussianUpdaterCore<double, 3, 3>
 {
 public:
   using Observation = ObservationPose;

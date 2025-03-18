@@ -49,7 +49,7 @@
 //       covariance[1]: 0
 //       covariance[2]: 0
 //       covariance[3]: 0.0004
-//     level_arm:
+//     lever_arm:
 //       x: 0
 //       y: 0
 //       z: 2

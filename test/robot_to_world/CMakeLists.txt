@@ -1,7 +1,7 @@
-add_executable(${PROJECT_NAME}_test_level_arm_compensation test_level_arm_compensation.cpp )
-target_link_libraries(${PROJECT_NAME}_test_level_arm_compensation ${PROJECT_NAME} GTest::GTest GTest::Main)
-target_compile_options(${PROJECT_NAME}_test_level_arm_compensation PRIVATE -std=c++17)
-add_test(test_level_arm_compensation ${PROJECT_NAME}_test_level_arm_compensation)
+add_executable(${PROJECT_NAME}_test_lever_arm_compensation test_lever_arm_compensation.cpp )
+target_link_libraries(${PROJECT_NAME}_test_lever_arm_compensation ${PROJECT_NAME} GTest::GTest GTest::Main)
+target_compile_options(${PROJECT_NAME}_test_lever_arm_compensation PRIVATE -std=c++17)
+add_test(test_lever_arm_compensation ${PROJECT_NAME}_test_lever_arm_compensation)
 
 add_executable(${PROJECT_NAME}_test_attitude_updater test_attitude_updater.cpp )
 target_link_libraries(${PROJECT_NAME}_test_attitude_updater ${PROJECT_NAME} GTest::GTest GTest::Main)

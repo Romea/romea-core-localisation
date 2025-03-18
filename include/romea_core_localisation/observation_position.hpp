@@ -37,11 +37,11 @@ struct ObservationPosition : GaussianObservation<double, 2>
 
   ObservationPosition()
   : GaussianObservation(),
-    level_arm(Eigen::Vector3d::Zero())
+    lever_arm(Eigen::Vector3d::Zero())
   {
   }
 
-  Eigen::Vector3d level_arm;
+  Eigen::Vector3d lever_arm;
 };
 
 }  // namespace localisation

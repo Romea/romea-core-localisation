@@ -26,7 +26,7 @@
 #include "romea_core_localisation/fsm_state.hpp"
 #include "romea_core_localisation/observation_position.hpp"
 #include "romea_core_localisation/updater_exteroceptive.hpp"
-#include "romea_core_localisation/robot_to_world/level_arm_compensation.hpp"
+#include "romea_core_localisation/robot_to_world/lever_arm_compensation.hpp"
 #include "romea_core_localisation/robot_to_world/kalman/meta_state.hpp"
 
 namespace romea
@@ -36,7 +36,7 @@ namespace core
 namespace localisation
 {
 
-class R2WKFUpdaterPosition: public UpdaterExteroceptive, public KFUpdaterCore<double, 3, 2>
+class R2WKFUpdaterPosition : public UpdaterExteroceptive, public KFUpdaterCore<double, 3, 2>
 {
 public:
   using Observation = ObservationPosition;
