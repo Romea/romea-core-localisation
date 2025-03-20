@@ -50,12 +50,6 @@ add_library(${PROJECT_NAME} SHARED
   src/robot_to_world/particle/updater_range.cpp
   src/robot_to_world/particle/updater_pose.cpp
   src/robot_to_world/particle/updater_position.cpp
-  src/robot_to_world_25D/meta_state_base.cpp
-  src/robot_to_world_25D/kalman/meta_state.cpp
-  src/robot_to_world_25D/kalman/predictor.cpp
-  src/robot_to_world_25D/kalman/results.cpp
-  src/robot_to_world_25D/kalman/updater_course.cpp
-  src/robot_to_world_25D/kalman/updater_position.cpp
   )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
