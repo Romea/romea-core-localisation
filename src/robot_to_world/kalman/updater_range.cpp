@@ -50,7 +50,7 @@ R2WKFUpdaterRange::R2WKFUpdaterRange(
     UNSCENTED_TRANFORM_ALPHA,
     UNSCENTED_TRANFORM_BETA,
     maximalMahalanobisDistance),
-  antennaAtitudeCompensation_()
+  lever_arm_compensation_()
 {
   set_log_file_header_(
     {"stamp",
@@ -115,7 +115,7 @@ void R2WKFUpdaterRange::update_(
   AddOn & currentAddon)
 {
   // compute antenna attitude compensation
-  antennaAtitudeCompensation_.compute(
+  lever_arm_compensation_.compute(
     currentAddon.roll,
     currentAddon.pitch,
     currentAddon.roll_pitch_variance,
@@ -124,7 +124,7 @@ void R2WKFUpdaterRange::update_(
     currentObservation.initiator_position);
 
 
-  const Eigen::Vector3d & tagAntennaPosition = antennaAtitudeCompensation_.getPosition();
+  const Eigen::Vector3d & tagAntennaPosition = lever_arm_compensation_.getPosition();
 
   const double & ix = tagAntennaPosition.x();
   const double & iy = tagAntennaPosition.y();

@@ -46,10 +46,10 @@ struct R2WKFMetaState : R2WMetaStateBase
   State state;
 };
 
-void applyLevelArmCompensation(
+void apply_lever_arm_compensation(
   R2WKFMetaState::State & currentState,
   R2WKFMetaState::AddOn & currentAddOn,
-  LevelArmCompensation & levelArmCompensation,
+  LeverArmCompensation & levelArmCompensation,
   const Eigen::Vector3d & levelArm);
 
 }  // namespace localisation

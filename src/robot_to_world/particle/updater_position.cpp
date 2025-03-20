@@ -35,10 +35,10 @@ R2WPFUpdaterPosition::R2WPFUpdaterPosition(
   const std::string & logFilename)
 : UpdaterExteroceptive(updaterName, minimalRate, triggerMode, logFilename),
   PFGaussianUpdaterCore(numberOfParticles, maximalMahalanobisDistance),
-  levelArms_(RowMajorMatrix::Zero(2, numberOfParticles)),
+  leverArms_(RowMajorMatrix::Zero(2, numberOfParticles)),
   cosCourses_(RowMajorVector::Zero(numberOfParticles)),
   sinCourses_(RowMajorVector::Zero(numberOfParticles)),
-  levelArmCompensation_()
+  lever_arm_compensation_()
 {
 }
 
@@ -91,7 +91,7 @@ void R2WPFUpdaterPosition::update_(
   AddOn & currentAddon)
 {
   // compute antenna attitude compensation
-  levelArmCompensation_.compute(
+  lever_arm_compensation_.compute(
     currentAddon.roll,
     currentAddon.pitch,
     currentAddon.roll_pitch_variance,
@@ -100,8 +100,8 @@ void R2WPFUpdaterPosition::update_(
     currentObservation.lever_arm);
 
 
-  double varxyantenna = levelArmCompensation_.getPositionCovariance().block<2, 2>(0, 0).trace();
-  const Eigen::Vector3d & antennaPosition = levelArmCompensation_.getPosition();
+  double varxyantenna = lever_arm_compensation_.getPositionCovariance().block<2, 2>(0, 0).trace();
+  const Eigen::Vector3d & antennaPosition = lever_arm_compensation_.getPosition();
   const double & xantenna = antennaPosition(0);
   const double & yantenna = antennaPosition(1);
 
@@ -158,7 +158,7 @@ void R2WPFUpdaterPosition::computeLevelArms_(
 {
   NormalRandomArrayGenerator2D<double> randomGenerator;
 
-  levelArmCompensation_.compute(
+  lever_arm_compensation_.compute(
     currentAddon.roll,
     currentAddon.pitch,
     currentAddon.roll_pitch_variance,
@@ -167,10 +167,10 @@ void R2WPFUpdaterPosition::computeLevelArms_(
     currentObservation.lever_arm);
 
   randomGenerator.init(
-    levelArmCompensation_.getPosition().segment<2>(0),
-    levelArmCompensation_.getPosition().block<2, 2>(0, 0));
+    lever_arm_compensation_.getPosition().segment<2>(0),
+    lever_arm_compensation_.getPosition().block<2, 2>(0, 0));
 
-  randomGenerator.fill(levelArms_);
+  randomGenerator.fill(leverArms_);
 }
 
 //-----------------------------------------------------------------------------
@@ -192,12 +192,12 @@ void R2WPFUpdaterPosition::applyLevelArmCompentations_(State & currentState)
   sinCourses_ = currentState.particles.row(MetaState::ORIENTATION_Z).sin();
 
   currentState.particles.row(MetaState::POSITION_X) -=
-    cosCourses_ * levelArms_.row(MetaState::POSITION_X) -
-    sinCourses_ * levelArms_.row(MetaState::POSITION_Y);
+    cosCourses_ * leverArms_.row(MetaState::POSITION_X) -
+    sinCourses_ * leverArms_.row(MetaState::POSITION_Y);
 
   currentState.particles.row(MetaState::POSITION_Y) -=
-    sinCourses_ * levelArms_.row(MetaState::POSITION_X) +
-    cosCourses_ * levelArms_.row(MetaState::POSITION_Y);
+    sinCourses_ * leverArms_.row(MetaState::POSITION_X) +
+    cosCourses_ * leverArms_.row(MetaState::POSITION_Y);
 }
 
 }  // namespace localisation

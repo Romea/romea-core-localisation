@@ -26,10 +26,10 @@ namespace core
 namespace localisation
 {
 
-class LevelArmCompensation
+class LeverArmCompensation
 {
 public:
-  LevelArmCompensation();
+  LeverArmCompensation();
 
   void compute(
     const double & vehicleRollAngle,

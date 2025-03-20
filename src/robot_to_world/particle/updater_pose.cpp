@@ -42,7 +42,7 @@ R2WPFUpdaterPose::R2WPFUpdaterPose(
   PFGaussianUpdaterCore(numberOfParticles, maximalMahalanobisDistance),
   cosCourses_(RowMajorVector::Zero(numberOfParticles)),
   sinCourses_(RowMajorVector::Zero(numberOfParticles)),
-  levelArmCompensation_()
+  lever_arm_compensation_()
 {
 }
 
@@ -98,7 +98,7 @@ void R2WPFUpdaterPose::update_(
   AddOn & currentAddon)
 {
   // compute level arm compensation
-  levelArmCompensation_.compute(
+  lever_arm_compensation_.compute(
     currentAddon.roll,
     currentAddon.pitch,
     currentAddon.roll_pitch_variance,
@@ -106,8 +106,8 @@ void R2WPFUpdaterPose::update_(
     0,
     currentObservation.lever_arm);
 
-  double varxyantenna = levelArmCompensation_.getPositionCovariance().block<2, 2>(0, 0).trace();
-  const Eigen::Vector3d & antennaPosition = levelArmCompensation_.getPosition();
+  double varxyantenna = lever_arm_compensation_.getPositionCovariance().block<2, 2>(0, 0).trace();
+  const Eigen::Vector3d & antennaPosition = lever_arm_compensation_.getPosition();
   const double & xantenna = antennaPosition(0);
   const double & yantenna = antennaPosition(1);
 
@@ -189,7 +189,7 @@ bool R2WPFUpdaterPose::set_(
     Eigen::Vector3d pose = currentObservation.Y();
     Eigen::Matrix3d poseCovariance = currentObservation.R();
 
-    levelArmCompensation_.compute(
+    lever_arm_compensation_.compute(
       currentAddon.roll,
       currentAddon.pitch,
       currentAddon.roll_pitch_variance,
@@ -199,8 +199,8 @@ bool R2WPFUpdaterPose::set_(
         ObservationPose::ORIENTATION_Z),
       currentObservation.lever_arm);
 
-    pose.segment<2>(0) -= levelArmCompensation_.getPosition().segment<2>(0);
-    poseCovariance.block<2, 2>(0, 0) += levelArmCompensation_.getPositionCovariance().block<2, 2>(
+    pose.segment<2>(0) -= lever_arm_compensation_.getPosition().segment<2>(0);
+    poseCovariance.block<2, 2>(0, 0) += lever_arm_compensation_.getPositionCovariance().block<2, 2>(
       0,
       0);
 

@@ -31,10 +31,10 @@ R2WKFMetaState::R2WKFMetaState()
 }
 
 //--------------------------------------------------------------------------
-void applyLevelArmCompensation(
+void apply_lever_arm_compensation(
   R2WKFMetaState::State & currentState,
   R2WKFMetaState::AddOn & currentAddOn,
-  LevelArmCompensation & levelArmCompensation,
+  LeverArmCompensation & levelArmCompensation,
   const Eigen::Vector3d & levelArm)
 {
   levelArmCompensation.compute(
@@ -50,7 +50,7 @@ void applyLevelArmCompensation(
 
   currentState.P().block<2, 2>(R2WKFMetaState::POSITION_X, R2WKFMetaState::POSITION_X) +=
     levelArmCompensation.getPositionCovariance().block<2, 2>(
-      R2WKFMetaState::POSITION_X, R2WKFMetaState::POSITION_X);
+    R2WKFMetaState::POSITION_X, R2WKFMetaState::POSITION_X);
 
   assert(isPositiveSemiDefiniteMatrix(currentState.P()));
 }

@@ -67,7 +67,7 @@ protected:
     AddOn & currentAddon);
 
 protected:
-  LevelArmCompensation antennaAtitudeCompensation_;
+  LeverArmCompensation lever_arm_compensation_;
 };
 
 }  // namespace localisation

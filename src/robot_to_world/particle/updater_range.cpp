@@ -38,7 +38,7 @@ R2WPFUpdaterRange::R2WPFUpdaterRange(
   PFGaussianUpdaterCore(numberOfParticles, maximalMahalanobisDistance),
   cosCourses_(RowMajorVector::Zero(numberOfParticles_)),
   sinCourses_(RowMajorVector::Zero(numberOfParticles_)),
-  levelArmCompensation_()
+  lever_arm_compensation_()
 {
 }
 
@@ -75,7 +75,7 @@ void R2WPFUpdaterRange::update_(
   AddOn & currentAddon)
 {
   // compute antenna attitude compensation
-  levelArmCompensation_.compute(
+  lever_arm_compensation_.compute(
     currentAddon.roll,
     currentAddon.pitch,
     currentAddon.roll_pitch_variance,
@@ -84,7 +84,7 @@ void R2WPFUpdaterRange::update_(
     currentObservation.initiator_position);
 
 
-  const Eigen::Vector3d & tagAntennaPosition = levelArmCompensation_.getPosition();
+  const Eigen::Vector3d & tagAntennaPosition = lever_arm_compensation_.getPosition();
 
   // compute a priori observations
   const double & eax = tagAntennaPosition.x();
@@ -107,7 +107,7 @@ void R2WPFUpdaterRange::update_(
     (eaz - iaz) * (eaz - iaz)).sqrt();
 
   // update weights and resample
-  currentObservation.R() += levelArmCompensation_.getPositionCovariance().trace();
+  currentObservation.R() += lever_arm_compensation_.getPositionCovariance().trace();
 
   if (updateState_(currentState, currentObservation)) {
     currentAddon.last_exteroceptive_update.time = duration;

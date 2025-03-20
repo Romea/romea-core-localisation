@@ -78,10 +78,10 @@ private:
     State & currentState,
     AddOn & currentAddon);
 
-  //  void applyLevelArmCompensation_(R2WLocalisationKFState & currentState,
+  //  void applyLeverArmCompensation_(R2WLocalisationKFState & currentState,
   //                                  const Eigen::Vector3d & levelArm);
 
-  LevelArmCompensation levelArmCompensation_;
+  LeverArmCompensation level_arm_compensation_;
 };
 
 }  // namespace localisation

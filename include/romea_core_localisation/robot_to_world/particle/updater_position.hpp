@@ -91,10 +91,10 @@ private:
   void applyLevelArmCompentations_(State & currentState);
 
 private:
-  RowMajorMatrix levelArms_;
+  RowMajorMatrix leverArms_;
   RowMajorVector cosCourses_;
   RowMajorVector sinCourses_;
-  LevelArmCompensation levelArmCompensation_;
+  LeverArmCompensation lever_arm_compensation_;
 };
 
 }  // namespace localisation

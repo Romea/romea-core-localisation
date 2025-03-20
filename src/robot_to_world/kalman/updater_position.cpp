@@ -35,7 +35,7 @@ R2WKFUpdaterPosition::R2WKFUpdaterPosition(
   const std::string & logFilename)
 : UpdaterExteroceptive(updaterName, minimalRate, triggerMode, logFilename),
   KFUpdaterCore(maximalMahalanobisDistance),
-  levelArmCompensation_()
+  lever_arm_compensation_()
 {
   this->H_(0, MetaState::POSITION_X) = 1;
   this->H_(1, MetaState::POSITION_Y) = 1;
@@ -124,25 +124,23 @@ void R2WKFUpdaterPosition::update_(
   State previousState = currentState;
 
   // compute antenna attitude compensation
-  levelArmCompensation_.compute(
+  lever_arm_compensation_.compute(
     currentAddon.roll,
     currentAddon.pitch,
     currentAddon.roll_pitch_variance,
     currentState.X(MetaState::ORIENTATION_Z),
-    0,                             // orientation covariance is already in state covariance
+    0,  // orientation covariance is already in state covariance
     currentObservation.lever_arm);
 
   // Compute innovation
   Inn_ = currentObservation.Y();
   Inn_ -= currentState.X().segment<2>(MetaState::POSITION_X);
-  Inn_ -= levelArmCompensation_.getPosition().segment<2>(0);
+  Inn_ -= lever_arm_compensation_.getPosition().segment<2>(0);
 
   // Compute innovation covariance
-  //  this->R_ = currentObservation.R();
-  //  this->R_ += levelArmCompensation_.getPositionCovariance().block<2,2>(0,0);
-  H_.template block<2, 1>(0, 2) = levelArmCompensation_.getJacobian().block<2, 1>(0, 2);
+  H_.template block<2, 1>(0, 2) = lever_arm_compensation_.getJacobian().block<2, 1>(0, 2);
   QInn_ = H_ * currentState.P() * H_.transpose() + currentObservation.R();
-  QInn_ += levelArmCompensation_.getPositionCovariance().block<2, 2>(0, 0);
+  QInn_ += lever_arm_compensation_.getPositionCovariance().block<2, 2>(0, 0);
 
   // log
   if (log_file_.is_open()) {
@@ -163,9 +161,9 @@ void R2WKFUpdaterPosition::update_(
     log_file_ << currentState.P(2, 2) << ",";
     log_file_ << currentAddon.roll << ",";
     log_file_ << currentAddon.pitch << ",";
-    log_file_ << levelArmCompensation_.getPosition()(0) << ",";
-    log_file_ << levelArmCompensation_.getPosition()(1) << ",";
-    log_file_ << levelArmCompensation_.getPosition()(2) << ",";
+    log_file_ << lever_arm_compensation_.getPosition()(0) << ",";
+    log_file_ << lever_arm_compensation_.getPosition()(1) << ",";
+    log_file_ << lever_arm_compensation_.getPosition()(2) << ",";
     log_file_ << currentObservation.Y(0) - Inn_.x() << ",";
     log_file_ << currentObservation.Y(1) - Inn_.y() << ",";
     log_file_ << Inn_.x() << ",";
@@ -228,10 +226,10 @@ bool R2WKFUpdaterPosition::set_(
       MetaState::POSITION_X,
       MetaState::POSITION_X) = currentObservation.R();
 
-    applyLevelArmCompensation(
+    apply_lever_arm_compensation(
       currentState,
       currentAddon,
-      levelArmCompensation_,
+      lever_arm_compensation_,
       currentObservation.lever_arm);
 
     currentAddon.last_exteroceptive_update.time = duration;

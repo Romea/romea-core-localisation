@@ -19,10 +19,10 @@
 // romea
 #include "romea_core_localisation/robot_to_world/lever_arm_compensation.hpp"
 
-class TestLevelArmCompensation : public ::testing::Test
+class TestLeverArmCompensation : public ::testing::Test
 {
 public:
-  TestLevelArmCompensation()
+  TestLeverArmCompensation()
   : lever_arm_compensation(),
     antenna_position(0.5, 1, 2),
     angle_variance(0.1)
@@ -43,13 +43,13 @@ public:
       antenna_position);
   }
 
-  romea::core::localisation::LevelArmCompensation lever_arm_compensation;
+  romea::core::localisation::LeverArmCompensation lever_arm_compensation;
   Eigen::Vector3d antenna_position;
   double angle_variance;
 };
 
 
-TEST_F(TestLevelArmCompensation, roll_compensation)
+TEST_F(TestLeverArmCompensation, roll_compensation)
 {
   compute(M_PI_2, 0, 0);
   EXPECT_NEAR(lever_arm_compensation.getPosition().x(), antenna_position.x(), 0.0001);
@@ -57,7 +57,7 @@ TEST_F(TestLevelArmCompensation, roll_compensation)
   EXPECT_NEAR(lever_arm_compensation.getPosition().z(), antenna_position.y(), 0.0001);
 }
 
-TEST_F(TestLevelArmCompensation, pitch_compensation)
+TEST_F(TestLeverArmCompensation, pitch_compensation)
 {
   compute(0, M_PI_2, 0);
   EXPECT_NEAR(lever_arm_compensation.getPosition().x(), antenna_position.z(), 0.0001);
@@ -65,7 +65,7 @@ TEST_F(TestLevelArmCompensation, pitch_compensation)
   EXPECT_NEAR(lever_arm_compensation.getPosition().z(), -antenna_position.x(), 0.0001);
 }
 
-TEST_F(TestLevelArmCompensation, yaw_compensation)
+TEST_F(TestLeverArmCompensation, yaw_compensation)
 {
   compute(0, 0, M_PI_2);
   EXPECT_NEAR(lever_arm_compensation.getPosition().x(), -antenna_position.y(), 0.0001);

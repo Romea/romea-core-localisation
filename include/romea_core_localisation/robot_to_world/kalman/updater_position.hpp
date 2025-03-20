@@ -73,7 +73,7 @@ public:
     AddOn & currentAddon);
 
 private:
-  LevelArmCompensation levelArmCompensation_;
+  LeverArmCompensation lever_arm_compensation_;
 };
 
 }  // namespace localisation

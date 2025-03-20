@@ -23,7 +23,7 @@ namespace localisation
 {
 
 //-----------------------------------------------------------------------------
-LevelArmCompensation::LevelArmCompensation()
+LeverArmCompensation::LeverArmCompensation()
 : position_(Eigen::Vector3d::Zero()),
   positionCovariance_(Eigen::Matrix3d::Zero()),
   vehicleAttitude_(),
@@ -33,7 +33,7 @@ LevelArmCompensation::LevelArmCompensation()
 }
 
 //-----------------------------------------------------------------------------
-void LevelArmCompensation::compute(
+void LeverArmCompensation::compute(
   const double & vehicleRollAngle,
   const double & vehiclePitchAngle,
   const double & vehicleRollPitchVariance,
@@ -55,19 +55,19 @@ void LevelArmCompensation::compute(
 }
 
 //-----------------------------------------------------------------------------
-const Eigen::Vector3d & LevelArmCompensation::getPosition()const
+const Eigen::Vector3d & LeverArmCompensation::getPosition()const
 {
   return position_;
 }
 
 //-----------------------------------------------------------------------------
-const Eigen::Matrix3d & LevelArmCompensation::getPositionCovariance()const
+const Eigen::Matrix3d & LeverArmCompensation::getPositionCovariance()const
 {
   return positionCovariance_;
 }
 
 //-----------------------------------------------------------------------------
-const Eigen::Matrix3d & LevelArmCompensation::getJacobian()const
+const Eigen::Matrix3d & LeverArmCompensation::getJacobian()const
 {
   return jacobian_;
 }
