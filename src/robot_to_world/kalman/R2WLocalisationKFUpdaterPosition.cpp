@@ -58,7 +58,7 @@ R2WLocalisationKFUpdaterPosition::R2WLocalisationKFUpdaterPosition(
       "cov_ytheta",
       "cov_theta",
       "roll",
-      "pitch"
+      "pitch",
       "level_arm_x",
       "level_arm_y",
       "level_arm_z",
