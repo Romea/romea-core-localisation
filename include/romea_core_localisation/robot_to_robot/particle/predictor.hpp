@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__PARTICLE__PREDICTOR_HPP_
 #define ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__PARTICLE__PREDICTOR_HPP_
 
@@ -20,16 +20,12 @@
 #include "romea_core_localisation/predictor_base.hpp"
 #include "romea_core_localisation/robot_to_robot/particle/meta_state.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
-class R2RPFPredictor : public PredictorBase<R2RPFMetaState>
-{
-public:
+class R2RPFPredictor : public PredictorBase<R2RPFMetaState> {
+ public:
   using MetaState = R2RPFMetaState;
   using State = R2RPFMetaState::State;
   using Input = R2RPFMetaState::Input;
@@ -37,42 +33,33 @@ public:
   using RowMajorVector = R2RPFMetaState::State::RowMajorVector;
   using RowMajorMatrix = R2RPFMetaState::State::RowMajorMatrix;
 
-public:
-  R2RPFPredictor(
-    const Duration & maximalDurationInDeadReckoning,
-    const double & maximalTravelledDistanceInDeadReckoning,
-    const double & maximalPositionCircularErrorProbable,
-    const size_t & numberOfParticles);
+ public:
+  R2RPFPredictor(const Duration& maximal_duration_in_dead_reckoning,
+                 const double& maximal_travelled_distance_in_dead_reckoning,
+                 const double& maximal_position_circular_error_probable,
+                 const size_t& number_of_particles);
 
-private:
-  bool stop_(
-    const Duration & duration,
-    const MetaState & meatastate)override;
+ private:
+  bool stop_(const Duration& duration, const MetaState& meatastate) override;
 
-  void predict_(
-    const MetaState & previousMetaState,
-    MetaState & currentMetaState)override;
+  void predict_(const MetaState& previous_meta_state,
+                MetaState& current_meta_state) override;
 
-  void reset_(MetaState & metaState)override;
+  void reset_(MetaState& metaState) override;
 
-  void predictState_(
-    const State & previousState,
-    const Input & previousInput,
-    State & currentState);
+  void predictState_(const State& previous_state, const Input& previous_input,
+                     State& current_state);
 
-  void predictAddOn_(
-    const AddOn & previousAddOn,
-    const State & currentState,
-    AddOn & currentAddOn);
+  void predictAddOn_(const AddOn& previous_add_on, const State& current_state,
+                     AddOn& current_add_on);
 
+  void drawFollowerInputs(const Input& previous_input);
 
-  void drawFollowerInputs(const Input & previousInput);
+  void drawLeaderInputs(const Input& previous_input);
 
-  void drawLeaderInputs(const Input & previousInput);
-
-private:
-  RowMajorVector cosCourses_;
-  RowMajorVector sinCourses_;
+ private:
+  RowMajorVector cos_courses_;
+  RowMajorVector sin_courses_;
 
   double wfdT_, vxfdT_, vyfdT_;
   Eigen::Vector3d Uf_;

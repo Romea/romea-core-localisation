@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,43 +13,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__PARTICLE__RESULTS_HPP_
 #define ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__PARTICLE__RESULTS_HPP_
 
-#include "romea_core_localisation/robot_to_robot/results_base.hpp"
 #include "romea_core_localisation/robot_to_robot/particle/meta_state.hpp"
+#include "romea_core_localisation/robot_to_robot/results_base.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
-class R2RPFResults : public R2RResultsBase<R2RPFMetaState>
-{
-public:
-  explicit R2RPFResults(const size_t & numberOfParticles);
+class R2RPFResults : public R2RResultsBase<R2RPFMetaState> {
+ public:
+  explicit R2RPFResults(const size_t& number_of_particles);
   virtual ~R2RPFResults() = default;
 
-  const double & get_leader_x() const override;
-  const double & get_leader_y() const override;
-  const double & get_leader_orientation() const override;
+  const double& get_leader_x() const override;
+  const double& get_leader_y() const override;
+  const double& get_leader_orientation() const override;
 
   Eigen::Vector3d get_leader_pose() const override;
   Eigen::Matrix3d get_leader_pose_covariance() const override;
 
-  const double & get_linear_speed() const override;
-  const double & get_lateral_speed() const override;
-  const double & get_angular_speed() const override;
+  const double& get_linear_speed() const override;
+  const double& get_lateral_speed() const override;
+  const double& get_angular_speed() const override;
 
   Eigen::Vector3d get_twist() const override;
   Eigen::Matrix3d get_twist_covariance() const override;
 
-  const double & get_leader_linear_speed() const override;
-  const double & get_leader_lateral_speed() const override;
-  const double & get_leader_angular_speed() const override;
+  const double& get_leader_linear_speed() const override;
+  const double& get_leader_lateral_speed() const override;
+  const double& get_leader_angular_speed() const override;
 
   Eigen::Vector3d get_leader_twist() const override;
   Eigen::Matrix3d get_leader_twist_covariance() const override;
@@ -56,11 +52,11 @@ public:
   Pose2D to_leader_pose2d() const override;
   PoseAndTwist2D to_leader_pose_and_body_twist2d() const override;
 
-private:
+ private:
   void lazy_compute_estimate_() const;
   void lazy_compute_estimate_covariance_() const;
 
-private:
+ private:
   mutable double weight_sum_;
 
   mutable Duration estimate_stamp_;

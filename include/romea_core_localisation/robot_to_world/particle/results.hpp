@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,42 +13,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__PARTICLE__RESULTS_HPP_
 #define ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__PARTICLE__RESULTS_HPP_
 
 // romea
-#include <romea_core_filtering/particle/ParticleFilterEstimator.hpp>
-#include "romea_core_localisation/robot_to_world/results_base.hpp"
+// #include <romea_core_filtering/particle/ParticleFilterEstimator.hpp>
+
 #include "romea_core_localisation/robot_to_world/particle/meta_state.hpp"
+#include "romea_core_localisation/robot_to_world/results_base.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
-class R2WPFResults : public R2WResultsBase<R2WPFMetaState>
-{
-public:
-  using  RowMajorMatrix = R2WPFMetaState::State::RowMajorMatrix;
+class R2WPFResults : public R2WResultsBase<R2WPFMetaState> {
+ public:
+  using RowMajorMatrix = R2WPFMetaState::State::RowMajorMatrix;
 
-public:
-  explicit R2WPFResults(const size_t & numberOfParticles);
+ public:
+  explicit R2WPFResults(const size_t& number_of_particles);
   virtual ~R2WPFResults();
 
-  const double & get_x() const override;
-  const double & get_y() const override;
-  const double & get_yaw() const override;
-  const double & get_yaw_variance() const override;
+  const double& get_x() const override;
+  const double& get_y() const override;
+  const double& get_yaw() const override;
+  const double& get_yaw_variance() const override;
 
   Eigen::Vector3d get_pose() const override;
   Eigen::Matrix3d get_pose_covariance() const override;
 
-  const double & get_linear_speed() const override;
-  const double & get_lateral_speed() const override;
-  const double & get_angular_speed() const override;
+  const double& get_linear_speed() const override;
+  const double& get_lateral_speed() const override;
+  const double& get_angular_speed() const override;
 
   Eigen::Vector3d get_twist() const override;
   Eigen::Matrix3d get_twist_covariance() const override;
@@ -58,13 +55,13 @@ public:
   PoseAndTwist2D to_pose_and_body_twist2d() const override;
   PoseAndTwist3D to_pose_and_body_twist3d() const override;
 
-  void reset(const Duration & duration);
+  void reset(const Duration& duration);
 
-private:
+ private:
   void lazy_compute_estimate_() const;
   void lazy_compute_estimate_covariance_() const;
 
-private:
+ private:
   mutable double weight_sum_;
 
   mutable Duration estimate_stamp_;

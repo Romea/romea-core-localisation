@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,97 +13,82 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // std
 #include <string>
 
 // local
 #include "romea_core_localisation/robot_to_world/kalman/updater_pose.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
 //-----------------------------------------------------------------------------
-R2WKFUpdaterPose::R2WKFUpdaterPose(
-  const std::string & updaterName,
-  const double & minimalRate,
-  const TriggerMode & triggerMode,
-  const double & maximalMahalanobisDistance,
-  const std::string & logFilename)
-: UpdaterExteroceptive(updaterName, minimalRate, triggerMode, logFilename),
-  KFUpdaterCore(maximalMahalanobisDistance),
-  level_arm_compensation_()
-{
+R2WKFUpdaterPose::R2WKFUpdaterPose(const std::string& updater_name,
+                                   const double& minimal_rate,
+                                   const trigger_mode& trigger_mode,
+                                   const double& maximal_mahalanobis_distance,
+                                   const std::string& logFilename)
+    : UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode,
+                           logFilename),
+      EKFUpdaterBase<double, 3, 3>(maximal_mahalanobis_distance),
+      lever_arm_compensation_() {
   H_(0, MetaState::POSITION_X) = 1;
   H_(1, MetaState::POSITION_Y) = 1;
   H_(2, MetaState::ORIENTATION_Z) = 1;
 
-  set_log_file_header_(
-    {"stamp",
-      "x_obs",
-      "y_obs",
-      "theta_obs",
-      "cov_x_obs",
-      "cov_xy_obs",
-      "cov_xtheta_obs",
-      "cov_y_obs",
-      "cov_ytheta_obs",
-      "cov_theta_obs",
-      "x",
-      "y",
-      "theta",
-      "cov_x",
-      "cov_xy",
-      "cov_xtheta",
-      "cov_y",
-      "cov_ytheta",
-      "cov_theta",
-      "lever_arm_x",
-      "lever_arm_y"
-      "mahalanobis_distance",
-      "success"
-    });
+  set_log_file_header_({"stamp",
+                        "x_obs",
+                        "y_obs",
+                        "theta_obs",
+                        "cov_x_obs",
+                        "cov_xy_obs",
+                        "cov_xtheta_obs",
+                        "cov_y_obs",
+                        "cov_ytheta_obs",
+                        "cov_theta_obs",
+                        "x",
+                        "y",
+                        "theta",
+                        "cov_x",
+                        "cov_xy",
+                        "cov_xtheta",
+                        "cov_y",
+                        "cov_ytheta",
+                        "cov_theta",
+                        "lever_arm_x",
+                        "lever_arm_y"
+                        "mahalanobis_distance",
+                        "success"});
 }
 
 //--------------------------------------------------------------------------
-void R2WKFUpdaterPose::update(
-  const Duration & duration,
-  const Observation & currentObservation,
-  FSMState & currentFSMState,
-  MetaState & currentMetaState)
-{
+void R2WKFUpdaterPose::update(const Duration& duration,
+                              const Observation& current_observation,
+                              FSMState& current_fsm_State,
+                              MetaState& current_meta_state) {
   rate_diagnostic_.evaluate(duration);
 
-  switch (currentFSMState) {
+  switch (current_fsm_State) {
     case FSMState::INIT:
-      if (set_(
-          duration,
-          currentObservation,
-          currentMetaState.input,
-          currentMetaState.state,
-          currentMetaState.addon))
-      {
-        currentFSMState = FSMState::RUNNING;
+      if (set_(duration, current_observation, current_meta_state.input,
+               current_meta_state.state, current_meta_state.addon)) {
+        current_fsm_State = FSMState::RUNNING;
         std::cout << " FSM : INIT DONE (POSE), GO TO RUNNING MODE" << std::endl;
       }
       break;
     case FSMState::RUNNING:
-      if (trigger_mode_ == TriggerMode::ALWAYS) {
+      if (trigger_mode_ == trigger_mode::ALWAYS) {
         try {
-          update_(
-            duration,
-            currentObservation,
-            currentMetaState.state,
-            currentMetaState.addon);
+          update_(duration, current_observation, current_meta_state.state,
+                  current_meta_state.addon);
         } catch (...) {
-          std::cout << " FSM : POSE UPDATE HAS FAILED, RESET AND GO TO INIT MODE" << std::endl;
-          currentFSMState = FSMState::INIT;
-          currentMetaState.state.reset();
-          currentMetaState.addon.reset();
+          std::cout
+              << " FSM : POSE UPDATE HAS FAILED, RESET AND GO TO INIT MODE"
+              << std::endl;
+          current_fsm_State = FSMState::INIT;
+          current_meta_state.state.reset();
+          current_meta_state.addon.reset();
         }
       }
       break;
@@ -112,100 +98,92 @@ void R2WKFUpdaterPose::update(
 }
 
 //-----------------------------------------------------------------------------
-void R2WKFUpdaterPose::update_(
-  const Duration & duration,
-  const Observation & currentObservation,
-  State & currentState,
-  AddOn & currentAddon)
-{
+void R2WKFUpdaterPose::update_(const Duration& duration,
+                               const Observation& current_observation,
+                               State& current_state, AddOn& current_add_on) {
   // compute antenna attitude compensation
-  level_arm_compensation_.compute(
-    currentAddon.roll,
-    currentAddon.pitch,
-    currentAddon.roll_pitch_variance,
-    currentState.X(MetaState::ORIENTATION_Z),
-    0,                             // orientation covariance is already in state covariance
-    currentObservation.lever_arm);
-
+  lever_arm_compensation_.compute(
+      current_add_on.roll, current_add_on.pitch,
+      current_add_on.roll_pitch_variance,
+      current_state.X(MetaState::ORIENTATION_Z),
+      0,  // orientation covariance is already in state covariance
+      current_observation.lever_arm);
 
   // Compute innovation
-  Inn_[0] = currentObservation.Y(ObservationPose::POSITION_X) -
-    currentState.X(MetaState::POSITION_X);
-  Inn_[1] = currentObservation.Y(ObservationPose::POSITION_Y) -
-    currentState.X(MetaState::POSITION_Y);
+  Inn_[0] = current_observation.Y(ObservationPose::POSITION_X) -
+            current_state.X(MetaState::POSITION_X);
+  Inn_[1] = current_observation.Y(ObservationPose::POSITION_Y) -
+            current_state.X(MetaState::POSITION_Y);
   Inn_[2] = betweenMinusPiAndPi(
-    currentObservation.Y(ObservationPose::ORIENTATION_Z) -
-    currentState.X(MetaState::ORIENTATION_Z));
-  Inn_.template segment<2>(0) -= level_arm_compensation_.getPosition().segment<2>(0);
+      current_observation.Y(ObservationPose::ORIENTATION_Z) -
+      current_state.X(MetaState::ORIENTATION_Z));
+  Inn_.template segment<2>(0) -=
+      lever_arm_compensation_.getPosition().segment<2>(0);
 
   // Compute innovation covariance
-  // this->R_ = currentObservation.R();
+  // this->R_ = current_observation.R();
   // this->R_.template block<2, 2>(0, 0) +=
-  //   level_arm_compensation_.getPositionCovariance().block<2, 2>(0, 0);
-  H_.template block<2, 1>(0, 2) = level_arm_compensation_.getJacobian().block<2, 1>(0, 2);
+  //   lever_arm_compensation_.getPositionCovariance().block<2, 2>(0, 0);
+  H_.template block<2, 1>(0, 2) =
+      lever_arm_compensation_.getJacobian().block<2, 1>(0, 2);
 
-  QInn_ = H_ * currentState.P() * H_.transpose() + currentObservation.R();
+  QInn_ = H_ * current_state.P() * H_.transpose() + current_observation.R();
   QInn_.template block<2, 2>(0, 0) +=
-    level_arm_compensation_.getPositionCovariance().block<2, 2>(0, 0);
+      lever_arm_compensation_.getPositionCovariance().block<2, 2>(0, 0);
 
   // log
   if (log_file_.is_open()) {
     log_file_ << duration.count() << ",";
-    log_file_ << currentObservation.Y(0) << ",";
-    log_file_ << currentObservation.Y(1) << ",";
-    log_file_ << currentObservation.Y(2) << ",";
-    log_file_ << currentObservation.R(0, 0) << ",";
-    log_file_ << currentObservation.R(0, 1) << ",";
-    log_file_ << currentObservation.R(0, 2) << ",";
-    log_file_ << currentObservation.R(1, 1) << ",";
-    log_file_ << currentObservation.R(1, 2) << ",";
-    log_file_ << currentObservation.R(2, 2) << ",";
-    log_file_ << currentState.X(0) << ",";
-    log_file_ << currentState.X(1) << ",";
-    log_file_ << currentState.X(2) << ",";
-    log_file_ << currentState.P(0, 0) << ",";
-    log_file_ << currentState.P(0, 1) << ",";
-    log_file_ << currentState.P(0, 2) << ",";
-    log_file_ << currentState.P(1, 1) << ",";
-    log_file_ << currentState.P(1, 2) << ",";
-    log_file_ << currentState.P(2, 2) << ",";
-    log_file_ << level_arm_compensation_.getPosition()(0) << ",";
-    log_file_ << level_arm_compensation_.getPosition()(1) << ",";
+    log_file_ << current_observation.Y(0) << ",";
+    log_file_ << current_observation.Y(1) << ",";
+    log_file_ << current_observation.Y(2) << ",";
+    log_file_ << current_observation.R(0, 0) << ",";
+    log_file_ << current_observation.R(0, 1) << ",";
+    log_file_ << current_observation.R(0, 2) << ",";
+    log_file_ << current_observation.R(1, 1) << ",";
+    log_file_ << current_observation.R(1, 2) << ",";
+    log_file_ << current_observation.R(2, 2) << ",";
+    log_file_ << current_state.X(0) << ",";
+    log_file_ << current_state.X(1) << ",";
+    log_file_ << current_state.X(2) << ",";
+    log_file_ << current_state.P(0, 0) << ",";
+    log_file_ << current_state.P(0, 1) << ",";
+    log_file_ << current_state.P(0, 2) << ",";
+    log_file_ << current_state.P(1, 1) << ",";
+    log_file_ << current_state.P(1, 2) << ",";
+    log_file_ << current_state.P(2, 2) << ",";
+    log_file_ << lever_arm_compensation_.getPosition()(0) << ",";
+    log_file_ << lever_arm_compensation_.getPosition()(1) << ",";
   }
 
   // Update state vector
-  if (updateState_(currentState)) {
-    currentAddon.last_exteroceptive_update.time = duration;
-    currentAddon.last_exteroceptive_update.travelled_distance = currentAddon.travelled_distance;
+  if (update_state_(current_state)) {
+    current_add_on.last_exteroceptive_update.time = duration;
+    current_add_on.last_exteroceptive_update.travelled_distance =
+        current_add_on.travelled_distance;
   }
 
-  assert(isPositiveSemiDefiniteMatrix(currentState.P()));
+  assert(isPositiveSemiDefiniteMatrix(current_state.P()));
 }
 
-
 //-----------------------------------------------------------------------------
-bool R2WKFUpdaterPose::set_(
-  const Duration & duration,
-  const ObservationPose & currentObservation,
-  const Input & currentInput,
-  State & currentState,
-  AddOn & currentAddon)
-{
-  if (!std::isnan(currentInput.U(MetaState::LINEAR_SPEED_X_BODY)) &&
-    !std::isnan(currentInput.U(MetaState::LINEAR_SPEED_Y_BODY)) &&
-    !std::isnan(currentInput.U(MetaState::ANGULAR_SPEED_Z_BODY)))
-  {
-    currentState.X() = currentObservation.Y();
-    currentState.P() = currentObservation.R();
+bool R2WKFUpdaterPose::set_(const Duration& duration,
+                            const ObservationPose& current_observation,
+                            const Input& current_input, State& current_state,
+                            AddOn& current_add_on) {
+  if (!std::isnan(current_input.U(MetaState::LINEAR_SPEED_X_BODY)) &&
+      !std::isnan(current_input.U(MetaState::LINEAR_SPEED_Y_BODY)) &&
+      !std::isnan(current_input.U(MetaState::ANGULAR_SPEED_Z_BODY))) {
+    current_state.X() = current_observation.Y();
+    current_state.P() = current_observation.R();
 
-    apply_lever_arm_compensation(
-      currentState,
-      currentAddon,
-      level_arm_compensation_,
-      currentObservation.lever_arm);
+    apply_lever_arm_compensation(current_state, current_add_on,
+                                 lever_arm_compensation_,
+                                 current_observation.lever_arm);
 
-    currentAddon.last_exteroceptive_update.time = duration;
-    currentAddon.last_exteroceptive_update.travelled_distance = currentAddon.travelled_distance;
+    current_add_on.last_exteroceptive_update.time = duration;
+    current_add_on.last_exteroceptive_update.travelled_distance =
+        current_add_on.travelled_distance;
     return true;
   } else {
     return false;

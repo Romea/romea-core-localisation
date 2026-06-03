@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,27 +13,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // std
 #include <string>
 
 // local
 #include "romea_core_localisation/updater_proprioceptive.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
 //-----------------------------------------------------------------------------
-UpdaterProprioceptive::UpdaterProprioceptive(
-  const std::string & updater_name,
-  const double & minimal_rate)
-: UpdaterBase(updater_name, minimal_rate, TriggerMode::ALWAYS)
-{
-}
+UpdaterProprioceptive::UpdaterProprioceptive(const std::string& updater_name,
+                                             const double& minimal_rate)
+    : UpdaterBase(updater_name, minimal_rate, trigger_mode::ALWAYS) {}
 
 }  // namespace localisation
 }  // namespace core

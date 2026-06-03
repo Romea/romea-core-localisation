@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,16 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__KALMAN__UPDATER_POSE_HPP_
 #define ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__KALMAN__UPDATER_POSE_HPP_
 
-
 // romea
-#include <romea_core_common/time/Time.hpp>
 #include <romea_core_common/math/EulerAngles.hpp>
 #include <romea_core_common/math/Matrix.hpp>
-#include <romea_core_filtering/kalman/KalmanFilterUpdaterCore.hpp>
+#include <romea_core_common/time/Time.hpp>
+#include <romea_core_filtering/filter/kalman/updater/base/extended.hpp>
 
 // std
 #include <string>
@@ -29,59 +28,45 @@
 // local
 #include "romea_core_localisation/fsm_state.hpp"
 #include "romea_core_localisation/observation_pose.hpp"
-#include "romea_core_localisation/updater_exteroceptive.hpp"
-#include "romea_core_localisation/robot_to_world/lever_arm_compensation.hpp"
 #include "romea_core_localisation/robot_to_world/kalman/meta_state.hpp"
+#include "romea_core_localisation/robot_to_world/lever_arm_compensation.hpp"
+#include "romea_core_localisation/updater_exteroceptive.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
-class R2WKFUpdaterPose : public UpdaterExteroceptive, public KFUpdaterCore<double, 3, 3>
-{
-public:
+class R2WKFUpdaterPose : public UpdaterExteroceptive,
+                         public EKFUpdaterBase<double, 3, 3> {
+ public:
   using Observation = ObservationPose;
   using MetaState = R2WKFMetaState;
   using State = R2WKFMetaState::State;
   using Input = R2WKFMetaState::Input;
   using AddOn = R2WKFMetaState::AddOn;
 
-public:
-  R2WKFUpdaterPose(
-    const std::string & updaterName,
-    const double & minimalRate,
-    const TriggerMode & triggerMode,
-    const double & maximalMahalanobisDistance,
-    const std::string & logFilename);
+ public:
+  R2WKFUpdaterPose(const std::string& updater_name, const double& minimal_rate,
+                   const trigger_mode& trigger_mode,
+                   const double& maximal_mahalanobis_distance,
+                   const std::string& logFilename);
 
-  void update(
-    const Duration & duration,
-    const Observation & currentObservation,
-    FSMState & currentFSMState,
-    MetaState & currentMetaState);
+  void update(const Duration& duration, const Observation& current_observation,
+              FSMState& current_fsm_State, MetaState& current_meta_state);
 
-private:
-  void update_(
-    const Duration & duration,
-    const Observation & currentObservation,
-    State & currentState,
-    AddOn & currentAddon);
+ private:
+  void update_(const Duration& duration, const Observation& current_observation,
+               State& current_state, AddOn& current_add_on);
 
+  bool set_(const Duration& duration,
+            const ObservationPose& current_observation,
+            const Input& current_input, State& current_state,
+            AddOn& current_add_on);
 
-  bool set_(
-    const Duration & duration,
-    const ObservationPose & currentObservation,
-    const Input & currentInput,
-    State & currentState,
-    AddOn & currentAddon);
+  //  void applyLeverArmCompensation_(R2WLocalisationKFState & current_state,
+  //                                  const Eigen::Vector3d & lever_arm);
 
-  //  void applyLeverArmCompensation_(R2WLocalisationKFState & currentState,
-  //                                  const Eigen::Vector3d & levelArm);
-
-  LeverArmCompensation level_arm_compensation_;
+  LeverArmCompensation lever_arm_compensation_;
 };
 
 }  // namespace localisation

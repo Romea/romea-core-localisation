@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,23 +13,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__KALMAN__META_STATE_HPP_
 #define ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__KALMAN__META_STATE_HPP_
 
 // romea
-#include "romea_core_filtering/GaussianState.hpp"
+#include "romea_core_filtering/gaussian/state.hpp"
 #include "romea_core_localisation/robot_to_robot/meta_state_base.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
-struct R2RKFMetaState : public R2RMetaStateBase
-{
+struct R2RKFMetaState : public R2RMetaStateBase {
   using State = GaussianState<double, STATE_SIZE>;
 
   R2RKFMetaState();

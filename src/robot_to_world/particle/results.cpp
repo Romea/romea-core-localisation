@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,139 +13,120 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // romea
 #include "romea_core_localisation/robot_to_world/particle/results.hpp"
+
 #include <romea_core_common/math/EulerAngles.hpp>
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
 //-----------------------------------------------------------------------------
-R2WPFResults::R2WPFResults(const size_t & numberOfParticles)
-: R2WResultsBase<R2WPFMetaState>(numberOfParticles),
-  weight_sum_(0),
-  estimate_stamp_(Duration::zero()),
-  estimate_(Eigen::Vector3d::Zero()),
-  estimate_covariance_stamp_(Duration::zero()),
-  estimate_covariance_(Eigen::Matrix3d::Zero()),
-  mean_centered_particles_(RowMajorMatrix::Zero(STATE_SIZE, numberOfParticles))
-{
-}
+R2WPFResults::R2WPFResults(const size_t& number_of_particles)
+    : R2WResultsBase<R2WPFMetaState>(number_of_particles),
+      weight_sum_(0),
+      estimate_stamp_(Duration::zero()),
+      estimate_(Eigen::Vector3d::Zero()),
+      estimate_covariance_stamp_(Duration::zero()),
+      estimate_covariance_(Eigen::Matrix3d::Zero()),
+      mean_centered_particles_(
+          RowMajorMatrix::Zero(STATE_SIZE, number_of_particles)) {}
 
 //-----------------------------------------------------------------------------
-R2WPFResults::~R2WPFResults()
-{
-}
+R2WPFResults::~R2WPFResults() {}
 
 //-----------------------------------------------------------------------------
-void R2WPFResults::reset(const Duration & duration)
-{
+void R2WPFResults::reset(const Duration& duration) {
   duration_ = duration;
   estimate_stamp_ = Duration::zero();
   estimate_covariance_stamp_ = Duration::zero();
 }
 
 //-----------------------------------------------------------------------------
-const double & R2WPFResults::get_x() const
-{
+const double& R2WPFResults::get_x() const {
   lazy_compute_estimate_();
   return estimate_(R2WPFMetaState::POSITION_X);
 }
 
 //-----------------------------------------------------------------------------
-const double & R2WPFResults::get_y() const
-{
+const double& R2WPFResults::get_y() const {
   lazy_compute_estimate_();
   return estimate_(R2WPFMetaState::POSITION_Y);
 }
 
 //-----------------------------------------------------------------------------
-const double & R2WPFResults::get_yaw() const
-{
+const double& R2WPFResults::get_yaw() const {
   lazy_compute_estimate_();
   return estimate_(R2WPFMetaState::ORIENTATION_Z);
 }
 
 //-----------------------------------------------------------------------------
-const double & R2WPFResults::get_yaw_variance() const
-{
+const double& R2WPFResults::get_yaw_variance() const {
   lazy_compute_estimate_();
   lazy_compute_estimate_covariance_();
   return estimate_(R2WPFMetaState::ORIENTATION_Z);
 }
 
 //-----------------------------------------------------------------------------
-Eigen::Vector3d R2WPFResults::get_pose() const
-{
+Eigen::Vector3d R2WPFResults::get_pose() const {
   lazy_compute_estimate_();
   return estimate_;
 }
 
 //-----------------------------------------------------------------------------
-Eigen::Matrix3d R2WPFResults::get_pose_covariance() const
-{
+Eigen::Matrix3d R2WPFResults::get_pose_covariance() const {
   lazy_compute_estimate_();
   lazy_compute_estimate_covariance_();
   return estimate_covariance_;
 }
 
 //-----------------------------------------------------------------------------
-const double & R2WPFResults::get_linear_speed() const
-{
+const double& R2WPFResults::get_linear_speed() const {
   return input.U(LINEAR_SPEED_X_BODY);
 }
 
 //-----------------------------------------------------------------------------
-const double & R2WPFResults::get_lateral_speed() const
-{
+const double& R2WPFResults::get_lateral_speed() const {
   return input.U(LINEAR_SPEED_Y_BODY);
 }
 
 //-----------------------------------------------------------------------------
-const double & R2WPFResults::get_angular_speed() const
-{
+const double& R2WPFResults::get_angular_speed() const {
   return input.U(ANGULAR_SPEED_Z_BODY);
 }
 
 //-----------------------------------------------------------------------------
-Eigen::Vector3d R2WPFResults::get_twist() const
-{
-  return input.U();
-}
+Eigen::Vector3d R2WPFResults::get_twist() const { return input.U(); }
 
 //-----------------------------------------------------------------------------
-Eigen::Matrix3d R2WPFResults::get_twist_covariance() const
-{
+Eigen::Matrix3d R2WPFResults::get_twist_covariance() const {
   return input.QU();
 }
 
-
 //-----------------------------------------------------------------------------
-void R2WPFResults::lazy_compute_estimate_()const
-{
+void R2WPFResults::lazy_compute_estimate_() const {
   if (estimate_stamp_ != duration_) {
     weight_sum_ = state.weights.sum();
-    this->estimate_(0) = (state.particles.row(0) * state.weights).sum() / weight_sum_;
-    this->estimate_(1) = (state.particles.row(1) * state.weights).sum() / weight_sum_;
-    double C = (state.particles.row(2).cos() * state.weights).sum() / weight_sum_;
-    double S = (state.particles.row(2).sin() * state.weights).sum() / weight_sum_;
+    this->estimate_(0) =
+        (state.particles.row(0) * state.weights).sum() / weight_sum_;
+    this->estimate_(1) =
+        (state.particles.row(1) * state.weights).sum() / weight_sum_;
+    double C =
+        (state.particles.row(2).cos() * state.weights).sum() / weight_sum_;
+    double S =
+        (state.particles.row(2).sin() * state.weights).sum() / weight_sum_;
     this->estimate_(2) = std::atan2(S, C);
     estimate_stamp_ = duration_;
   }
 }
 
-
 //-----------------------------------------------------------------------------
-void R2WPFResults::lazy_compute_estimate_covariance_() const
-{
+void R2WPFResults::lazy_compute_estimate_covariance_() const {
   if (estimate_covariance_stamp_ != duration_) {
     for (int i = 0; i < STATE_SIZE; ++i) {
-      this->mean_centered_particles_.row(i) = state.particles.row(i) - this->estimate_(i);
+      this->mean_centered_particles_.row(i) =
+          state.particles.row(i) - this->estimate_(i);
     }
 
     // TODO(jean) à vectoriser
@@ -153,13 +135,13 @@ void R2WPFResults::lazy_compute_estimate_covariance_() const
       courseRow(n) = betweenMinusPiAndPi(courseRow(n));
     }
 
-
     for (int i = 0; i < STATE_SIZE; ++i) {
       for (int j = i; j < STATE_SIZE; ++j) {
-        this->estimate_covariance_(i, j) =
-          this->estimate_covariance_(j, i) = (this->mean_centered_particles_.row(i) *
-          this->mean_centered_particles_.row(j) *
-          state.weights).sum() / weight_sum_;
+        this->estimate_covariance_(i, j) = this->estimate_covariance_(j, i) =
+            (this->mean_centered_particles_.row(i) *
+             this->mean_centered_particles_.row(j) * state.weights)
+                .sum() /
+            weight_sum_;
       }
     }
 
@@ -168,8 +150,7 @@ void R2WPFResults::lazy_compute_estimate_covariance_() const
 }
 
 //-----------------------------------------------------------------------------
-Pose2D R2WPFResults::to_pose2d() const
-{
+Pose2D R2WPFResults::to_pose2d() const {
   lazy_compute_estimate_();
   lazy_compute_estimate_covariance_();
 
@@ -182,8 +163,7 @@ Pose2D R2WPFResults::to_pose2d() const
 }
 
 //-----------------------------------------------------------------------------
-Pose3D R2WPFResults::to_pose3d() const
-{
+Pose3D R2WPFResults::to_pose3d() const {
   lazy_compute_estimate_();
   lazy_compute_estimate_covariance_();
 
@@ -198,10 +178,8 @@ Pose3D R2WPFResults::to_pose3d() const
   return pose3d;
 }
 
-
 //-----------------------------------------------------------------------------
-PoseAndTwist2D R2WPFResults::to_pose_and_body_twist2d() const
-{
+PoseAndTwist2D R2WPFResults::to_pose_and_body_twist2d() const {
   lazy_compute_estimate_();
   lazy_compute_estimate_covariance_();
 
@@ -218,8 +196,7 @@ PoseAndTwist2D R2WPFResults::to_pose_and_body_twist2d() const
 }
 
 //-----------------------------------------------------------------------------
-PoseAndTwist3D R2WPFResults::to_pose_and_body_twist3d() const
-{
+PoseAndTwist3D R2WPFResults::to_pose_and_body_twist3d() const {
   lazy_compute_estimate_();
   lazy_compute_estimate_covariance_();
 

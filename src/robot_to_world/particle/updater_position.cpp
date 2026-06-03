@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,63 +19,48 @@
 // romea
 #include "romea_core_localisation/robot_to_world/particle/updater_position.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
 //-----------------------------------------------------------------------------
 R2WPFUpdaterPosition::R2WPFUpdaterPosition(
-  const std::string & updaterName,
-  const double & minimalRate,
-  const TriggerMode & triggerMode,
-  const size_t & numberOfParticles,
-  const double & maximalMahalanobisDistance,
-  const std::string & logFilename)
-: UpdaterExteroceptive(updaterName, minimalRate, triggerMode, logFilename),
-  PFGaussianUpdaterCore(numberOfParticles, maximalMahalanobisDistance),
-  leverArms_(RowMajorMatrix::Zero(2, numberOfParticles)),
-  cosCourses_(RowMajorVector::Zero(numberOfParticles)),
-  sinCourses_(RowMajorVector::Zero(numberOfParticles)),
-  lever_arm_compensation_()
-{
-}
+    const std::string& updater_name, const double& minimal_rate,
+    const trigger_mode& trigger_mode, const size_t& number_of_particles,
+    const double& maximal_mahalanobis_distance, const std::string& logFilename)
+    : UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode,
+                           logFilename),
+      PFGaussianUpdaterBase(number_of_particles, maximal_mahalanobis_distance),
+      leverArms_(RowMajorMatrix::Zero(2, number_of_particles)),
+      cos_courses_(RowMajorVector::Zero(number_of_particles)),
+      sin_courses_(RowMajorVector::Zero(number_of_particles)),
+      lever_arm_compensation_() {}
 
 //--------------------------------------------------------------------------
-void R2WPFUpdaterPosition::update(
-  const Duration & duration,
-  const Observation & currentObservation,
-  FSMState & currentFSMState,
-  MetaState & currentMetaState)
-{
-  switch (currentFSMState) {
+void R2WPFUpdaterPosition::update(const Duration& duration,
+                                  const Observation& current_observation,
+                                  FSMState& current_fsm_State,
+                                  MetaState& current_meta_state) {
+  switch (current_fsm_State) {
     case FSMState::INIT:
-      if (set_(
-          duration,
-          currentObservation,
-          currentMetaState.input,
-          currentMetaState.state,
-          currentMetaState.addon))
-      {
-        std::cout << " FSM : INIT DONE (POSITION + COURSE), GO TO RUNNING MODE " << std::endl;
-        currentFSMState = FSMState::RUNNING;
+      if (set_(duration, current_observation, current_meta_state.input,
+               current_meta_state.state, current_meta_state.addon)) {
+        std::cout << " FSM : INIT DONE (POSITION + COURSE), GO TO RUNNING MODE "
+                  << std::endl;
+        current_fsm_State = FSMState::RUNNING;
       }
       break;
     case FSMState::RUNNING:
-      if (trigger_mode_ == TriggerMode::ALWAYS) {
+      if (trigger_mode_ == trigger_mode::ALWAYS) {
         try {
-          update_(
-            duration,
-            currentObservation,
-            currentMetaState.state,
-            currentMetaState.addon);
+          update_(duration, current_observation, current_meta_state.state,
+                  current_meta_state.addon);
         } catch (...) {
-          std::cout << " FSM : FILTER DEGENERECENCE, RESET AND GO TO INIT MODE" << std::endl;
-          currentFSMState = FSMState::INIT;
-          currentMetaState.state.reset();
-          currentMetaState.addon.reset();
+          std::cout << " FSM : FILTER DEGENERECENCE, RESET AND GO TO INIT MODE"
+                    << std::endl;
+          current_fsm_State = FSMState::INIT;
+          current_meta_state.state.reset();
+          current_meta_state.addon.reset();
         }
       }
       break;
@@ -84,67 +70,62 @@ void R2WPFUpdaterPosition::update(
 }
 
 //-----------------------------------------------------------------------------
-void R2WPFUpdaterPosition::update_(
-  const Duration & duration,
-  Observation currentObservation,
-  State & currentState,
-  AddOn & currentAddon)
-{
+void R2WPFUpdaterPosition::update_(const Duration& duration,
+                                   Observation current_observation,
+                                   State& current_state,
+                                   AddOn& current_add_on) {
   // compute antenna attitude compensation
-  lever_arm_compensation_.compute(
-    currentAddon.roll,
-    currentAddon.pitch,
-    currentAddon.roll_pitch_variance,
-    0,
-    0,
-    currentObservation.lever_arm);
+  lever_arm_compensation_.compute(current_add_on.roll, current_add_on.pitch,
+                                  current_add_on.roll_pitch_variance, 0, 0,
+                                  current_observation.lever_arm);
 
-
-  double varxyantenna = lever_arm_compensation_.getPositionCovariance().block<2, 2>(0, 0).trace();
-  const Eigen::Vector3d & antennaPosition = lever_arm_compensation_.getPosition();
-  const double & xantenna = antennaPosition(0);
-  const double & yantenna = antennaPosition(1);
+  double varxyantenna =
+      lever_arm_compensation_.getPositionCovariance().block<2, 2>(0, 0).trace();
+  const Eigen::Vector3d& antennaPosition =
+      lever_arm_compensation_.getPosition();
+  const double& xantenna = antennaPosition(0);
+  const double& yantenna = antennaPosition(1);
 
   // compute apriori observations
-  const auto & courses = currentState.particles.row(MetaState::ORIENTATION_Z);
-  const auto & x = currentState.particles.row(MetaState::POSITION_X);
-  const auto & y = currentState.particles.row(MetaState::POSITION_Y);
+  const auto& courses = current_state.particles.row(MetaState::ORIENTATION_Z);
+  const auto& x = current_state.particles.row(MetaState::POSITION_X);
+  const auto& y = current_state.particles.row(MetaState::POSITION_Y);
 
-  cosCourses_ = courses.array().cos();
-  sinCourses_ = courses.array().sin();
-  aprioriObservations_.row(MetaState::POSITION_X) = x +
-    (cosCourses_ * xantenna - sinCourses_ * yantenna);
-  aprioriObservations_.row(MetaState::POSITION_Y) = y +
-    (sinCourses_ * xantenna + cosCourses_ * yantenna);
+  cos_courses_ = courses.array().cos();
+  sin_courses_ = courses.array().sin();
+  apriori_observations_.row(MetaState::POSITION_X) =
+      x + (cos_courses_ * xantenna - sin_courses_ * yantenna);
+  apriori_observations_.row(MetaState::POSITION_Y) =
+      y + (sin_courses_ * xantenna + cos_courses_ * yantenna);
 
   // update weights and resample
-  currentObservation.R(MetaState::POSITION_X, MetaState::POSITION_X) += varxyantenna;
-  currentObservation.R(MetaState::POSITION_Y, MetaState::POSITION_Y) += varxyantenna;
-  if (updateState_(currentState, currentObservation)) {
-    currentAddon.last_exteroceptive_update.time = duration;
-    currentAddon.last_exteroceptive_update.travelled_distance = currentAddon.travelled_distance;
+  current_observation.R(MetaState::POSITION_X, MetaState::POSITION_X) +=
+      varxyantenna;
+  current_observation.R(MetaState::POSITION_Y, MetaState::POSITION_Y) +=
+      varxyantenna;
+  if (update_state_(current_state, current_observation)) {
+    current_add_on.last_exteroceptive_update.time = duration;
+    current_add_on.last_exteroceptive_update.travelled_distance =
+        current_add_on.travelled_distance;
   }
 }
 
 //-----------------------------------------------------------------------------
-bool R2WPFUpdaterPosition::set_(
-  const Duration & duration,
-  Observation const & currentObservation,
-  const Input & currentInput,
-  State & currentState,
-  AddOn & currentAddon)
-{
-  currentAddon.last_exteroceptive_update.time = duration;
-  currentAddon.last_exteroceptive_update.travelled_distance = currentAddon.travelled_distance;
+bool R2WPFUpdaterPosition::set_(const Duration& duration,
+                                Observation const& current_observation,
+                                const Input& current_input,
+                                State& current_state, AddOn& current_add_on) {
+  current_add_on.last_exteroceptive_update.time = duration;
+  current_add_on.last_exteroceptive_update.travelled_distance =
+      current_add_on.travelled_distance;
 
-  if (!std::isnan(currentInput.U(MetaState::LINEAR_SPEED_X_BODY)) &&
-    !std::isnan(currentInput.U(MetaState::LINEAR_SPEED_Y_BODY)) &&
-    !std::isnan(currentInput.U(MetaState::ANGULAR_SPEED_Z_BODY)) &&
-    !std::isnan(currentState.particles(MetaState::ORIENTATION_Z, 0)))
-  {
-    computeLevelArms_(currentObservation, currentAddon);
-    setParticlePositions_(currentObservation, currentState);
-    applyLevelArmCompentations_(currentState);
+  if (!std::isnan(current_input.U(MetaState::LINEAR_SPEED_X_BODY)) &&
+      !std::isnan(current_input.U(MetaState::LINEAR_SPEED_Y_BODY)) &&
+      !std::isnan(current_input.U(MetaState::ANGULAR_SPEED_Z_BODY)) &&
+      !std::isnan(current_state.particles(MetaState::ORIENTATION_Z, 0))) {
+    computelever_arms_(current_observation, current_add_on);
+    setParticlePositions_(current_observation, current_state);
+    applylever_armCompentations_(current_state);
     return true;
   } else {
     return false;
@@ -152,52 +133,43 @@ bool R2WPFUpdaterPosition::set_(
 }
 
 //-----------------------------------------------------------------------------
-void R2WPFUpdaterPosition::computeLevelArms_(
-  Observation const & currentObservation,
-  const AddOn & currentAddon)
-{
+void R2WPFUpdaterPosition::computelever_arms_(
+    Observation const& current_observation, const AddOn& current_add_on) {
   NormalRandomArrayGenerator2D<double> randomGenerator;
 
-  lever_arm_compensation_.compute(
-    currentAddon.roll,
-    currentAddon.pitch,
-    currentAddon.roll_pitch_variance,
-    0,
-    0,
-    currentObservation.lever_arm);
+  lever_arm_compensation_.compute(current_add_on.roll, current_add_on.pitch,
+                                  current_add_on.roll_pitch_variance, 0, 0,
+                                  current_observation.lever_arm);
 
-  randomGenerator.init(
-    lever_arm_compensation_.getPosition().segment<2>(0),
-    lever_arm_compensation_.getPosition().block<2, 2>(0, 0));
+  randomGenerator.init(lever_arm_compensation_.getPosition().segment<2>(0),
+                       lever_arm_compensation_.getPosition().block<2, 2>(0, 0));
 
   randomGenerator.fill(leverArms_);
 }
 
 //-----------------------------------------------------------------------------
 void R2WPFUpdaterPosition::setParticlePositions_(
-  const Observation & currentObservation,
-  State & currentState)
-{
-  auto particlePositions = currentState.particles.block(2, numberOfParticles_, 0, 0);
+    const Observation& current_observation, State& current_state) {
+  auto particlePositions =
+      current_state.particles.block(2, number_of_particles_, 0, 0);
 
   NormalRandomArrayGenerator2D<double> randomGenerator;
-  randomGenerator.init(currentObservation.Y(), currentObservation.R());
+  randomGenerator.init(current_observation.Y(), current_observation.R());
   randomGenerator.fill(particlePositions);
 }
 
 //-----------------------------------------------------------------------------
-void R2WPFUpdaterPosition::applyLevelArmCompentations_(State & currentState)
-{
-  cosCourses_ = currentState.particles.row(MetaState::ORIENTATION_Z).cos();
-  sinCourses_ = currentState.particles.row(MetaState::ORIENTATION_Z).sin();
+void R2WPFUpdaterPosition::applylever_armCompentations_(State& current_state) {
+  cos_courses_ = current_state.particles.row(MetaState::ORIENTATION_Z).cos();
+  sin_courses_ = current_state.particles.row(MetaState::ORIENTATION_Z).sin();
 
-  currentState.particles.row(MetaState::POSITION_X) -=
-    cosCourses_ * leverArms_.row(MetaState::POSITION_X) -
-    sinCourses_ * leverArms_.row(MetaState::POSITION_Y);
+  current_state.particles.row(MetaState::POSITION_X) -=
+      cos_courses_ * leverArms_.row(MetaState::POSITION_X) -
+      sin_courses_ * leverArms_.row(MetaState::POSITION_Y);
 
-  currentState.particles.row(MetaState::POSITION_Y) -=
-    sinCourses_ * leverArms_.row(MetaState::POSITION_X) +
-    cosCourses_ * leverArms_.row(MetaState::POSITION_Y);
+  current_state.particles.row(MetaState::POSITION_Y) -=
+      sin_courses_ * leverArms_.row(MetaState::POSITION_X) +
+      cos_courses_ * leverArms_.row(MetaState::POSITION_Y);
 }
 
 }  // namespace localisation

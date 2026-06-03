@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,28 +13,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__UPDATER_TRIGGER_MODE_HPP_
 #define ROMEA_CORE_LOCALISATION__UPDATER_TRIGGER_MODE_HPP_
 
 #include <string>
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
-enum class UpdaterTriggerMode
-{
-  ALWAYS,
-  ONCE
-};
+enum class Updatertrigger_mode { ALWAYS, ONCE };
 
-std::string to_string(const UpdaterTriggerMode & trigger_mode);
+std::string to_string(const Updatertrigger_mode& trigger_mode);
 
-UpdaterTriggerMode to_trigger_mode(const std::string & trigger_mode);
+Updatertrigger_mode to_trigger_mode(const std::string& trigger_mode);
 
 }  // namespace localisation
 }  // namespace core

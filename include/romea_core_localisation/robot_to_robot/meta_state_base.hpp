@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,34 +13,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__META_STATE_BASE_HPP_
 #define ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__META_STATE_BASE_HPP_
 
 // romea
-#include <romea_core_filtering/GaussianInput.hpp>
 #include <romea_core_common/containers/Eigen/RingOfEigenVector.hpp>
+#include <romea_core_filtering/gaussian/input.hpp>
+
 #include "romea_core_localisation/update_monitoring.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
-struct R2RMetaStateBase
-{
-  enum StateIndex
-  {
+struct R2RMetaStateBase {
+  enum StateIndex {
     LEADER_POSITION_X = 0,
     LEADER_POSITION_Y,
     LEADER_ORIENTATION_Z,
     STATE_SIZE
   };
 
-  enum InputIndex
-  {
+  enum InputIndex {
     LINEAR_SPEED_X_BODY = 0,
     LINEAR_SPEED_Y_BODY,
     ANGULAR_SPEED_Z_BODY,
@@ -51,8 +46,7 @@ struct R2RMetaStateBase
 
   using Input = GaussianInput<double, INPUT_SIZE>;
 
-  struct AddOn
-  {
+  struct AddOn {
     AddOn();
 
     void reset();

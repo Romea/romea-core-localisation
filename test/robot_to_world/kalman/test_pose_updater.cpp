@@ -1,4 +1,5 @@
-﻿// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+﻿// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,126 +13,118 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // gtest
 #include <gtest/gtest.h>
 
-// std
 #include <memory>
 
 // local
 #include "../../test_utils.hpp"
 #include "romea_core_localisation/fsm_state.hpp"
-#include "romea_core_localisation/robot_to_world/kalman/updater_pose.hpp"
 #include "romea_core_localisation/robot_to_world/kalman/meta_state.hpp"
+#include "romea_core_localisation/robot_to_world/kalman/updater_pose.hpp"
 
 using Updater = romea::core::localisation::R2WKFUpdaterPose;
 using FSMState = romea::core::localisation::FSMState;
 using MetaState = romea::core::localisation::R2WKFMetaState;
 using Observation = romea::core::localisation::ObservationPose;
-using TriggerMode = romea::core::localisation::UpdaterTriggerMode;
+using trigger_mode = romea::core::localisation::Updatertrigger_mode;
 
-const Eigen::Vector3d initialPose = (Eigen::Vector3d() << 0.1, 0.2, 0.3).finished();
+const Eigen::Vector3d initialPose =
+    (Eigen::Vector3d() << 0.1, 0.2, 0.3).finished();
 const Eigen::Matrix3d initialPoseCovariance =
-  (Eigen::Matrix3d() << 0.1, 0, 0, 0, 0.2, 0, 0, 0, 0.3).finished();
+    (Eigen::Matrix3d() << 0.1, 0, 0, 0, 0.2, 0, 0, 0, 0.3).finished();
 
-class TestPoseUpdater : public ::testing::Test
-{
-public:
+void set_valid_inputs(MetaState& metastate) {
+  metastate.input.U(MetaState::LINEAR_SPEED_X_BODY) = 1.0;
+  metastate.input.U(MetaState::LINEAR_SPEED_Y_BODY) = 0.0;
+  metastate.input.U(MetaState::ANGULAR_SPEED_Z_BODY) = 0.1;
+}
+
+class TestPoseUpdater : public ::testing::Test {
+ public:
   TestPoseUpdater()
-  : metastate(),
-    fsmState(FSMState::INIT),
-    updater(nullptr)
-  {
-  }
+      : metastate(), fsm_state(FSMState::INIT), updater(nullptr) {}
 
-  void init(
-    const FSMState & fsmState_,
-    const TriggerMode & triggerMode_)
-  {
-    updater = std::make_unique<Updater>(
-      "course_updater",
-      100,
-      triggerMode_,
-      5,
-      "course_updater.dat");
+  void init(const FSMState& fsm_state_, const trigger_mode& trigger_mode_) {
+    updater = std::make_unique<Updater>("course_updater", 100, trigger_mode_, 5,
+                                        "course_updater.dat");
 
     metastate.state.X() << initialPose;
     metastate.state.P() << initialPoseCovariance;
-    fsmState = fsmState_;
+    fsm_state = fsm_state_;
   }
 
-  void update(
-    const romea::core::Duration & duration,
-    const Observation & observation)
-  {
-    updater->update(duration, observation, fsmState, metastate);
+  void update(const romea::core::Duration& duration,
+              const Observation& observation) {
+    updater->update(duration, observation, fsm_state, metastate);
   }
 
   MetaState metastate;
-  FSMState fsmState;
+  FSMState fsm_state;
   std::unique_ptr<Updater> updater;
 };
 
-TEST_F(TestPoseUpdater, testSetObservation)
-{
-  init(FSMState::INIT, TriggerMode::ALWAYS);
+TEST_F(TestPoseUpdater, testSetObservation) {
+  init(FSMState::INIT, trigger_mode::ALWAYS);
+  set_valid_inputs(metastate);
 
   romea::core::Duration duration = romea::core::durationFromSecond(2);
 
   Observation observation;
   observation.Y() << -0.1, -0.2, 0.4;
   observation.R() << 0.1, 0, 0, 0, 0.2, 0, 0, 0, 0.3;
-  updater->update(duration, observation, fsmState, metastate);
+  updater->update(duration, observation, fsm_state, metastate);
 
-  EXPECT_EQ(fsmState, FSMState::INIT);
-  isSame(metastate.state.X(), observation.Y());
-  isSame(metastate.state.P(), observation.R());
-  // EXPECT_EQ(metastate.addon.lastExteroceptiveUpdate.time.count(), duration.count());
-  // EXPECT_DOUBLE_EQ(metastate.addon.lastExteroceptiveUpdate.travelledDistance, 0);
+  EXPECT_EQ(fsm_state, FSMState::RUNNING);
+  EXPECT_TRUE(metastate.state.X().isApprox(observation.Y()));
+  EXPECT_TRUE(metastate.state.P().isApprox(observation.R()));
+  EXPECT_EQ(metastate.addon.last_exteroceptive_update.time.count(),
+            duration.count());
+  EXPECT_DOUBLE_EQ(
+      metastate.addon.last_exteroceptive_update.travelled_distance, 0);
 }
 
-TEST_F(TestPoseUpdater, testUpdate)
-{
-  init(FSMState::RUNNING, TriggerMode::ALWAYS);
+TEST_F(TestPoseUpdater, testUpdate) {
+  init(FSMState::RUNNING, trigger_mode::ALWAYS);
 
   romea::core::Duration duration = romea::core::durationFromSecond(2);
   Observation observation;
   observation.Y() = initialPose;
   observation.R() = initialPoseCovariance;
-  updater->update(duration, observation, fsmState, metastate);
+  updater->update(duration, observation, fsm_state, metastate);
 
-  std::cout << metastate.state.X() << std::endl;
-  std::cout << metastate.state.P() << std::endl;
-
-//  EXPECT_EQ(fsmState,FSMState::RUNNING);
-//  EXPECT_EQ(metastate.state.X(MetaState::ORIENTATION_Z),initialCourse);
-//  EXPECT_EQ(metastate.state.P(MetaState::ORIENTATION_Z,MetaState::ORIENTATION_Z),0.05);
-//  EXPECT_EQ(metastate.addon.lastExteroceptiveUpdate.time.count(),duration.count());
-//  EXPECT_DOUBLE_EQ(metastate.addon.lastExteroceptiveUpdate.travelledDistance,0);
+  EXPECT_EQ(fsm_state, FSMState::RUNNING);
+  EXPECT_TRUE(metastate.state.X().isApprox(initialPose));
+  EXPECT_TRUE((metastate.state.P().diagonal().isApprox(
+      Eigen::Vector3d(0.05, 0.1, 0.15))));
+  EXPECT_EQ(metastate.addon.last_exteroceptive_update.time.count(),
+            duration.count());
+  EXPECT_DOUBLE_EQ(
+      metastate.addon.last_exteroceptive_update.travelled_distance, 0);
 }
 
-// TEST_F(TestCourseUpdater, testMahalanobisRejection)
-//{
-//  init(FSMState::RUNNING,TriggerMode::ALWAYS);
+TEST_F(TestPoseUpdater, testMahalanobisRejection) {
+  init(FSMState::RUNNING, trigger_mode::ALWAYS);
 
-//  romea::Duration duration = romea::durationFromSecond(2);
-//  Observation observation;
-//  observation.Y()=10;
-//  observation.R()=0.1;
-//  updater->update(duration,observation,fsmState,metastate);
+  const auto previous_state = metastate.state.X();
+  const auto previous_covariance = metastate.state.P();
 
-//  EXPECT_EQ(fsmState,FSMState::RUNNING);
-//  EXPECT_EQ(metastate.state.X(MetaState::ORIENTATION_Z),initialCourse);
-//  EXPECT_EQ(metastate.state.P(MetaState::ORIENTATION_Z,MetaState::ORIENTATION_Z),initialCourseVariance);
-//  EXPECT_EQ(metastate.addon.lastExteroceptiveUpdate.time.count(),duration.count());
-//  EXPECT_DOUBLE_EQ(metastate.addon.lastExteroceptiveUpdate.travelledDistance,0);
+  romea::core::Duration duration = romea::core::durationFromSecond(2);
+  Observation observation;
+  observation.Y() << 100, 100, 3;
+  observation.R() << 0.1, 0, 0, 0, 0.2, 0, 0, 0, 0.3;
+  updater->update(duration, observation, fsm_state, metastate);
 
-//}
+  EXPECT_EQ(fsm_state, FSMState::RUNNING);
+  EXPECT_TRUE(metastate.state.X().isApprox(previous_state));
+  EXPECT_TRUE(metastate.state.P().isApprox(previous_covariance));
+  EXPECT_EQ(metastate.addon.last_exteroceptive_update.time,
+            romea::core::Duration::zero());
+}
 
 //-----------------------------------------------------------------------------
-int main(int argc, char ** argv)
-{
+int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

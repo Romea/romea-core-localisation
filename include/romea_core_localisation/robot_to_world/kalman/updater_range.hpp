@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,61 +13,48 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__KALMAN__UPDATER_RANGE_HPP_
 #define ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__KALMAN__UPDATER_RANGE_HPP_
-
 
 // std
 #include <string>
 
 // romea
 #include "romea_core_common/time/Time.hpp"
-#include "romea_core_filtering/kalman/UnscentedKalmanFilterUpdaterCore.hpp"
+#include "romea_core_filtering/filter/kalman/updater/base/unscented.hpp"
 #include "romea_core_localisation/fsm_state.hpp"
 #include "romea_core_localisation/observation_range.hpp"
-#include "romea_core_localisation/updater_exteroceptive.hpp"
-#include "romea_core_localisation/robot_to_world/lever_arm_compensation.hpp"
 #include "romea_core_localisation/robot_to_world/kalman/meta_state.hpp"
+#include "romea_core_localisation/robot_to_world/lever_arm_compensation.hpp"
+#include "romea_core_localisation/updater_exteroceptive.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
-class R2WKFUpdaterRange : public UpdaterExteroceptive, public UKFUpdaterCore<double, 3, 1>
-{
-public:
+class R2WKFUpdaterRange : public UpdaterExteroceptive,
+                          public UKFUpdaterBase<double, 3, 1> {
+ public:
   using Observation = ObservationRange;
   using MetaState = R2WKFMetaState;
   using State = R2WKFMetaState::State;
   using Input = R2WKFMetaState::Input;
   using AddOn = R2WKFMetaState::AddOn;
 
-public:
-  R2WKFUpdaterRange(
-    const std::string & updaterName,
-    const double & minimalRate,
-    const TriggerMode & triggerMode,
-    const double & maximalMahalanobisDistance,
-    const std::string & logFilename);
+ public:
+  R2WKFUpdaterRange(const std::string& updater_name, const double& minimal_rate,
+                    const trigger_mode& trigger_mode,
+                    const double& maximal_mahalanobis_distance,
+                    const std::string& logFilename);
 
-  void update(
-    const Duration & duration,
-    const Observation & currentObservation,
-    FSMState & currentFSMState,
-    MetaState & currentMetaState);
+  void update(const Duration& duration, const Observation& current_observation,
+              FSMState& current_fsm_State, MetaState& current_meta_state);
 
-protected:
-  void update_(
-    const Duration & duration,
-    const Observation & currentObservation,
-    State & currentState,
-    AddOn & currentAddon);
+ protected:
+  void update_(const Duration& duration, const Observation& current_observation,
+               State& current_state, AddOn& current_add_on);
 
-protected:
+ protected:
   LeverArmCompensation lever_arm_compensation_;
 };
 

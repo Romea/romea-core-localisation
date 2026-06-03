@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,13 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__PARTICLE__META_STATE_HPP_
 #define ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__PARTICLE__META_STATE_HPP_
 
-
 // romea
-#include <romea_core_filtering/particle/ParticleFilterState.hpp>
+#include <romea_core_filtering/filter/particle/state.hpp>
 
 // std
 #include <random>
@@ -26,19 +25,15 @@
 // local
 #include "romea_core_localisation/robot_to_world/meta_state_base.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
-struct R2WPFMetaState : R2WMetaStateBase
-{
-public:
+struct R2WPFMetaState : R2WMetaStateBase {
+ public:
   using State = ParticleFilterState<double, STATE_SIZE>;
 
-  explicit R2WPFMetaState(const size_t & numberOfParticles);
+  explicit R2WPFMetaState(const size_t& number_of_particles);
 
   virtual ~R2WPFMetaState() = default;
 

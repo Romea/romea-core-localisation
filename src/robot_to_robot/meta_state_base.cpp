@@ -43,6 +43,7 @@ void R2RMetaStateBase::AddOn::reset()
   leader_trajectory.clear();
   robot_trajectory.clear();
   last_exteroceptive_update.travelled_distance = 0;
+  travelled_distance = 0;
 }
 
 //-----------------------------------------------------------------------------

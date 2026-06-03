@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,19 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // gtest
 #include <gtest/gtest.h>
 
 // romea
-#include "test_utils.hpp"
 #include "romea_core_localisation/fsm_state.hpp"
+#include "test_utils.hpp"
 
-using namespace romea::core::localisation;  //NOLINT
+using namespace romea::core::localisation;  // NOLINT
 
 //-----------------------------------------------------------------------------
-TEST(TestFSMStateConversion, checkfsmStateToString)
-{
+TEST(TestFSMStateConversion, checkfsm_stateToString) {
   EXPECT_STREQ(to_string(FSMState::ABORTED).c_str(), "ABORTED");
   EXPECT_STREQ(to_string(FSMState::RUNNING).c_str(), "RUNNING");
   EXPECT_STREQ(to_string(FSMState::RESET).c_str(), "RESET");
@@ -32,17 +31,19 @@ TEST(TestFSMStateConversion, checkfsmStateToString)
 }
 
 //-----------------------------------------------------------------------------
-TEST(TestFSMStateConversion, checkfsmStateToDiagnosticStatus)
-{
-  EXPECT_EQ(to_diagnostic_status(FSMState::ABORTED), romea::core::DiagnosticStatus::ERROR);
-  EXPECT_EQ(to_diagnostic_status(FSMState::RUNNING), romea::core::DiagnosticStatus::OK);
-  EXPECT_EQ(to_diagnostic_status(FSMState::RESET), romea::core::DiagnosticStatus::WARN);
-  EXPECT_EQ(to_diagnostic_status(FSMState::INIT), romea::core::DiagnosticStatus::WARN);
+TEST(TestFSMStateConversion, checkfsm_stateToDiagnosticStatus) {
+  EXPECT_EQ(to_diagnostic_status(FSMState::ABORTED),
+            romea::core::DiagnosticStatus::ERROR);
+  EXPECT_EQ(to_diagnostic_status(FSMState::RUNNING),
+            romea::core::DiagnosticStatus::OK);
+  EXPECT_EQ(to_diagnostic_status(FSMState::RESET),
+            romea::core::DiagnosticStatus::WARN);
+  EXPECT_EQ(to_diagnostic_status(FSMState::INIT),
+            romea::core::DiagnosticStatus::WARN);
 }
 
 //-----------------------------------------------------------------------------
-int main(int argc, char ** argv)
-{
+int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

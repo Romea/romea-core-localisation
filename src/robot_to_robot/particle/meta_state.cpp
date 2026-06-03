@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,22 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "romea_core_localisation/robot_to_robot/particle/meta_state.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
 //--------------------------------------------------------------------------
-R2RPFMetaState::R2RPFMetaState(const size_t & numberOfParticles)
-: R2RMetaStateBase(),
-  state(numberOfParticles)
-{
-}
+R2RPFMetaState::R2RPFMetaState(const size_t& number_of_particles)
+    : R2RMetaStateBase(), state(number_of_particles) {}
 
 }  // namespace localisation
 }  // namespace core

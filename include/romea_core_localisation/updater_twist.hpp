@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,10 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__UPDATER_TWIST_HPP_
 #define ROMEA_CORE_LOCALISATION__UPDATER_TWIST_HPP_
-
 
 // romea
 #include <romea_core_common/time/Time.hpp>
@@ -25,44 +24,31 @@
 
 // local
 #include "romea_core_localisation/fsm_state.hpp"
-#include "romea_core_localisation/updater_proprioceptive.hpp"
 #include "romea_core_localisation/observation_twist.hpp"
+#include "romea_core_localisation/updater_proprioceptive.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
-template<class MetaState>
-class UpdaterTwist : public UpdaterProprioceptive
-{
-public:
-  UpdaterTwist(
-    const std::string & updaterName,
-    const double & minimalRate)
-  : UpdaterProprioceptive(updaterName, minimalRate)
-  {
-  }
+template <class MetaState>
+class UpdaterTwist : public UpdaterProprioceptive {
+ public:
+  UpdaterTwist(const std::string& updater_name, const double& minimal_rate)
+      : UpdaterProprioceptive(updater_name, minimal_rate) {}
 
   using Observation = ObservationTwist;
 
-  void update(
-    const Duration & duration,
-    const Observation & currentObservation,
-    FSMState & /*currentFSMState*/,
-    MetaState & currentMetaState)
-  {
+  void update(const Duration& duration, const Observation& current_observation,
+              FSMState& /*current_fsm_State*/, MetaState& current_meta_state) {
     rate_diagnostic_.evaluate(duration);
 
-    currentMetaState.input.U().template
-    segment<3>(MetaState::LINEAR_SPEED_X_BODY) = currentObservation.Y();
+    current_meta_state.input.U().template segment<3>(
+        MetaState::LINEAR_SPEED_X_BODY) = current_observation.Y();
 
-    currentMetaState.input.QU().template
-    block<3, 3>(
-      MetaState::LINEAR_SPEED_X_BODY,
-      MetaState::LINEAR_SPEED_X_BODY) = currentObservation.R();
+    current_meta_state.input.QU().template block<3, 3>(
+        MetaState::LINEAR_SPEED_X_BODY, MetaState::LINEAR_SPEED_X_BODY) =
+        current_observation.R();
   }
 };
 

@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // std
 #include <string>
 #include <vector>
@@ -20,28 +20,21 @@
 // local
 #include "romea_core_localisation/updater_exteroceptive.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
 //-----------------------------------------------------------------------------
-UpdaterExteroceptive::UpdaterExteroceptive(
-  const std::string & updater_name,
-  const double & minimal_rate,
-  const TriggerMode & trigger_mode,
-  const std::string & log_filename)
-: UpdaterBase(updater_name, minimal_rate, trigger_mode)
-{
+UpdaterExteroceptive::UpdaterExteroceptive(const std::string& updater_name,
+                                           const double& minimal_rate,
+                                           const trigger_mode& trigger_mode,
+                                           const std::string& log_filename)
+    : UpdaterBase(updater_name, minimal_rate, trigger_mode) {
   open_log_file_(log_filename);
 }
 
-
 //-----------------------------------------------------------------------------
-void UpdaterExteroceptive::open_log_file_(const std::string & log_filename)
-{
+void UpdaterExteroceptive::open_log_file_(const std::string& log_filename) {
   if (!log_filename.empty()) {
     log_file_.open(log_filename);
 
@@ -53,8 +46,7 @@ void UpdaterExteroceptive::open_log_file_(const std::string & log_filename)
 
 //-----------------------------------------------------------------------------
 void UpdaterExteroceptive::set_log_file_header_(
-  const std::vector<std::string> & log_column_names)
-{
+    const std::vector<std::string>& log_column_names) {
   if (log_file_.is_open()) {
     log_file_ << "%";
     for (size_t n = 0; n < log_column_names.size(); ++n) {

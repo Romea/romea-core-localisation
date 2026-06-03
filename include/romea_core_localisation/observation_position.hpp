@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,34 +13,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__OBSERVATION_POSITION_HPP_
 #define ROMEA_CORE_LOCALISATION__OBSERVATION_POSITION_HPP_
 
 // romea
-#include <romea_core_filtering/GaussianObservation.hpp>
+#include "romea_core_filtering/gaussian/observation.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
-struct ObservationPosition : GaussianObservation<double, 2>
-{
-  enum Index
-  {
-    POSITION_X = 0,
-    POSITION_Y,
-    SIZE
-  };
+struct ObservationPosition : GaussianObservation<double, 2> {
+  enum Index { POSITION_X = 0, POSITION_Y, SIZE };
 
   ObservationPosition()
-  : GaussianObservation(),
-    lever_arm(Eigen::Vector3d::Zero())
-  {
-  }
+      : GaussianObservation(), lever_arm(Eigen::Vector3d::Zero()) {}
 
   Eigen::Vector3d lever_arm;
 };

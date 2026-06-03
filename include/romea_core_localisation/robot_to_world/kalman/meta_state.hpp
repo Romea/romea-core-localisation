@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,31 +13,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__KALMAN__META_STATE_HPP_
 #define ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__KALMAN__META_STATE_HPP_
 
-
 // romea
-#include <romea_core_filtering/GaussianState.hpp>
+#include <romea_core_filtering/gaussian/state.hpp>
 
 // std
 #include <memory>
 
 // local
-#include "romea_core_localisation/robot_to_world/meta_state_base.hpp"
 #include "romea_core_localisation/robot_to_world/lever_arm_compensation.hpp"
+#include "romea_core_localisation/robot_to_world/meta_state_base.hpp"
 
+namespace romea {
+namespace core {
+namespace localisation {
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
-
-struct R2WKFMetaState : R2WMetaStateBase
-{
+struct R2WKFMetaState : R2WMetaStateBase {
   using State = GaussianState<double, STATE_SIZE>;
 
   R2WKFMetaState();
@@ -46,11 +40,10 @@ struct R2WKFMetaState : R2WMetaStateBase
   State state;
 };
 
-void apply_lever_arm_compensation(
-  R2WKFMetaState::State & currentState,
-  R2WKFMetaState::AddOn & currentAddOn,
-  LeverArmCompensation & levelArmCompensation,
-  const Eigen::Vector3d & levelArm);
+void apply_lever_arm_compensation(R2WKFMetaState::State& current_state,
+                                  R2WKFMetaState::AddOn& current_add_on,
+                                  LeverArmCompensation& lever_arm_compensation,
+                                  const Eigen::Vector3d& lever_arm);
 
 }  // namespace localisation
 }  // namespace core

@@ -1,3 +1,8 @@
+add_executable(${PROJECT_NAME}_test_r2w_meta_state test_meta_state.cpp )
+target_link_libraries(${PROJECT_NAME}_test_r2w_meta_state ${PROJECT_NAME} GTest::GTest GTest::Main)
+target_compile_options(${PROJECT_NAME}_test_r2w_meta_state PRIVATE -std=c++17)
+add_test(test_r2w_meta_state ${PROJECT_NAME}_test_r2w_meta_state)
+
 add_executable(${PROJECT_NAME}_test_lever_arm_compensation test_lever_arm_compensation.cpp )
 target_link_libraries(${PROJECT_NAME}_test_lever_arm_compensation ${PROJECT_NAME} GTest::GTest GTest::Main)
 target_compile_options(${PROJECT_NAME}_test_lever_arm_compensation PRIVATE -std=c++17)
@@ -33,7 +38,29 @@ target_link_libraries(${PROJECT_NAME}_test_course_kf_updater ${PROJECT_NAME} GTe
 target_compile_options(${PROJECT_NAME}_test_course_kf_updater PRIVATE -std=c++17)
 add_test(test_course_kf_updater ${PROJECT_NAME}_test_course_kf_updater)
 
+add_executable(${PROJECT_NAME}_test_position_kf_updater kalman/test_position_updater.cpp )
+target_link_libraries(${PROJECT_NAME}_test_position_kf_updater ${PROJECT_NAME} GTest::GTest GTest::Main)
+target_compile_options(${PROJECT_NAME}_test_position_kf_updater PRIVATE -std=c++17)
+add_test(test_position_kf_updater ${PROJECT_NAME}_test_position_kf_updater)
+
 add_executable(${PROJECT_NAME}_test_pose_kf_updater kalman/test_pose_updater.cpp )
 target_link_libraries(${PROJECT_NAME}_test_pose_kf_updater ${PROJECT_NAME} GTest::GTest GTest::Main)
 target_compile_options(${PROJECT_NAME}_test_pose_kf_updater PRIVATE -std=c++17)
 add_test(test_pose_kf_updater ${PROJECT_NAME}_test_pose_kf_updater)
+
+add_executable(${PROJECT_NAME}_test_range_kf_updater kalman/test_range_updater.cpp )
+target_link_libraries(${PROJECT_NAME}_test_range_kf_updater ${PROJECT_NAME} GTest::GTest GTest::Main)
+target_compile_options(${PROJECT_NAME}_test_range_kf_updater PRIVATE -std=c++17)
+add_test(test_range_kf_updater ${PROJECT_NAME}_test_range_kf_updater)
+
+add_executable(${PROJECT_NAME}_test_r2w_kf_predictor kalman/test_predictor.cpp )
+target_link_libraries(${PROJECT_NAME}_test_r2w_kf_predictor ${PROJECT_NAME} GTest::GTest GTest::Main)
+target_compile_options(${PROJECT_NAME}_test_r2w_kf_predictor PRIVATE -std=c++17)
+add_test(test_r2w_kf_predictor ${PROJECT_NAME}_test_r2w_kf_predictor)
+
+add_executable(${PROJECT_NAME}_test_r2w_kf_results kalman/test_results.cpp )
+target_link_libraries(${PROJECT_NAME}_test_r2w_kf_results ${PROJECT_NAME} GTest::GTest GTest::Main)
+target_compile_options(${PROJECT_NAME}_test_r2w_kf_results PRIVATE -std=c++17)
+add_test(test_r2w_kf_results ${PROJECT_NAME}_test_r2w_kf_results)
+
+add_subdirectory(particle)

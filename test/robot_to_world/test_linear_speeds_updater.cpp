@@ -1,4 +1,5 @@
-﻿// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+﻿// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,103 +21,85 @@
 
 // romea
 #include "romea_core_localisation/fsm_state.hpp"
-#include "romea_core_localisation/updater_linear_speeds.hpp"
 #include "romea_core_localisation/robot_to_world/meta_state_base.hpp"
+#include "romea_core_localisation/updater_linear_speeds.hpp"
 
 using FSMState = romea::core::localisation::FSMState;
 using MetaState = romea::core::localisation::R2WMetaStateBase;
 using Observation = romea::core::localisation::ObservationLinearSpeeds;
 using Updater = romea::core::localisation::UpdaterLinearSpeeds<MetaState>;
 
-
-TEST(TestAngularSpeedUpdater, checkUpdate)
-{
+TEST(TestAngularSpeedUpdater, checkUpdate) {
   Observation observation;
   observation.Y(Observation::LINEAR_SPEED_X_BODY) = 1;
   observation.Y(Observation::LINEAR_SPEED_Y_BODY) = 2;
-  observation.R(Observation::LINEAR_SPEED_X_BODY, Observation::LINEAR_SPEED_X_BODY) = 3;
-  observation.R(Observation::LINEAR_SPEED_X_BODY, Observation::LINEAR_SPEED_Y_BODY) = 4;
-  observation.R(Observation::LINEAR_SPEED_Y_BODY, Observation::LINEAR_SPEED_X_BODY) = 5;
-  observation.R(Observation::LINEAR_SPEED_Y_BODY, Observation::LINEAR_SPEED_Y_BODY) = 6;
+  observation.R(Observation::LINEAR_SPEED_X_BODY,
+                Observation::LINEAR_SPEED_X_BODY) = 3;
+  observation.R(Observation::LINEAR_SPEED_X_BODY,
+                Observation::LINEAR_SPEED_Y_BODY) = 4;
+  observation.R(Observation::LINEAR_SPEED_Y_BODY,
+                Observation::LINEAR_SPEED_X_BODY) = 5;
+  observation.R(Observation::LINEAR_SPEED_Y_BODY,
+                Observation::LINEAR_SPEED_Y_BODY) = 6;
 
   romea::core::Duration t(1000);
   MetaState metaState;
-  FSMState fsmState = FSMState::INIT;
+  FSMState fsm_state = FSMState::INIT;
   Updater updater("twist_updater", 10);
 
-  updater.update(t, observation, fsmState, metaState);
+  updater.update(t, observation, fsm_state, metaState);
 
-  EXPECT_EQ(fsmState, FSMState::INIT);
-  EXPECT_EQ(
-    metaState.input.U(MetaState::InputIndex::LINEAR_SPEED_X_BODY),
-    observation.Y(Observation::LINEAR_SPEED_X_BODY));
-  EXPECT_EQ(
-    metaState.input.U(MetaState::InputIndex::LINEAR_SPEED_Y_BODY),
-    observation.Y(Observation::LINEAR_SPEED_Y_BODY));
-  EXPECT_FALSE(std::isfinite(metaState.input.U(MetaState::InputIndex::ANGULAR_SPEED_Z_BODY)));
+  EXPECT_EQ(fsm_state, FSMState::INIT);
+  EXPECT_EQ(metaState.input.U(MetaState::InputIndex::LINEAR_SPEED_X_BODY),
+            observation.Y(Observation::LINEAR_SPEED_X_BODY));
+  EXPECT_EQ(metaState.input.U(MetaState::InputIndex::LINEAR_SPEED_Y_BODY),
+            observation.Y(Observation::LINEAR_SPEED_Y_BODY));
+  EXPECT_FALSE(std::isfinite(
+      metaState.input.U(MetaState::InputIndex::ANGULAR_SPEED_Z_BODY)));
 
-  EXPECT_EQ(
-    metaState.input.QU(
-      MetaState::InputIndex::LINEAR_SPEED_X_BODY,
-      MetaState::InputIndex::LINEAR_SPEED_X_BODY),
-    observation.R(
-      Observation::LINEAR_SPEED_X_BODY,
-      Observation::LINEAR_SPEED_X_BODY));
+  EXPECT_EQ(metaState.input.QU(MetaState::InputIndex::LINEAR_SPEED_X_BODY,
+                               MetaState::InputIndex::LINEAR_SPEED_X_BODY),
+            observation.R(Observation::LINEAR_SPEED_X_BODY,
+                          Observation::LINEAR_SPEED_X_BODY));
 
-  EXPECT_EQ(
-    metaState.input.QU(
-      MetaState::InputIndex::LINEAR_SPEED_X_BODY,
-      MetaState::InputIndex::LINEAR_SPEED_Y_BODY),
-    observation.R(
-      Observation::LINEAR_SPEED_X_BODY,
-      Observation::LINEAR_SPEED_Y_BODY));
+  EXPECT_EQ(metaState.input.QU(MetaState::InputIndex::LINEAR_SPEED_X_BODY,
+                               MetaState::InputIndex::LINEAR_SPEED_Y_BODY),
+            observation.R(Observation::LINEAR_SPEED_X_BODY,
+                          Observation::LINEAR_SPEED_Y_BODY));
 
+  EXPECT_EQ(metaState.input.QU(MetaState::InputIndex::LINEAR_SPEED_X_BODY,
+                               MetaState::InputIndex::ANGULAR_SPEED_Z_BODY),
+            0);
 
-  EXPECT_EQ(
-    metaState.input.QU(
-      MetaState::InputIndex::LINEAR_SPEED_X_BODY,
-      MetaState::InputIndex::ANGULAR_SPEED_Z_BODY), 0);
+  EXPECT_EQ(metaState.input.QU(MetaState::InputIndex::LINEAR_SPEED_Y_BODY,
+                               MetaState::InputIndex::LINEAR_SPEED_X_BODY),
+            observation.R(Observation::LINEAR_SPEED_Y_BODY,
+                          Observation::LINEAR_SPEED_X_BODY));
 
-  EXPECT_EQ(
-    metaState.input.QU(
-      MetaState::InputIndex::LINEAR_SPEED_Y_BODY,
-      MetaState::InputIndex::LINEAR_SPEED_X_BODY),
-    observation.R(
-      Observation::LINEAR_SPEED_Y_BODY,
-      Observation::LINEAR_SPEED_X_BODY));
+  EXPECT_EQ(metaState.input.QU(MetaState::InputIndex::LINEAR_SPEED_Y_BODY,
+                               MetaState::InputIndex::LINEAR_SPEED_Y_BODY),
+            observation.R(Observation::LINEAR_SPEED_Y_BODY,
+                          Observation::LINEAR_SPEED_Y_BODY));
 
-  EXPECT_EQ(
-    metaState.input.QU(
-      MetaState::InputIndex::LINEAR_SPEED_Y_BODY,
-      MetaState::InputIndex::LINEAR_SPEED_Y_BODY),
-    observation.R(
-      Observation::LINEAR_SPEED_Y_BODY,
-      Observation::LINEAR_SPEED_Y_BODY));
+  EXPECT_EQ(metaState.input.QU(MetaState::InputIndex::LINEAR_SPEED_Y_BODY,
+                               MetaState::InputIndex::ANGULAR_SPEED_Z_BODY),
+            0);
 
-  EXPECT_EQ(
-    metaState.input.QU(
-      MetaState::InputIndex::LINEAR_SPEED_Y_BODY,
-      MetaState::InputIndex::ANGULAR_SPEED_Z_BODY), 0);
+  EXPECT_EQ(metaState.input.QU(MetaState::InputIndex::ANGULAR_SPEED_Z_BODY,
+                               MetaState::InputIndex::LINEAR_SPEED_X_BODY),
+            0);
 
-  EXPECT_EQ(
-    metaState.input.QU(
-      MetaState::InputIndex::ANGULAR_SPEED_Z_BODY,
-      MetaState::InputIndex::LINEAR_SPEED_X_BODY), 0);
+  EXPECT_EQ(metaState.input.QU(MetaState::InputIndex::ANGULAR_SPEED_Z_BODY,
+                               MetaState::InputIndex::LINEAR_SPEED_Y_BODY),
+            0);
 
-  EXPECT_EQ(
-    metaState.input.QU(
-      MetaState::InputIndex::ANGULAR_SPEED_Z_BODY,
-      MetaState::InputIndex::LINEAR_SPEED_Y_BODY), 0);
-
-  EXPECT_EQ(
-    metaState.input.QU(
-      MetaState::InputIndex::ANGULAR_SPEED_Z_BODY,
-      MetaState::InputIndex::ANGULAR_SPEED_Z_BODY), 0);
+  EXPECT_EQ(metaState.input.QU(MetaState::InputIndex::ANGULAR_SPEED_Z_BODY,
+                               MetaState::InputIndex::ANGULAR_SPEED_Z_BODY),
+            0);
 }
 
 //-----------------------------------------------------------------------------
-int main(int argc, char ** argv)
-{
+int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

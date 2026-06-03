@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,24 +13,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__OBSERVATION_TWIST_HPP_
 #define ROMEA_CORE_LOCALISATION__OBSERVATION_TWIST_HPP_
 
 // romea
-#include <romea_core_filtering/GaussianObservation.hpp>
+#include "romea_core_filtering/gaussian/observation.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
-struct ObservationTwist : GaussianObservation<double, 3>
-{
-  enum Index
-  {
+struct ObservationTwist : GaussianObservation<double, 3> {
+  enum Index {
     LINEAR_SPEED_X_BODY = 0,
     LINEAR_SPEED_Y_BODY,
     ANGULAR_SPEED_Z_BODY,

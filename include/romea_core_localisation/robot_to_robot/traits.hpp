@@ -17,8 +17,8 @@
 
 
 // romea
-#include <romea_core_filtering/kalman/KalmanFilter.hpp>
-#include <romea_core_filtering/particle/ParticleFilter.hpp>
+#include "romea_core_filtering/filter/kalman/filter.hpp"
+#include "romea_core_filtering/filter/particle/filter.hpp"
 #include "romea_core_localisation/updater_twist.hpp"
 #include "romea_core_localisation/updater_linear_speed.hpp"
 #include "romea_core_localisation/updater_linear_speeds.hpp"

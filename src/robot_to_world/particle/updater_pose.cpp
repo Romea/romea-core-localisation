@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,10 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // romea
-#include <romea_core_common/math/NormalRandomMatrixGenerator.hpp>
 #include <romea_core_common/math/EulerAngles.hpp>
+#include <romea_core_common/math/NormalRandomMatrixGenerator.hpp>
 
 // std
 #include <string>
@@ -23,65 +23,50 @@
 // local
 #include "romea_core_localisation/robot_to_world/particle/updater_pose.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
 //-----------------------------------------------------------------------------
-R2WPFUpdaterPose::R2WPFUpdaterPose(
-  const std::string & updaterName,
-  const double & minimalRate,
-  const TriggerMode & triggerMode,
-  const size_t & numberOfParticles,
-  const double & maximalMahalanobisDistance,
-  const std::string & logFilename)
-: UpdaterExteroceptive(updaterName, minimalRate, triggerMode, logFilename),
-  PFGaussianUpdaterCore(numberOfParticles, maximalMahalanobisDistance),
-  cosCourses_(RowMajorVector::Zero(numberOfParticles)),
-  sinCourses_(RowMajorVector::Zero(numberOfParticles)),
-  lever_arm_compensation_()
-{
-}
-
+R2WPFUpdaterPose::R2WPFUpdaterPose(const std::string& updater_name,
+                                   const double& minimal_rate,
+                                   const trigger_mode& trigger_mode,
+                                   const size_t& number_of_particles,
+                                   const double& maximal_mahalanobis_distance,
+                                   const std::string& logFilename)
+    : UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode,
+                           logFilename),
+      PFGaussianUpdaterBase(number_of_particles, maximal_mahalanobis_distance),
+      cos_courses_(RowMajorVector::Zero(number_of_particles)),
+      sin_courses_(RowMajorVector::Zero(number_of_particles)),
+      lever_arm_compensation_() {}
 
 //--------------------------------------------------------------------------
-void R2WPFUpdaterPose::update(
-  const Duration & duration,
-  const Observation & currentObservation,
-  FSMState & currentFSMState,
-  MetaState & currentMetaState)
-{
+void R2WPFUpdaterPose::update(const Duration& duration,
+                              const Observation& current_observation,
+                              FSMState& current_fsm_State,
+                              MetaState& current_meta_state) {
   rate_diagnostic_.evaluate(duration);
 
-  switch (currentFSMState) {
+  switch (current_fsm_State) {
     case FSMState::INIT:
-      if (set_(
-          duration,
-          currentObservation,
-          currentMetaState.input,
-          currentMetaState.state,
-          currentMetaState.addon))
-      {
-        currentFSMState = FSMState::RUNNING;
+      if (set_(duration, current_observation, current_meta_state.input,
+               current_meta_state.state, current_meta_state.addon)) {
+        current_fsm_State = FSMState::RUNNING;
         std::cout << " FSM : INIT DONE (POSE), GO TO RUNNING MODE" << std::endl;
       }
       break;
     case FSMState::RUNNING:
-      if (trigger_mode_ == TriggerMode::ALWAYS) {
+      if (trigger_mode_ == trigger_mode::ALWAYS) {
         try {
-          update_(
-            duration,
-            currentObservation,
-            currentMetaState.state,
-            currentMetaState.addon);
+          update_(duration, current_observation, current_meta_state.state,
+                  current_meta_state.addon);
         } catch (...) {
-          std::cout << " FSM : FILTER DEGENERESCENCE, RESET AND GO TO INIT MODE" << std::endl;
-          currentFSMState = FSMState::INIT;
-          currentMetaState.state.reset();
-          currentMetaState.addon.reset();
+          std::cout << " FSM : FILTER DEGENERESCENCE, RESET AND GO TO INIT MODE"
+                    << std::endl;
+          current_fsm_State = FSMState::INIT;
+          current_meta_state.state.reset();
+          current_meta_state.addon.reset();
         }
       }
       break;
@@ -91,125 +76,122 @@ void R2WPFUpdaterPose::update(
 }
 
 //-----------------------------------------------------------------------------
-void R2WPFUpdaterPose::update_(
-  const Duration & duration,
-  Observation currentObservation,
-  State & currentState,
-  AddOn & currentAddon)
-{
+void R2WPFUpdaterPose::update_(const Duration& duration,
+                               Observation current_observation,
+                               State& current_state, AddOn& current_add_on) {
   // compute level arm compensation
-  lever_arm_compensation_.compute(
-    currentAddon.roll,
-    currentAddon.pitch,
-    currentAddon.roll_pitch_variance,
-    0,
-    0,
-    currentObservation.lever_arm);
+  lever_arm_compensation_.compute(current_add_on.roll, current_add_on.pitch,
+                                  current_add_on.roll_pitch_variance, 0, 0,
+                                  current_observation.lever_arm);
 
-  double varxyantenna = lever_arm_compensation_.getPositionCovariance().block<2, 2>(0, 0).trace();
-  const Eigen::Vector3d & antennaPosition = lever_arm_compensation_.getPosition();
-  const double & xantenna = antennaPosition(0);
-  const double & yantenna = antennaPosition(1);
+  double varxyantenna =
+      lever_arm_compensation_.getPositionCovariance().block<2, 2>(0, 0).trace();
+  const Eigen::Vector3d& antennaPosition =
+      lever_arm_compensation_.getPosition();
+  const double& xantenna = antennaPosition(0);
+  const double& yantenna = antennaPosition(1);
 
   // compute apriori observations
-  const auto & courses = currentState.particles.row(MetaState::ORIENTATION_Z);
-  const auto & x = currentState.particles.row(MetaState::POSITION_X);
-  const auto & y = currentState.particles.row(MetaState::POSITION_Y);
+  const auto& courses = current_state.particles.row(MetaState::ORIENTATION_Z);
+  const auto& x = current_state.particles.row(MetaState::POSITION_X);
+  const auto& y = current_state.particles.row(MetaState::POSITION_Y);
 
-  cosCourses_ = courses.array().cos();
-  sinCourses_ = courses.array().sin();
-  aprioriObservations_.row(MetaState::POSITION_X) = x +
-    (cosCourses_ * xantenna - sinCourses_ * yantenna);
-  aprioriObservations_.row(MetaState::POSITION_Y) = y +
-    (sinCourses_ * xantenna + cosCourses_ * yantenna);
-  aprioriObservations_.row(MetaState::ORIENTATION_Z) = courses;
+  cos_courses_ = courses.array().cos();
+  sin_courses_ = courses.array().sin();
+  apriori_observations_.row(MetaState::POSITION_X) =
+      x + (cos_courses_ * xantenna - sin_courses_ * yantenna);
+  apriori_observations_.row(MetaState::POSITION_Y) =
+      y + (sin_courses_ * xantenna + cos_courses_ * yantenna);
+  apriori_observations_.row(MetaState::ORIENTATION_Z) = courses;
 
   // update weights and resample
-  currentObservation.R(MetaState::POSITION_X, MetaState::POSITION_X) += varxyantenna;
-  currentObservation.R(MetaState::POSITION_Y, MetaState::POSITION_Y) += varxyantenna;
-  if (updateState_(currentState, currentObservation)) {
-    currentAddon.last_exteroceptive_update.time = duration;
-    currentAddon.last_exteroceptive_update.travelled_distance = currentAddon.travelled_distance;
+  current_observation.R(MetaState::POSITION_X, MetaState::POSITION_X) +=
+      varxyantenna;
+  current_observation.R(MetaState::POSITION_Y, MetaState::POSITION_Y) +=
+      varxyantenna;
+  if (update_state_(current_state, current_observation)) {
+    current_add_on.last_exteroceptive_update.time = duration;
+    current_add_on.last_exteroceptive_update.travelled_distance =
+        current_add_on.travelled_distance;
   }
 }
 
 //-----------------------------------------------------------------------------
-void R2WPFUpdaterPose::computeInnovation_(
-  const PFGaussianUpdaterCore::Observation & observation,
-  const RawMajorVector & weights)
-{
-  double weightSum = weights.sum();
+void R2WPFUpdaterPose::compute_innovation_(
+    const PFGaussianUpdaterBase::Observation& observation,
+    const RawMajorVector& weights) {
+  double weight_sum = weights.sum();
 
-  aprioriObservation_.Y(MetaState::POSITION_X) =
-    (aprioriObservations_.row(MetaState::POSITION_X) * weights).sum() / weightSum;
-  aprioriObservation_.Y(MetaState::POSITION_Y) =
-    (aprioriObservations_.row(MetaState::POSITION_Y) * weights).sum() / weightSum;
-  aprioriObservation_.Y(MetaState::ORIENTATION_Z) =
-    std::atan2(
-    (aprioriObservations_.row(MetaState::ORIENTATION_Z).sin() * weights).sum() / weightSum,
-    (aprioriObservations_.row(MetaState::ORIENTATION_Z).cos() * weights).sum() / weightSum);
+  apriori_observation_.Y(MetaState::POSITION_X) =
+      (apriori_observations_.row(MetaState::POSITION_X) * weights).sum() /
+      weight_sum;
+  apriori_observation_.Y(MetaState::POSITION_Y) =
+      (apriori_observations_.row(MetaState::POSITION_Y) * weights).sum() /
+      weight_sum;
+  apriori_observation_.Y(MetaState::ORIENTATION_Z) = std::atan2(
+      (apriori_observations_.row(MetaState::ORIENTATION_Z).sin() * weights)
+              .sum() /
+          weight_sum,
+      (apriori_observations_.row(MetaState::ORIENTATION_Z).cos() * weights)
+              .sum() /
+          weight_sum);
 
   for (int i = 0; i < 3; ++i) {
-    aprioriMeanCenteredObservations_.row(i) = aprioriObservations_.row(i) -
-      aprioriObservation_.Y(i);
+    apriori_mean_centered_observations_.row(i) =
+        apriori_observations_.row(i) - apriori_observation_.Y(i);
   }
 
   // TODO(jean) à vectoriser
-  for (size_t n = 0; n < numberOfParticles_; n++) {
-    aprioriMeanCenteredObservations_(MetaState::ORIENTATION_Z, n) =
-      betweenMinusPiAndPi(aprioriMeanCenteredObservations_(MetaState::ORIENTATION_Z, n));
+  for (size_t n = 0; n < number_of_particles_; n++) {
+    apriori_mean_centered_observations_(MetaState::ORIENTATION_Z, n) =
+        betweenMinusPiAndPi(
+            apriori_mean_centered_observations_(MetaState::ORIENTATION_Z, n));
   }
 
   for (size_t i = 0; i < 3; ++i) {
     for (size_t j = i; j < 3; ++j) {
-      aprioriObservation_.R(i, j) =
-        aprioriObservation_.R(j, i) = (aprioriMeanCenteredObservations_.row(i) *
-        aprioriMeanCenteredObservations_.row(j) *
-        weights).sum() / weightSum;
+      apriori_observation_.R(i, j) = apriori_observation_.R(j, i) =
+          (apriori_mean_centered_observations_.row(i) *
+           apriori_mean_centered_observations_.row(j) * weights)
+              .sum() /
+          weight_sum;
     }
   }
 
-  this->Inn_ = observation.Y() - aprioriObservation_.Y();
-  this->QInn_ = observation.R() + aprioriObservation_.R();
+  this->Inn_ = observation.Y() - apriori_observation_.Y();
+  this->QInn_ = observation.R() + apriori_observation_.R();
 }
 
-
 //-----------------------------------------------------------------------------
-bool R2WPFUpdaterPose::set_(
-  const Duration & duration,
-  const Observation & currentObservation,
-  const Input & currentInput,
-  State & currentState,
-  AddOn & currentAddon)
-{
-  if (!std::isnan(currentInput.U(MetaState::LINEAR_SPEED_X_BODY)) &&
-    !std::isnan(currentInput.U(MetaState::LINEAR_SPEED_Y_BODY)) &&
-    !std::isnan(currentInput.U(MetaState::ANGULAR_SPEED_Z_BODY)))
-  {
-    Eigen::Vector3d pose = currentObservation.Y();
-    Eigen::Matrix3d poseCovariance = currentObservation.R();
+bool R2WPFUpdaterPose::set_(const Duration& duration,
+                            const Observation& current_observation,
+                            const Input& current_input, State& current_state,
+                            AddOn& current_add_on) {
+  if (!std::isnan(current_input.U(MetaState::LINEAR_SPEED_X_BODY)) &&
+      !std::isnan(current_input.U(MetaState::LINEAR_SPEED_Y_BODY)) &&
+      !std::isnan(current_input.U(MetaState::ANGULAR_SPEED_Z_BODY))) {
+    Eigen::Vector3d pose = current_observation.Y();
+    Eigen::Matrix3d poseCovariance = current_observation.R();
 
     lever_arm_compensation_.compute(
-      currentAddon.roll,
-      currentAddon.pitch,
-      currentAddon.roll_pitch_variance,
-      currentObservation.Y(ObservationPose::ORIENTATION_Z),
-      currentObservation.R(
-        ObservationPose::ORIENTATION_Z,
-        ObservationPose::ORIENTATION_Z),
-      currentObservation.lever_arm);
+        current_add_on.roll, current_add_on.pitch,
+        current_add_on.roll_pitch_variance,
+        current_observation.Y(ObservationPose::ORIENTATION_Z),
+        current_observation.R(ObservationPose::ORIENTATION_Z,
+                              ObservationPose::ORIENTATION_Z),
+        current_observation.lever_arm);
 
     pose.segment<2>(0) -= lever_arm_compensation_.getPosition().segment<2>(0);
-    poseCovariance.block<2, 2>(0, 0) += lever_arm_compensation_.getPositionCovariance().block<2, 2>(
-      0,
-      0);
+    poseCovariance.block<2, 2>(0, 0) +=
+        lever_arm_compensation_.getPositionCovariance().block<2, 2>(0, 0);
 
     NormalRandomArrayGenerator3D<double> randomGenerator;
     randomGenerator.init(pose, poseCovariance);
-    randomGenerator.fill(currentState.particles);
+    randomGenerator.fill(current_state.particles);
 
-    currentAddon.last_exteroceptive_update.time = duration;
-    currentAddon.last_exteroceptive_update.travelled_distance = currentAddon.travelled_distance;
+    current_add_on.last_exteroceptive_update.time = duration;
+    current_add_on.last_exteroceptive_update.travelled_distance =
+        current_add_on.travelled_distance;
 
     return true;
   } else {

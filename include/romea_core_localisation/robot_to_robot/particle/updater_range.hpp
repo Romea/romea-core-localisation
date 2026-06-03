@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,15 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__PARTICLE__UPDATER_RANGE_HPP_
 #define ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__PARTICLE__UPDATER_RANGE_HPP_
 
-
 // romea
 #include <romea_core_common/time/Time.hpp>
-#include <romea_core_filtering/particle/ParticleFilterGaussianUpdaterCore.hpp>
-#include <romea_core_filtering/particle/ParticleFilterResampling.hpp>
+#include <romea_core_filtering/filter/particle/updater/algorithm/resampling.hpp>
+#include <romea_core_filtering/filter/particle/updater/base/gaussian.hpp>
 
 // std
 #include <string>
@@ -28,19 +27,16 @@
 // local
 #include "romea_core_localisation/fsm_state.hpp"
 #include "romea_core_localisation/observation_range.hpp"
-#include "romea_core_localisation/updater_exteroceptive.hpp"
 #include "romea_core_localisation/robot_to_robot/particle/meta_state.hpp"
+#include "romea_core_localisation/updater_exteroceptive.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
-class R2RPFUpdaterRange: public UpdaterExteroceptive, public PFGaussianUpdaterCore<double, 3, 1>
-{
-public:
+class R2RPFUpdaterRange : public UpdaterExteroceptive,
+                          public PFGaussianUpdaterBase<double, 3, 1> {
+ public:
   using Observation = ObservationRange;
   using MetaState = R2RPFMetaState;
   using State = R2RPFMetaState::State;
@@ -48,31 +44,23 @@ public:
   using AddOn = R2RPFMetaState::AddOn;
   using RowMajorVector = R2RPFMetaState::State::RowMajorVector;
 
-public:
-  R2RPFUpdaterRange(
-    const std::string & updaterName,
-    const double & minimalRate,
-    const TriggerMode & triggerMode,
-    const size_t & numberOfParticles,
-    const double & maximalMahalanobisDistance,
-    const std::string & logFilename);
+ public:
+  R2RPFUpdaterRange(const std::string& updater_name, const double& minimal_rate,
+                    const trigger_mode& trigger_mode,
+                    const size_t& number_of_particles,
+                    const double& maximal_mahalanobis_distance,
+                    const std::string& logFilename);
 
-  void update(
-    const Duration & duration,
-    const Observation & currentObservation,
-    FSMState & currentFSMState,
-    MetaState & currentMetaState);
+  void update(const Duration& duration, const Observation& current_observation,
+              FSMState& current_fsm_State, MetaState& current_meta_state);
 
-protected:
-  void update_(
-    const Duration & duration,
-    const Observation & currentObservation,
-    State & currentState,
-    AddOn & currentAddOn);
+ protected:
+  void update_(const Duration& duration, const Observation& current_observation,
+               State& current_state, AddOn& current_add_on);
 
-protected:
-  RowMajorVector cosCourses_;
-  RowMajorVector sinCourses_;
+ protected:
+  RowMajorVector cos_courses_;
+  RowMajorVector sin_courses_;
 };
 
 }  // namespace localisation

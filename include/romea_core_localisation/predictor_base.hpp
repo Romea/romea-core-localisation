@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,114 +13,105 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__PREDICTOR_BASE_HPP_
 #define ROMEA_CORE_LOCALISATION__PREDICTOR_BASE_HPP_
 
-
 // romea
 #include <romea_core_common/time/Time.hpp>
-#include <romea_core_filtering/FilterPredictor.hpp>
+#include <romea_core_filtering/filter/predictor_base.hpp>
 
 // std
-#include <limits>
 #include <iostream>
+#include <limits>
 
 // local
 #include "romea_core_localisation/fsm_state.hpp"
 
+namespace romea {
+namespace core {
+namespace localisation {
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
-
-template<class State>
-class PredictorBase : public FilterPredictor<State, FSMState, Duration>
-{
-public:
-  PredictorBase(
-    const Duration & maximalDurationInDeadReckoning,
-    const double & maximalTravelledDistanceInDeadReckoning,
-    const double & maximalPositionCircularErrorProbable);
+template <class State>
+class PredictorBase : public FilterPredictorBase<State, FSMState, Duration> {
+ public:
+  PredictorBase(const Duration& maximal_duration_in_dead_reckoning,
+                const double& maximal_travelled_distance_in_dead_reckoning,
+                const double& maximal_position_circular_error_probable);
 
   virtual ~PredictorBase() = default;
 
-public:
-  virtual void predict(
-    const Duration & previousDuration,
-    const FSMState & previousFSMState,
-    const State & previousStateVector,
-    const Duration & currentDuration,
-    FSMState & currentFSMState,
-    State & currentState);
+ public:
+  virtual void predict(const Duration& previous_duration,
+                       const FSMState& previous_fsm_state,
+                       const State& previous_state_vector,
+                       const Duration& currentDuration,
+                       FSMState& current_fsm_State, State& current_state);
 
-protected:
-  virtual bool stop_(const Duration & previousDuration, const State & currentState) = 0;
+ protected:
+  virtual bool stop_(const Duration& previous_duration,
+                     const State& current_state) = 0;
 
-  virtual void predict_(const State & previousStateVector, State & currentState) = 0;
+  virtual void predict_(const State& previous_state_vector,
+                        State& current_state) = 0;
 
-  virtual void reset_(State & currentState) = 0;
+  virtual void reset_(State& current_state) = 0;
 
-protected:
-  Duration maximalDurationInDeadReckoning_;
-  double maximalTravelledDistanceInDeadReckoning_;
-  double maximalPositionCircularErrorProbable_;
+ protected:
+  Duration maximal_duration_in_dead_reckoning_;
+  double maximal_travelled_distance_in_dead_reckoning_;
+  double maximal_position_circular_error_probable_;
   double dt_;
 };
 
 //-----------------------------------------------------------------------------
-template<class State>
+template <class State>
 PredictorBase<State>::PredictorBase(
-  const Duration & maximalDurationInDeadReckoning,
-  const double & maximalTravelledDistanceInDeadReckoning,
-  const double & maximalPositionCircularErrorProbable)
-: maximalDurationInDeadReckoning_(maximalDurationInDeadReckoning),
-  maximalTravelledDistanceInDeadReckoning_(maximalTravelledDistanceInDeadReckoning),
-  maximalPositionCircularErrorProbable_(maximalPositionCircularErrorProbable),
-  dt_(0)
-{
-}
+    const Duration& maximal_duration_in_dead_reckoning,
+    const double& maximal_travelled_distance_in_dead_reckoning,
+    const double& maximal_position_circular_error_probable)
+    : maximal_duration_in_dead_reckoning_(maximal_duration_in_dead_reckoning),
+      maximal_travelled_distance_in_dead_reckoning_(
+          maximal_travelled_distance_in_dead_reckoning),
+      maximal_position_circular_error_probable_(
+          maximal_position_circular_error_probable),
+      dt_(0) {}
 
 //-----------------------------------------------------------------------------
-template<class State>
-void PredictorBase<State>::predict(
-  const Duration & previousDuration,
-  const FSMState & previousFSMState,
-  const State & previousState,
-  const Duration & currentduration,
-  FSMState & currentFSMState,
-  State & currentState)
-{
-  assert(currentduration >= previousDuration);
+template <class State>
+void PredictorBase<State>::predict(const Duration& previous_duration,
+                                   const FSMState& previous_fsm_state,
+                                   const State& previous_state,
+                                   const Duration& currentduration,
+                                   FSMState& current_fsm_State,
+                                   State& current_state) {
+  assert(currentduration >= previous_duration);
 
-  currentFSMState = previousFSMState;
-  if (previousFSMState == FSMState::RUNNING) {
-    dt_ = durationToSecond(currentduration - previousDuration);
+  current_fsm_State = previous_fsm_state;
+  if (previous_fsm_state == FSMState::RUNNING) {
+    dt_ = durationToSecond(currentduration - previous_duration);
 
     if (dt_ > 0) {
-      predict_(previousState, currentState);
+      predict_(previous_state, current_state);
     } else {
-      currentState = previousState;
+      current_state = previous_state;
     }
 
-    if (stop_(currentduration, currentState)) {
-      std::cout << "FSM : TOO LONG IN DEAD RECKONING, RESET AND GO TO INIT " << std::endl;
-      reset_(currentState);
-      currentFSMState = FSMState::INIT;
+    if (stop_(currentduration, current_state)) {
+      std::cout << "FSM : TOO LONG IN DEAD RECKONING, RESET AND GO TO INIT "
+                << std::endl;
+      reset_(current_state);
+      current_fsm_State = FSMState::INIT;
     }
   } else {
-    currentState = previousState;
+    current_state = previous_state;
   }
 
   //  std::cout << "predict current state "<<std::endl;
-  //  std::cout << currentState.state.X() <<std::endl;
-  //  std::cout << currentState.state.P() <<std::endl;
-  //  std::cout << currentState.input.U() <<std::endl;
-  //  std::cout << currentState.input.QU() <<std::endl;
-  //  std::cout << "fsm state " <<int(currentFSMState) <<std::endl;
+  //  std::cout << current_state.state.X() <<std::endl;
+  //  std::cout << current_state.state.P() <<std::endl;
+  //  std::cout << current_state.input.U() <<std::endl;
+  //  std::cout << current_state.input.QU() <<std::endl;
+  //  std::cout << "fsm state " <<int(current_fsm_State) <<std::endl;
 }
 
 }  // namespace localisation

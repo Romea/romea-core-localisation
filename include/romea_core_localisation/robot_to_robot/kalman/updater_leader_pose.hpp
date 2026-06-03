@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,11 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__KALMAN__UPDATER_LEADER_POSE_HPP_
 #define ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__KALMAN__UPDATER_LEADER_POSE_HPP_
-
-
 
 // std
 #include <string>
@@ -25,46 +23,35 @@
 #include "romea_core_common/time/Time.hpp"
 #include "romea_core_localisation/fsm_state.hpp"
 #include "romea_core_localisation/observation_pose.hpp"
-#include "romea_core_localisation/updater_exteroceptive.hpp"
 #include "romea_core_localisation/robot_to_robot/kalman/meta_state.hpp"
+#include "romea_core_localisation/updater_exteroceptive.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
-class R2RKFUpdaterLeaderPose : public UpdaterExteroceptive
-{
-public:
+class R2RKFUpdaterLeaderPose : public UpdaterExteroceptive {
+ public:
   using Observation = ObservationPose;
   using MetaState = R2RKFMetaState;
   using State = R2RKFMetaState::State;
   using Input = R2RKFMetaState::Input;
   using AddOn = R2RKFMetaState::AddOn;
 
-public:
-  R2RKFUpdaterLeaderPose(
-    const std::string & updaterName,
-    const double & minimalRate,
-    const TriggerMode & triggerMode,
-    const double & maximalMahalanobisDistance,
-    const std::string & logFilename);
+ public:
+  R2RKFUpdaterLeaderPose(const std::string& updater_name,
+                         const double& minimal_rate,
+                         const trigger_mode& trigger_mode,
+                         const double& maximal_mahalanobis_distance,
+                         const std::string& logFilename);
 
-  void update(
-    const Duration & duration,
-    const Observation & currentObservation,
-    FSMState & currentFSMState,
-    MetaState & currentMetaState);
+  void update(const Duration& duration, const Observation& current_observation,
+              FSMState& current_fsm_State, MetaState& current_meta_state);
 
-protected:
-  bool set_(
-    const Duration & duration,
-    const Observation & currentObservation,
-    const Input & currentInput,
-    State & currentState,
-    AddOn & currentAddOn);
+ protected:
+  bool set_(const Duration& duration, const Observation& current_observation,
+            const Input& current_input, State& current_state,
+            AddOn& current_add_on);
 };
 
 }  // namespace localisation

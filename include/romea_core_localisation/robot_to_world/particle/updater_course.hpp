@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,13 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__PARTICLE__UPDATER_COURSE_HPP_
 #define ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__PARTICLE__UPDATER_COURSE_HPP_
 
 // romea
 #include <romea_core_common/time/Time.hpp>
-#include <romea_core_filtering/particle/ParticleFilterUpdaterCore.hpp>
+#include <romea_core_filtering/filter/particle/updater/base/generic.hpp>
 
 // std
 #include <string>
@@ -26,52 +26,39 @@
 // local
 #include "romea_core_localisation/fsm_state.hpp"
 #include "romea_core_localisation/observation_course.hpp"
-#include "romea_core_localisation/updater_exteroceptive.hpp"
 #include "romea_core_localisation/robot_to_world/particle/meta_state.hpp"
+#include "romea_core_localisation/updater_exteroceptive.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
-class R2WPFUpdaterCourse : public UpdaterExteroceptive, public PFUpdaterCore<double, 3, 1>
-{
-public:
+class R2WPFUpdaterCourse : public UpdaterExteroceptive,
+                           public PFUpdaterBase<double, 3, 1> {
+ public:
   using Observation = ObservationCourse;
   using MetaState = R2WPFMetaState;
   using State = R2WPFMetaState::State;
   using Input = R2WPFMetaState::Input;
   using AddOn = R2WPFMetaState::AddOn;
 
-public:
-  R2WPFUpdaterCourse(
-    const std::string & updaterName,
-    const double & minimalRate,
-    const TriggerMode & triggerMode,
-    const size_t & numberOfParticles,
-    const double & maximalMahalanobisDistance,
-    const std::string & logFilename);
+ public:
+  R2WPFUpdaterCourse(const std::string& updater_name,
+                     const double& minimal_rate,
+                     const trigger_mode& trigger_mode,
+                     const size_t& number_of_particles,
+                     const double& maximal_mahalanobis_distance,
+                     const std::string& logFilename);
 
-  void update(
-    const Duration & duration,
-    const Observation & currentObservation,
-    FSMState & currentFSMState,
-    MetaState & currentState);
+  void update(const Duration& duration, const Observation& current_observation,
+              FSMState& current_fsm_State, MetaState& current_state);
 
-private:
-  void update_(
-    const Duration & duration,
-    const Observation & currentObservation,
-    State & currentState,
-    AddOn & currentAddon);
+ private:
+  void update_(const Duration& duration, const Observation& current_observation,
+               State& current_state, AddOn& current_add_on);
 
-  void set_(
-    const Duration & duration,
-    const Observation & currentObservation,
-    State & currentState,
-    AddOn & currentAddon);
+  void set_(const Duration& duration, const Observation& current_observation,
+            State& current_state, AddOn& current_add_on);
 };
 
 }  // namespace localisation

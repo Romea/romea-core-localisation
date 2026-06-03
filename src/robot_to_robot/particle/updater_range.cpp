@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,106 +13,96 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // std
 #include <string>
 
 // local
 #include "romea_core_localisation/robot_to_robot/particle/updater_range.hpp"
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
 //--------------------------------------------------------------------------
-R2RPFUpdaterRange::R2RPFUpdaterRange(
-  const std::string & updaterName,
-  const double & minimalRate,
-  const TriggerMode & triggerMode,
-  const size_t & numberOfParticles,
-  const double & maximalMahalanobisDistance,
-  const std::string & logFilename)
-: UpdaterExteroceptive(updaterName, minimalRate, triggerMode, logFilename),
-  PFGaussianUpdaterCore(numberOfParticles, maximalMahalanobisDistance),
-  cosCourses_(RowMajorVector::Zero(numberOfParticles_)),
-  sinCourses_(RowMajorVector::Zero(numberOfParticles_))
-{
-}
+R2RPFUpdaterRange::R2RPFUpdaterRange(const std::string& updater_name,
+                                     const double& minimal_rate,
+                                     const trigger_mode& trigger_mode,
+                                     const size_t& number_of_particles,
+                                     const double& maximal_mahalanobis_distance,
+                                     const std::string& logFilename)
+    : UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode,
+                           logFilename),
+      PFGaussianUpdaterBase(number_of_particles, maximal_mahalanobis_distance),
+      cos_courses_(RowMajorVector::Zero(number_of_particles_)),
+      sin_courses_(RowMajorVector::Zero(number_of_particles_)) {}
 
 //-----------------------------------------------------------------------------
-void R2RPFUpdaterRange::update(
-  const Duration & duration,
-  const Observation & currentObservation,
-  FSMState & currentFSMState,
-  MetaState & currentMetaState)
-{
+void R2RPFUpdaterRange::update(const Duration& duration,
+                               const Observation& current_observation,
+                               FSMState& current_fsm_State,
+                               MetaState& current_meta_state) {
   rate_diagnostic_.evaluate(duration);
 
-  if (currentFSMState == FSMState::RUNNING) {
+  if (current_fsm_State == FSMState::RUNNING) {
     try {
-      update_(
-        duration,
-        currentObservation,
-        currentMetaState.state,
-        currentMetaState.addon);
+      update_(duration, current_observation, current_meta_state.state,
+              current_meta_state.addon);
     } catch (...) {
-      std::cout << " FSM : FILTER DEGENERESCENCE, RESET AND GO TO INIT MODE" << std::endl;
-      currentMetaState.state.reset();
-      currentMetaState.addon.reset();
-      currentFSMState = FSMState::INIT;
+      std::cout << " FSM : FILTER DEGENERESCENCE, RESET AND GO TO INIT MODE"
+                << std::endl;
+      current_meta_state.state.reset();
+      current_meta_state.addon.reset();
+      current_fsm_State = FSMState::INIT;
     }
   }
 }
 
 //--------------------------------------------------------------------------
-void R2RPFUpdaterRange::update_(
-  const Duration & duration,
-  const Observation & currentObservation,
-  State & currentState,
-  AddOn & currentAddOn)
-{
+void R2RPFUpdaterRange::update_(const Duration& duration,
+                                const Observation& current_observation,
+                                State& current_state, AddOn& current_add_on) {
   // get position of the follower tag
-  double xf = currentObservation.initiator_position.x();
-  double yf = currentObservation.initiator_position.y();
-  double zf = currentObservation.initiator_position.z();
+  double xf = current_observation.initiator_position.x();
+  double yf = current_observation.initiator_position.y();
+  double zf = current_observation.initiator_position.z();
 
   // get the position of leader tag
-  double xl = currentObservation.responder_position.x();
-  double yl = currentObservation.responder_position.y();
-  double zl = currentObservation.responder_position.z();
+  double xl = current_observation.responder_position.x();
+  double yl = current_observation.responder_position.y();
+  double zl = current_observation.responder_position.z();
 
   // Compute importance weights
-  const auto & courses = currentState.particles.row(2);
-  const auto & x = currentState.particles.row(0);
-  const auto & y = currentState.particles.row(1);
+  const auto& courses = current_state.particles.row(2);
+  const auto& x = current_state.particles.row(0);
+  const auto& y = current_state.particles.row(1);
 
-  cosCourses_ = courses.array().cos();
-  sinCourses_ = courses.array().sin();
+  cos_courses_ = courses.array().cos();
+  sin_courses_ = courses.array().sin();
 
-  aprioriObservations_ = ((x + (cosCourses_ * xl - sinCourses_ * yl) - xf).square() +
-    (y + (sinCourses_ * xl + cosCourses_ * yl) - yf).square() +
-    (zl - zf) * (zl - zf)).sqrt();
+  apriori_observations_ =
+      ((x + (cos_courses_ * xl - sin_courses_ * yl) - xf).square() +
+       (y + (sin_courses_ * xl + cos_courses_ * yl) - yf).square() +
+       (zl - zf) * (zl - zf))
+          .sqrt();
 
-  computeInnovation_(currentObservation, currentState.weights);
-  bool success = updateState_(currentState, currentObservation);
+  compute_innovation_(current_observation, current_state.weights);
+  bool success = update_state_(current_state, current_observation);
 
   if (success) {
-    currentAddOn.last_exteroceptive_update.time = duration;
-    currentAddOn.last_exteroceptive_update.travelled_distance = currentAddOn.travelled_distance;
+    current_add_on.last_exteroceptive_update.time = duration;
+    current_add_on.last_exteroceptive_update.travelled_distance =
+        current_add_on.travelled_distance;
   }
 
   // log
   if (log_file_.is_open()) {
     log_file_ << duration.count() << " ";
     log_file_ << success << " ";
-    log_file_ << currentObservation.Y() << " ";
-    log_file_ << currentObservation.R() << " ";
-    log_file_ << aprioriObservation_.Y() << " ";
-    log_file_ << aprioriObservation_.R() << " ";
-    log_file_ << this->mahalanobisDistance_ << std::endl;
+    log_file_ << current_observation.Y() << " ";
+    log_file_ << current_observation.R() << " ";
+    log_file_ << apriori_observation_.Y() << " ";
+    log_file_ << apriori_observation_.R() << " ";
+    log_file_ << this->mahalanobis_distance_ << std::endl;
   }
 }
 

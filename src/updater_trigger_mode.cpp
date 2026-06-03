@@ -1,4 +1,5 @@
-// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Copyright 2022 INRAE, French National Research Institute for Agriculture,
+// Food and Environment
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // romea
 #include "romea_core_localisation/updater_trigger_mode.hpp"
 
@@ -21,17 +21,13 @@
 #include <sstream>
 #include <string>
 
-namespace romea
-{
-namespace core
-{
-namespace localisation
-{
+namespace romea {
+namespace core {
+namespace localisation {
 
 //-----------------------------------------------------------------------------
-std::string to_string(const UpdaterTriggerMode & triggerMode)
-{
-  if (triggerMode == UpdaterTriggerMode::ALWAYS) {
+std::string to_string(const Updatertrigger_mode& trigger_mode) {
+  if (trigger_mode == Updatertrigger_mode::ALWAYS) {
     return "always";
   } else {
     return "once";
@@ -39,15 +35,14 @@ std::string to_string(const UpdaterTriggerMode & triggerMode)
 }
 
 //-----------------------------------------------------------------------------
-UpdaterTriggerMode to_trigger_mode(const std::string & triggerMode)
-{
-  if (triggerMode == "always") {
-    return UpdaterTriggerMode::ALWAYS;
-  } else if (triggerMode == "once") {
-    return UpdaterTriggerMode::ONCE;
+Updatertrigger_mode to_trigger_mode(const std::string& trigger_mode) {
+  if (trigger_mode == "always") {
+    return Updatertrigger_mode::ALWAYS;
+  } else if (trigger_mode == "once") {
+    return Updatertrigger_mode::ONCE;
   } else {
     std::stringstream msg;
-    msg << triggerMode;
+    msg << trigger_mode;
     msg << "cannot be converted to a valid updater trigger mode";
     throw(std::runtime_error(msg.str()));
   }
