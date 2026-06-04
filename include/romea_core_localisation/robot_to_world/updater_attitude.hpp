@@ -28,30 +28,37 @@
 #include "romea_core_localisation/observation_attitude.hpp"
 #include "romea_core_localisation/updater_proprioceptive.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-template <class MetaState>
-class R2WUpdaterAttitude : public UpdaterProprioceptive {
- public:
+template<class MetaState>
+class R2WUpdaterAttitude : public UpdaterProprioceptive
+{
+public:
   using Observation = ObservationAttitude;
 
-  R2WUpdaterAttitude(const std::string& updater_name,
-                     const double& minimal_rate)
-      : UpdaterProprioceptive(updater_name, minimal_rate) {}
+  R2WUpdaterAttitude(const std::string & updater_name, const double & minimal_rate)
+  : UpdaterProprioceptive(updater_name, minimal_rate)
+  {
+  }
 
-  void update(const Duration& duration, const Observation& current_observation,
-              FSMState& /*current_fsm_State*/, MetaState& current_meta_state) {
+  void update(
+    const Duration & duration,
+    const Observation & current_observation,
+    FSMState & /*current_fsm_State*/,
+    MetaState & current_meta_state)
+  {
     rate_diagnostic_.evaluate(duration);
 
     assert(near(current_observation.R(0, 0), current_observation.R(1, 1)));
-    current_meta_state.addon.roll =
-        current_observation.Y(ObservationAttitude::ROLL);
-    current_meta_state.addon.pitch =
-        current_observation.Y(ObservationAttitude::PITCH);
-    current_meta_state.addon.roll_pitch_variance = current_observation.R(
-        ObservationAttitude::ROLL, ObservationAttitude::ROLL);
+    current_meta_state.addon.roll = current_observation.Y(ObservationAttitude::ROLL);
+    current_meta_state.addon.pitch = current_observation.Y(ObservationAttitude::PITCH);
+    current_meta_state.addon.roll_pitch_variance =
+      current_observation.R(ObservationAttitude::ROLL, ObservationAttitude::ROLL);
   }
 };
 

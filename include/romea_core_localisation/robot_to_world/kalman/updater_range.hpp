@@ -28,33 +28,44 @@
 #include "romea_core_localisation/robot_to_world/lever_arm_compensation.hpp"
 #include "romea_core_localisation/updater_exteroceptive.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-class R2WKFUpdaterRange : public UpdaterExteroceptive,
-                          public UKFUpdaterBase<double, 3, 1> {
- public:
+class R2WKFUpdaterRange : public UpdaterExteroceptive, public UKFUpdaterBase<double, 3, 1>
+{
+public:
   using Observation = ObservationRange;
   using MetaState = R2WKFMetaState;
   using State = R2WKFMetaState::State;
   using Input = R2WKFMetaState::Input;
   using AddOn = R2WKFMetaState::AddOn;
 
- public:
-  R2WKFUpdaterRange(const std::string& updater_name, const double& minimal_rate,
-                    const trigger_mode& trigger_mode,
-                    const double& maximal_mahalanobis_distance,
-                    const std::string& logFilename);
+public:
+  R2WKFUpdaterRange(
+    const std::string & updater_name,
+    const double & minimal_rate,
+    const trigger_mode & trigger_mode,
+    const double & maximal_mahalanobis_distance,
+    const std::string & logFilename);
 
-  void update(const Duration& duration, const Observation& current_observation,
-              FSMState& current_fsm_State, MetaState& current_meta_state);
+  void update(
+    const Duration & duration,
+    const Observation & current_observation,
+    FSMState & current_fsm_State,
+    MetaState & current_meta_state);
 
- protected:
-  void update_(const Duration& duration, const Observation& current_observation,
-               State& current_state, AddOn& current_add_on);
+protected:
+  void update_(
+    const Duration & duration,
+    const Observation & current_observation,
+    State & current_state,
+    AddOn & current_add_on);
 
- protected:
+protected:
   LeverArmCompensation lever_arm_compensation_;
 };
 

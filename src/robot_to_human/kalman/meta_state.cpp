@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "romea_core_localisation/robot_to_human/kalman/meta_state.hpp"
 
 namespace romea
@@ -23,9 +22,7 @@ namespace localisation
 {
 
 //-----------------------------------------------------------------------------
-R2HKFMetaState::R2HKFMetaState()
-: R2HMetaStateBase(),
-  state()
+R2HKFMetaState::R2HKFMetaState() : R2HMetaStateBase(), state()
 {
 }
 

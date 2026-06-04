@@ -15,13 +15,18 @@
 
 #include "romea_core_localisation/robot_to_robot/particle/meta_state.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
 //--------------------------------------------------------------------------
-R2RPFMetaState::R2RPFMetaState(const size_t& number_of_particles)
-    : R2RMetaStateBase(), state(number_of_particles) {}
+R2RPFMetaState::R2RPFMetaState(const size_t & number_of_particles)
+: R2RMetaStateBase(), state(number_of_particles)
+{
+}
 
 }  // namespace localisation
 }  // namespace core

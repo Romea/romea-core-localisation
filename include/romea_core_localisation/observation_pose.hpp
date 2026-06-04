@@ -18,15 +18,24 @@
 
 #include "romea_core_filtering/gaussian/observation.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-struct ObservationPose : GaussianObservation<double, 3> {
-  enum Index { POSITION_X = 0, POSITION_Y, ORIENTATION_Z, SIZE };
+struct ObservationPose : GaussianObservation<double, 3>
+{
+  enum Index
+  {
+    POSITION_X = 0,
+    POSITION_Y,
+    ORIENTATION_Z,
+    SIZE
+  };
 
-  ObservationPose()
-      : GaussianObservation(), lever_arm(Eigen::Vector3d::Zero()) {}
+  ObservationPose() : GaussianObservation(), lever_arm(Eigen::Vector3d::Zero()) {}
 
   Eigen::Vector3d lever_arm;
 };

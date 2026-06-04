@@ -26,51 +26,66 @@
 // local
 #include "romea_core_localisation/robot_to_human/kalman/updater_range.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
 //-----------------------------------------------------------------------------
-R2HKFUpdaterRange::R2HKFUpdaterRange(const std::string& updater_name,
-                                     const double& minimal_rate,
-                                     const trigger_mode& trigger_mode,
-                                     const double& maximal_mahalanobis_distance,
-                                     const std::string& logFilename,
-                                     const bool& usedConstraints)
-    : UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode,
-                           logFilename),
-      EKFUpdaterBase<double, 2, 1>(maximal_mahalanobis_distance),
-      U_(Eigen::VectorXd::Zero(MetaState::STATE_SIZE)),
-      W_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE, MetaState::STATE_SIZE)),
-      Amgs_(Eigen::Vector2d::Zero()),
-      Tmgs_(Eigen::Matrix2d::Zero()),
-      Wmgs_(0),
-      Dc_(Eigen::Matrix2d::Zero(MetaState::STATE_SIZE, MetaState::STATE_SIZE)),
-      Yc_(Eigen::VectorXd::Zero(MetaState::STATE_SIZE)),
-      RYc_(Eigen::MatrixXd::Identity(MetaState::STATE_SIZE,
-                                     MetaState::STATE_SIZE)),
-      isConstraintsUsed_(usedConstraints) {
+R2HKFUpdaterRange::R2HKFUpdaterRange(
+  const std::string & updater_name,
+  const double & minimal_rate,
+  const trigger_mode & trigger_mode,
+  const double & maximal_mahalanobis_distance,
+  const std::string & logFilename,
+  const bool & usedConstraints)
+: UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode, logFilename),
+  EKFUpdaterBase<double, 2, 1>(maximal_mahalanobis_distance),
+  U_(Eigen::VectorXd::Zero(MetaState::STATE_SIZE)),
+  W_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE, MetaState::STATE_SIZE)),
+  Amgs_(Eigen::Vector2d::Zero()),
+  Tmgs_(Eigen::Matrix2d::Zero()),
+  Wmgs_(0),
+  Dc_(Eigen::Matrix2d::Zero(MetaState::STATE_SIZE, MetaState::STATE_SIZE)),
+  Yc_(Eigen::VectorXd::Zero(MetaState::STATE_SIZE)),
+  RYc_(Eigen::MatrixXd::Identity(MetaState::STATE_SIZE, MetaState::STATE_SIZE)),
+  isConstraintsUsed_(usedConstraints)
+{
   Dc_(1, 1) = 1;
 
-  set_log_file_header_({"stamp", "range", "cov_range", "x", "y", "cov_x",
-                        "cov_xy", "cov_y", "ix", "iy", "apriori_range",
-                        "cov_apriori_range", "mahalanobis_distance", "sucess"});
+  set_log_file_header_(
+    {"stamp",
+     "range",
+     "cov_range",
+     "x",
+     "y",
+     "cov_x",
+     "cov_xy",
+     "cov_y",
+     "ix",
+     "iy",
+     "apriori_range",
+     "cov_apriori_range",
+     "mahalanobis_distance",
+     "sucess"});
 }
 
 //-----------------------------------------------------------------------------
-void R2HKFUpdaterRange::update(const Duration& duration,
-                               const Observation& current_observation,
-                               FSMState& current_fsm_State,
-                               MetaState& current_meta_state) {
+void R2HKFUpdaterRange::update(
+  const Duration & duration,
+  const Observation & current_observation,
+  FSMState & current_fsm_State,
+  MetaState & current_meta_state)
+{
   rate_diagnostic_.evaluate(duration);
 
   if (current_fsm_State == FSMState::RUNNING) {
     try {
-      update_(duration, current_observation, current_meta_state.state,
-              current_meta_state.addon);
+      update_(duration, current_observation, current_meta_state.state, current_meta_state.addon);
     } catch (...) {
-      std::cout << " FSM : RANGE UPDATE HAS FAILED, RESET AND GO TO INIT MODE"
-                << std::endl;
+      std::cout << " FSM : RANGE UPDATE HAS FAILED, RESET AND GO TO INIT MODE" << std::endl;
       current_meta_state.state.reset();
       current_meta_state.addon.reset();
       current_fsm_State = FSMState::INIT;
@@ -79,15 +94,16 @@ void R2HKFUpdaterRange::update(const Duration& duration,
 }
 
 //-----------------------------------------------------------------------------
-void R2HKFUpdaterRange::update_(const Duration& duration,
-                                const Observation& current_observation,
-                                State& current_state, AddOn& current_add_on) {
+void R2HKFUpdaterRange::update_(
+  const Duration & duration,
+  const Observation & current_observation,
+  State & current_state,
+  AddOn & current_add_on)
+{
   // compute observation matrix
   double aprioriRange =
-      (current_state.X() - current_observation.initiator_position.head<2>())
-          .norm();
-  H_ = (current_state.X() - current_observation.initiator_position.head<2>())
-           .transpose() /
+    (current_state.X() - current_observation.initiator_position.head<2>()).norm();
+  H_ = (current_state.X() - current_observation.initiator_position.head<2>()).transpose() /
        aprioriRange;
   double aprioriRangeVariance = (H_ * current_state.P() * H_.transpose())(0, 0);
 
@@ -113,8 +129,7 @@ void R2HKFUpdaterRange::update_(const Duration& duration,
 
   if (success) {
     current_add_on.last_exteroceptive_update.time = duration;
-    current_add_on.last_exteroceptive_update.travelled_distance =
-        current_add_on.travelled_distance;
+    current_add_on.last_exteroceptive_update.travelled_distance = current_add_on.travelled_distance;
   }
 
   // log
@@ -183,7 +198,10 @@ void R2HKFUpdaterRange::update_(const Duration& duration,
 }
 
 //-----------------------------------------------------------------------------
-void R2HKFUpdaterRange::useConstraints() { isConstraintsUsed_ = true; }
+void R2HKFUpdaterRange::useConstraints()
+{
+  isConstraintsUsed_ = true;
+}
 
 }  // namespace localisation
 }  // namespace core

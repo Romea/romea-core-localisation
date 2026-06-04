@@ -27,36 +27,41 @@
 // local
 #include "romea_core_localisation/fsm_state.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-template <class State>
-class PredictorBase : public FilterPredictorBase<State, FSMState, Duration> {
- public:
-  PredictorBase(const Duration& maximal_duration_in_dead_reckoning,
-                const double& maximal_travelled_distance_in_dead_reckoning,
-                const double& maximal_position_circular_error_probable);
+template<class State>
+class PredictorBase : public FilterPredictorBase<State, FSMState, Duration>
+{
+public:
+  PredictorBase(
+    const Duration & maximal_duration_in_dead_reckoning,
+    const double & maximal_travelled_distance_in_dead_reckoning,
+    const double & maximal_position_circular_error_probable);
 
   virtual ~PredictorBase() = default;
 
- public:
-  virtual void predict(const Duration& previous_duration,
-                       const FSMState& previous_fsm_state,
-                       const State& previous_state_vector,
-                       const Duration& currentDuration,
-                       FSMState& current_fsm_State, State& current_state);
+public:
+  virtual void predict(
+    const Duration & previous_duration,
+    const FSMState & previous_fsm_state,
+    const State & previous_state_vector,
+    const Duration & currentDuration,
+    FSMState & current_fsm_State,
+    State & current_state);
 
- protected:
-  virtual bool stop_(const Duration& previous_duration,
-                     const State& current_state) = 0;
+protected:
+  virtual bool stop_(const Duration & previous_duration, const State & current_state) = 0;
 
-  virtual void predict_(const State& previous_state_vector,
-                        State& current_state) = 0;
+  virtual void predict_(const State & previous_state_vector, State & current_state) = 0;
 
-  virtual void reset_(State& current_state) = 0;
+  virtual void reset_(State & current_state) = 0;
 
- protected:
+protected:
   Duration maximal_duration_in_dead_reckoning_;
   double maximal_travelled_distance_in_dead_reckoning_;
   double maximal_position_circular_error_probable_;
@@ -64,26 +69,28 @@ class PredictorBase : public FilterPredictorBase<State, FSMState, Duration> {
 };
 
 //-----------------------------------------------------------------------------
-template <class State>
+template<class State>
 PredictorBase<State>::PredictorBase(
-    const Duration& maximal_duration_in_dead_reckoning,
-    const double& maximal_travelled_distance_in_dead_reckoning,
-    const double& maximal_position_circular_error_probable)
-    : maximal_duration_in_dead_reckoning_(maximal_duration_in_dead_reckoning),
-      maximal_travelled_distance_in_dead_reckoning_(
-          maximal_travelled_distance_in_dead_reckoning),
-      maximal_position_circular_error_probable_(
-          maximal_position_circular_error_probable),
-      dt_(0) {}
+  const Duration & maximal_duration_in_dead_reckoning,
+  const double & maximal_travelled_distance_in_dead_reckoning,
+  const double & maximal_position_circular_error_probable)
+: maximal_duration_in_dead_reckoning_(maximal_duration_in_dead_reckoning),
+  maximal_travelled_distance_in_dead_reckoning_(maximal_travelled_distance_in_dead_reckoning),
+  maximal_position_circular_error_probable_(maximal_position_circular_error_probable),
+  dt_(0)
+{
+}
 
 //-----------------------------------------------------------------------------
-template <class State>
-void PredictorBase<State>::predict(const Duration& previous_duration,
-                                   const FSMState& previous_fsm_state,
-                                   const State& previous_state,
-                                   const Duration& currentduration,
-                                   FSMState& current_fsm_State,
-                                   State& current_state) {
+template<class State>
+void PredictorBase<State>::predict(
+  const Duration & previous_duration,
+  const FSMState & previous_fsm_state,
+  const State & previous_state,
+  const Duration & currentduration,
+  FSMState & current_fsm_State,
+  State & current_state)
+{
   assert(currentduration >= previous_duration);
 
   current_fsm_State = previous_fsm_state;
@@ -97,8 +104,7 @@ void PredictorBase<State>::predict(const Duration& previous_duration,
     }
 
     if (stop_(currentduration, current_state)) {
-      std::cout << "FSM : TOO LONG IN DEAD RECKONING, RESET AND GO TO INIT "
-                << std::endl;
+      std::cout << "FSM : TOO LONG IN DEAD RECKONING, RESET AND GO TO INIT " << std::endl;
       reset_(current_state);
       current_fsm_State = FSMState::INIT;
     }

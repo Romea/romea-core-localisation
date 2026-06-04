@@ -19,37 +19,42 @@
 // romea
 #include "romea_core_localisation/robot_to_world/particle/updater_range.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
 //--------------------------------------------------------------------------
-R2WPFUpdaterRange::R2WPFUpdaterRange(const std::string& updater_name,
-                                     const double& minimal_rate,
-                                     const trigger_mode& trigger_mode,
-                                     const size_t& number_of_particles,
-                                     const double& maximal_mahalanobis_distance,
-                                     const std::string& logFilename)
-    : UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode,
-                           logFilename),
-      PFGaussianUpdaterBase(number_of_particles, maximal_mahalanobis_distance),
-      cos_courses_(RowMajorVector::Zero(number_of_particles_)),
-      sin_courses_(RowMajorVector::Zero(number_of_particles_)),
-      lever_arm_compensation_() {}
+R2WPFUpdaterRange::R2WPFUpdaterRange(
+  const std::string & updater_name,
+  const double & minimal_rate,
+  const trigger_mode & trigger_mode,
+  const size_t & number_of_particles,
+  const double & maximal_mahalanobis_distance,
+  const std::string & logFilename)
+: UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode, logFilename),
+  PFGaussianUpdaterBase(number_of_particles, maximal_mahalanobis_distance),
+  cos_courses_(RowMajorVector::Zero(number_of_particles_)),
+  sin_courses_(RowMajorVector::Zero(number_of_particles_)),
+  lever_arm_compensation_()
+{
+}
 
 //-----------------------------------------------------------------------------
-void R2WPFUpdaterRange::update(const Duration& duration,
-                               const Observation& current_observation,
-                               FSMState& current_fsm_State,
-                               MetaState& current_meta_state) {
+void R2WPFUpdaterRange::update(
+  const Duration & duration,
+  const Observation & current_observation,
+  FSMState & current_fsm_State,
+  MetaState & current_meta_state)
+{
   if (current_fsm_State == FSMState::RUNNING) {
     if (trigger_mode_ == trigger_mode::ALWAYS) {
       try {
-        update_(duration, current_observation, current_meta_state.state,
-                current_meta_state.addon);
+        update_(duration, current_observation, current_meta_state.state, current_meta_state.addon);
       } catch (...) {
-        std::cout << " FSM : FILTER DEGENERESCENCE, RESET AND GO TO INIT MODE"
-                  << std::endl;
+        std::cout << " FSM : FILTER DEGENERESCENCE, RESET AND GO TO INIT MODE" << std::endl;
         current_meta_state.state.reset();
         current_meta_state.addon.reset();
         current_fsm_State = FSMState::INIT;
@@ -59,48 +64,50 @@ void R2WPFUpdaterRange::update(const Duration& duration,
 }
 
 //--------------------------------------------------------------------------
-void R2WPFUpdaterRange::update_(const Duration& duration,
-                                Observation current_observation,
-                                State& current_state, AddOn& current_add_on) {
+void R2WPFUpdaterRange::update_(
+  const Duration & duration,
+  Observation current_observation,
+  State & current_state,
+  AddOn & current_add_on)
+{
   // compute antenna attitude compensation
-  lever_arm_compensation_.compute(current_add_on.roll, current_add_on.pitch,
-                                  current_add_on.roll_pitch_variance, 0, 0,
-                                  current_observation.initiator_position);
+  lever_arm_compensation_.compute(
+    current_add_on.roll,
+    current_add_on.pitch,
+    current_add_on.roll_pitch_variance,
+    0,
+    0,
+    current_observation.initiator_position);
 
-  const Eigen::Vector3d& tagAntennaPosition =
-      lever_arm_compensation_.getPosition();
+  const Eigen::Vector3d & tagAntennaPosition = lever_arm_compensation_.getPosition();
 
   // compute a priori observations
-  const double& eax = tagAntennaPosition.x();
-  const double& eay = tagAntennaPosition.y();
-  const double& eaz =
-      tagAntennaPosition.z() + current_observation.terrain_elevation;
+  const double & eax = tagAntennaPosition.x();
+  const double & eay = tagAntennaPosition.y();
+  const double & eaz = tagAntennaPosition.z() + current_observation.terrain_elevation;
 
-  const double& iax = current_observation.responder_position.x();
-  const double& iay = current_observation.responder_position.y();
-  const double& iaz = current_observation.responder_position.z();
+  const double & iax = current_observation.responder_position.x();
+  const double & iay = current_observation.responder_position.y();
+  const double & iaz = current_observation.responder_position.z();
 
-  const auto& courses = current_state.particles.row(MetaState::ORIENTATION_Z);
-  const auto& x = current_state.particles.row(MetaState::POSITION_X);
-  const auto& y = current_state.particles.row(MetaState::POSITION_Y);
+  const auto & courses = current_state.particles.row(MetaState::ORIENTATION_Z);
+  const auto & x = current_state.particles.row(MetaState::POSITION_X);
+  const auto & y = current_state.particles.row(MetaState::POSITION_Y);
 
   cos_courses_ = courses.array().cos();
   sin_courses_ = courses.array().sin();
 
   apriori_observations_ =
-      ((x + (cos_courses_ * eax - sin_courses_ * eay) - iax).square() +
-       (y + (sin_courses_ * eax + cos_courses_ * eay) - iay).square() +
-       (eaz - iaz) * (eaz - iaz))
-          .sqrt();
+    ((x + (cos_courses_ * eax - sin_courses_ * eay) - iax).square() +
+     (y + (sin_courses_ * eax + cos_courses_ * eay) - iay).square() + (eaz - iaz) * (eaz - iaz))
+      .sqrt();
 
   // update weights and resample
-  current_observation.R() +=
-      lever_arm_compensation_.getPositionCovariance().trace();
+  current_observation.R() += lever_arm_compensation_.getPositionCovariance().trace();
 
   if (update_state_(current_state, current_observation)) {
     current_add_on.last_exteroceptive_update.time = duration;
-    current_add_on.last_exteroceptive_update.travelled_distance =
-        current_add_on.travelled_distance;
+    current_add_on.last_exteroceptive_update.travelled_distance = current_add_on.travelled_distance;
   }
 }
 

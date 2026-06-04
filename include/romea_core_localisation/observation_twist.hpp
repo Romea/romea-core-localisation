@@ -19,12 +19,17 @@
 // romea
 #include "romea_core_filtering/gaussian/observation.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-struct ObservationTwist : GaussianObservation<double, 3> {
-  enum Index {
+struct ObservationTwist : GaussianObservation<double, 3>
+{
+  enum Index
+  {
     LINEAR_SPEED_X_BODY = 0,
     LINEAR_SPEED_Y_BODY,
     ANGULAR_SPEED_Z_BODY,

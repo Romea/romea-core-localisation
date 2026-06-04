@@ -28,33 +28,44 @@
 #include "romea_core_localisation/robot_to_robot/particle/meta_state.hpp"
 #include "romea_core_localisation/updater_exteroceptive.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-class R2RPFUpdaterLeaderPose : public UpdaterExteroceptive {
- public:
+class R2RPFUpdaterLeaderPose : public UpdaterExteroceptive
+{
+public:
   using Observation = ObservationPose;
   using MetaState = R2RPFMetaState;
   using State = R2RPFMetaState::State;
   using Input = R2RPFMetaState::Input;
   using AddOn = R2RPFMetaState::AddOn;
 
- public:
-  R2RPFUpdaterLeaderPose(const std::string& updater_name,
-                         const double& minimal_rate,
-                         const trigger_mode& trigger_mode,
-                         const size_t& number_of_particles,
-                         const double& maximal_mahalanobis_distance,
-                         const std::string& logFilename);
+public:
+  R2RPFUpdaterLeaderPose(
+    const std::string & updater_name,
+    const double & minimal_rate,
+    const trigger_mode & trigger_mode,
+    const size_t & number_of_particles,
+    const double & maximal_mahalanobis_distance,
+    const std::string & logFilename);
 
-  void update(const Duration& duration, const Observation& current_observation,
-              FSMState& current_fsm_State, MetaState& current_meta_state);
+  void update(
+    const Duration & duration,
+    const Observation & current_observation,
+    FSMState & current_fsm_State,
+    MetaState & current_meta_state);
 
- private:
-  bool set_(const Duration& duration, const Observation& current_observation,
-            const Input& current_input, State& current_state,
-            AddOn& current_add_on);
+private:
+  bool set_(
+    const Duration & duration,
+    const Observation & current_observation,
+    const Input & current_input,
+    State & current_state,
+    AddOn & current_add_on);
 };
 
 }  // namespace localisation

@@ -26,7 +26,8 @@ using MetaState = romea::core::localisation::R2WMetaStateBase;
 using Observation = romea::core::localisation::ObservationAttitude;
 using Updater = romea::core::localisation::R2WUpdaterAttitude<MetaState>;
 
-TEST(TestAttitudeUpdater, checkUpdate) {
+TEST(TestAttitudeUpdater, checkUpdate)
+{
   Observation observation;
   observation.Y(Observation::ROLL) = 1;
   observation.Y(Observation::PITCH) = 2;
@@ -49,7 +50,8 @@ TEST(TestAttitudeUpdater, checkUpdate) {
 }
 
 //-----------------------------------------------------------------------------
-int main(int argc, char** argv) {
+int main(int argc, char ** argv)
+{
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

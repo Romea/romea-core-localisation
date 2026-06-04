@@ -27,26 +27,32 @@
 // local
 #include "romea_core_localisation/updater_trigger_mode.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-class UpdaterBase {
- public:
+class UpdaterBase
+{
+public:
   using trigger_mode = Updatertrigger_mode;
 
- public:
-  UpdaterBase(const std::string& updater_name, const double& minimal_rate,
-              const trigger_mode& trigger_mode);
+public:
+  UpdaterBase(
+    const std::string & updater_name,
+    const double & minimal_rate,
+    const trigger_mode & trigger_mode);
 
-  bool heart_beat_callback(const Duration& duration);
+  bool heart_beat_callback(const Duration & duration);
 
   DiagnosticReport get_report();
 
- protected:
-  void udapte_diagnostic_(const Duration& duration);
+protected:
+  void udapte_diagnostic_(const Duration & duration);
 
- protected:
+protected:
   trigger_mode trigger_mode_;
   CheckupGreaterThanRate rate_diagnostic_;
   mutable std::mutex mutex_;

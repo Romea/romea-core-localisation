@@ -21,12 +21,16 @@
 
 #include "romea_core_localisation/robot_to_robot/meta_state_base.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-struct R2RPFMetaState : R2RMetaStateBase {
-  explicit R2RPFMetaState(const size_t& number_of_particles);
+struct R2RPFMetaState : R2RMetaStateBase
+{
+  explicit R2RPFMetaState(const size_t & number_of_particles);
 
   virtual ~R2RPFMetaState() = default;
 

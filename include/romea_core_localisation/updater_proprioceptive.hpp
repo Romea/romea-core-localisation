@@ -22,14 +22,17 @@
 // romea
 #include "romea_core_localisation/updater_base.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-class UpdaterProprioceptive : public UpdaterBase {
- public:
-  UpdaterProprioceptive(const std::string& updater_name,
-                        const double& minimal_rate);
+class UpdaterProprioceptive : public UpdaterBase
+{
+public:
+  UpdaterProprioceptive(const std::string & updater_name, const double & minimal_rate);
 
   virtual ~UpdaterProprioceptive() = default;
 };

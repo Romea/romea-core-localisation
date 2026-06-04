@@ -31,50 +31,60 @@
 #include "romea_core_localisation/robot_to_world/particle/meta_state.hpp"
 #include "romea_core_localisation/updater_exteroceptive.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-class R2WPFUpdaterPosition : public UpdaterExteroceptive,
-                             public PFGaussianUpdaterBase<double, 3, 2> {
- public:
+class R2WPFUpdaterPosition : public UpdaterExteroceptive, public PFGaussianUpdaterBase<double, 3, 2>
+{
+public:
   using Observation = ObservationPosition;
   using MetaState = R2WPFMetaState;
   using State = R2WPFMetaState::State;
   using Input = R2WPFMetaState::Input;
   using AddOn = R2WPFMetaState::AddOn;
   using RowMajorVector = R2WPFMetaState::State::RowMajorVector;
-  using RowMajorMatrix =
-      Eigen::Array<double, 2, Eigen::Dynamic, Eigen::RowMajor>;
+  using RowMajorMatrix = Eigen::Array<double, 2, Eigen::Dynamic, Eigen::RowMajor>;
 
- public:
-  R2WPFUpdaterPosition(const std::string& updater_name,
-                       const double& minimal_rate,
-                       const trigger_mode& trigger_mode,
-                       const size_t& number_of_particles,
-                       const double& maximal_mahalanobis_distance,
-                       const std::string& logFilename);
+public:
+  R2WPFUpdaterPosition(
+    const std::string & updater_name,
+    const double & minimal_rate,
+    const trigger_mode & trigger_mode,
+    const size_t & number_of_particles,
+    const double & maximal_mahalanobis_distance,
+    const std::string & logFilename);
 
-  void update(const Duration& duration, const Observation& current_observation,
-              FSMState& current_fsm_State, MetaState& current_meta_state);
+  void update(
+    const Duration & duration,
+    const Observation & current_observation,
+    FSMState & current_fsm_State,
+    MetaState & current_meta_state);
 
- private:
-  void update_(const Duration& duration, Observation current_observation,
-               State& current_state, AddOn& current_add_on);
+private:
+  void update_(
+    const Duration & duration,
+    Observation current_observation,
+    State & current_state,
+    AddOn & current_add_on);
 
-  bool set_(const Duration& duration, const Observation& current_observation,
-            const Input& current_input, State& current_state,
-            AddOn& current_add_on);
+  bool set_(
+    const Duration & duration,
+    const Observation & current_observation,
+    const Input & current_input,
+    State & current_state,
+    AddOn & current_add_on);
 
-  void computelever_arms_(const Observation& ObservationPosition,
-                          const AddOn& current_add_on);
+  void computelever_arms_(const Observation & ObservationPosition, const AddOn & current_add_on);
 
-  void setParticlePositions_(const Observation& ObservationPosition,
-                             State& current_state);
+  void setParticlePositions_(const Observation & ObservationPosition, State & current_state);
 
-  void applylever_armCompentations_(State& current_state);
+  void applylever_armCompentations_(State & current_state);
 
- private:
+private:
   RowMajorMatrix leverArms_;
   RowMajorVector cos_courses_;
   RowMajorVector sin_courses_;

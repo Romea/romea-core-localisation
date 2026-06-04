@@ -35,9 +35,7 @@ Observation make_observation()
 {
   Observation observation;
   observation.Y() << 4.0, 5.0, 0.6;
-  observation.R() << 0.4, 0.01, 0.02,
-                     0.01, 0.5, 0.03,
-                     0.02, 0.03, 0.6;
+  observation.R() << 0.4, 0.01, 0.02, 0.01, 0.5, 0.03, 0.02, 0.03, 0.6;
   return observation;
 }
 
@@ -66,11 +64,7 @@ TEST(TestR2RLeaderPoseUpdater, initWaitsForAllFollowerAndLeaderInputs)
   FSMState fsm_state = FSMState::INIT;
   Updater updater("leader_pose_updater", 10.0, TriggerMode::ALWAYS, 10.0, "");
 
-  updater.update(
-    romea::core::durationFromSecond(1.0),
-    make_observation(),
-    fsm_state,
-    meta_state);
+  updater.update(romea::core::durationFromSecond(1.0), make_observation(), fsm_state, meta_state);
 
   EXPECT_EQ(fsm_state, FSMState::INIT);
 }

@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "romea_core_localisation/robot_to_robot/kalman/results.hpp"
 
 namespace romea
@@ -23,8 +22,7 @@ namespace localisation
 {
 
 //-----------------------------------------------------------------------------
-R2RKFResults::R2RKFResults()
-: R2RResultsBase()
+R2RKFResults::R2RKFResults() : R2RResultsBase()
 {
 }
 
@@ -71,7 +69,7 @@ Eigen::Vector3d R2RKFResults::get_twist() const
 }
 
 //--------------------------------------------------------------------------
-Eigen::Matrix3d R2RKFResults::get_twist_covariance()const
+Eigen::Matrix3d R2RKFResults::get_twist_covariance() const
 {
   return input.QU().block<3, 3>(LINEAR_SPEED_X_BODY, LINEAR_SPEED_X_BODY);
 }
@@ -101,7 +99,7 @@ Eigen::Vector3d R2RKFResults::get_leader_twist() const
 }
 
 //--------------------------------------------------------------------------
-Eigen::Matrix3d R2RKFResults::get_leader_twist_covariance()const
+Eigen::Matrix3d R2RKFResults::get_leader_twist_covariance() const
 {
   return input.QU().block<3, 3>(LEADER_LINEAR_SPEED_X_BODY, LEADER_LINEAR_SPEED_X_BODY);
 }

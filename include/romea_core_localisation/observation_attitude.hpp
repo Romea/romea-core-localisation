@@ -18,12 +18,21 @@
 
 #include "romea_core_filtering/gaussian/observation.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-struct ObservationAttitude : GaussianObservation<double, 2> {
-  enum Index { ROLL = 0, PITCH, SIZE };
+struct ObservationAttitude : GaussianObservation<double, 2>
+{
+  enum Index
+  {
+    ROLL = 0,
+    PITCH,
+    SIZE
+  };
 };
 
 }  // namespace localisation

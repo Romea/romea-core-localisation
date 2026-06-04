@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__LEVER_ARM_COMPENSATION_HPP_
 #define ROMEA_CORE_LOCALISATION__ROBOT_TO_WORLD__LEVER_ARM_COMPENSATION_HPP_
 
@@ -39,9 +38,9 @@ public:
     const double & vehicleYawAngleVariance,
     const Eigen::Vector3d & bodyAntennaPosition);
 
-  const Eigen::Vector3d & getPosition()const;
-  const Eigen::Matrix3d & getPositionCovariance()const;
-  const Eigen::Matrix3d & getJacobian()const;
+  const Eigen::Vector3d & getPosition() const;
+  const Eigen::Matrix3d & getPositionCovariance() const;
+  const Eigen::Matrix3d & getJacobian() const;
 
 private:
   Eigen::Vector3d position_;

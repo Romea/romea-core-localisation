@@ -19,32 +19,39 @@
 // local
 #include "romea_core_localisation/updater_base.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
 //-----------------------------------------------------------------------------
-UpdaterBase::UpdaterBase(const std::string& updater_name,
-                         const double& minimal_rate,
-                         const trigger_mode& trigger_mode)
-    : trigger_mode_(trigger_mode),
-      rate_diagnostic_(updater_name, minimal_rate, 0.1 * minimal_rate),
-      mutex_() {}
+UpdaterBase::UpdaterBase(
+  const std::string & updater_name, const double & minimal_rate, const trigger_mode & trigger_mode)
+: trigger_mode_(trigger_mode),
+  rate_diagnostic_(updater_name, minimal_rate, 0.1 * minimal_rate),
+  mutex_()
+{
+}
 
 //-----------------------------------------------------------------------------
-bool UpdaterBase::heart_beat_callback(const Duration& duration) {
+bool UpdaterBase::heart_beat_callback(const Duration & duration)
+{
   std::lock_guard<std::mutex> lock(mutex_);
   return rate_diagnostic_.heartBeatCallback(duration);
 }
 
 //-----------------------------------------------------------------------------
-DiagnosticReport UpdaterBase::get_report() {
+DiagnosticReport UpdaterBase::get_report()
+{
   std::lock_guard<std::mutex> lock(mutex_);
   return rate_diagnostic_.getReport();
 }
 
 //-----------------------------------------------------------------------------
-void UpdaterBase::udapte_diagnostic_(const Duration& duration) {
+void UpdaterBase::udapte_diagnostic_(const Duration & duration)
+{
   std::lock_guard<std::mutex> lock(mutex_);
   rate_diagnostic_.evaluate(duration);
 }

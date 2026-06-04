@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef TEST_UTILS_HPP_
 #define TEST_UTILS_HPP_
 
@@ -51,6 +50,5 @@ void isSame(const EigenType & obj1, const EigenType & obj2)
     EXPECT_DOUBLE_EQ(obj2(n), obj2(n));
   }
 }
-
 
 #endif  // TEST_UTILS_HPP_

@@ -27,32 +27,40 @@
 #include "romea_core_localisation/observation_linear_speed.hpp"
 #include "romea_core_localisation/updater_proprioceptive.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-template <class MetaState>
-class UpdaterLinearSpeed : public UpdaterProprioceptive {
- public:
-  UpdaterLinearSpeed(const std::string& updater_name,
-                     const double& minimal_rate)
-      : UpdaterProprioceptive(updater_name, minimal_rate) {}
+template<class MetaState>
+class UpdaterLinearSpeed : public UpdaterProprioceptive
+{
+public:
+  UpdaterLinearSpeed(const std::string & updater_name, const double & minimal_rate)
+  : UpdaterProprioceptive(updater_name, minimal_rate)
+  {
+  }
 
   using Observation = ObservationLinearSpeed;
 
-  void update(const Duration& duration, const Observation& current_observation,
-              FSMState& /*current_fsm_State*/, MetaState& current_meta_state) {
+  void update(
+    const Duration & duration,
+    const Observation & current_observation,
+    FSMState & /*current_fsm_State*/,
+    MetaState & current_meta_state)
+  {
     rate_diagnostic_.evaluate(duration);
 
-    current_meta_state.input.U().template segment<2>(
-        MetaState::LINEAR_SPEED_X_BODY)
-        << current_observation.Y(),
-        0;
+    current_meta_state.input.U().template segment<2>(MetaState::LINEAR_SPEED_X_BODY)
+      << current_observation.Y(),
+      0;
 
     current_meta_state.input.QU().template block<2, 2>(
-        MetaState::LINEAR_SPEED_X_BODY, MetaState::LINEAR_SPEED_X_BODY)
-        << current_observation.R(),
-        0, 0, 0;
+      MetaState::LINEAR_SPEED_X_BODY, MetaState::LINEAR_SPEED_X_BODY)
+      << current_observation.R(),
+      0, 0, 0;
   }
 };
 

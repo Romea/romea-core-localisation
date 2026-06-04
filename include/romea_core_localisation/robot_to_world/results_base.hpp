@@ -19,8 +19,8 @@
 #include <utility>
 
 // romea
-#include "romea_core_common/time/Time.hpp"
 #include "romea_core_common/geometry/PoseAndTwist3D.hpp"
+#include "romea_core_common/time/Time.hpp"
 
 namespace romea
 {
@@ -33,19 +33,14 @@ template<class State>
 class R2WResultsBase : public State
 {
 public:
-  template<typename ... Args>
-  R2WResultsBase(Args... args)
-  : State(std::forward<Args>(args)...),
-    duration_(Duration::zero())
+  template<typename... Args>
+  R2WResultsBase(Args... args) : State(std::forward<Args>(args)...), duration_(Duration::zero())
   {
   }
 
   virtual ~R2WResultsBase() = default;
 
-  virtual void set_duration(const Duration & duration)
-  {
-    duration_ = duration;
-  }
+  virtual void set_duration(const Duration & duration) { duration_ = duration; }
 
   virtual const double & get_x() const = 0;
   virtual const double & get_y() const = 0;

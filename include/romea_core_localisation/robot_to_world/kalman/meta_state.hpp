@@ -26,11 +26,15 @@
 #include "romea_core_localisation/robot_to_world/lever_arm_compensation.hpp"
 #include "romea_core_localisation/robot_to_world/meta_state_base.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-struct R2WKFMetaState : R2WMetaStateBase {
+struct R2WKFMetaState : R2WMetaStateBase
+{
   using State = GaussianState<double, STATE_SIZE>;
 
   R2WKFMetaState();
@@ -40,10 +44,11 @@ struct R2WKFMetaState : R2WMetaStateBase {
   State state;
 };
 
-void apply_lever_arm_compensation(R2WKFMetaState::State& current_state,
-                                  R2WKFMetaState::AddOn& current_add_on,
-                                  LeverArmCompensation& lever_arm_compensation,
-                                  const Eigen::Vector3d& lever_arm);
+void apply_lever_arm_compensation(
+  R2WKFMetaState::State & current_state,
+  R2WKFMetaState::AddOn & current_add_on,
+  LeverArmCompensation & lever_arm_compensation,
+  const Eigen::Vector3d & lever_arm);
 
 }  // namespace localisation
 }  // namespace core

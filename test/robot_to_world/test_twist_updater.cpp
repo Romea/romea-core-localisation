@@ -27,38 +27,30 @@ using MetaState = romea::core::localisation::R2WMetaStateBase;
 using Observation = romea::core::localisation::ObservationTwist;
 using Updater = romea::core::localisation::UpdaterTwist<MetaState>;
 
-TEST(TestAngularSpeedUpdater, checkUpdate) {
+TEST(TestAngularSpeedUpdater, checkUpdate)
+{
   Observation observation;
   observation.Y(Observation::LINEAR_SPEED_X_BODY) = 1;
   observation.Y(Observation::LINEAR_SPEED_Y_BODY) = 2;
   observation.Y(Observation::ANGULAR_SPEED_Z_BODY) = 3;
 
-  observation.R(Observation::LINEAR_SPEED_X_BODY,
-                Observation::LINEAR_SPEED_X_BODY) = 4;
+  observation.R(Observation::LINEAR_SPEED_X_BODY, Observation::LINEAR_SPEED_X_BODY) = 4;
 
-  observation.R(Observation::LINEAR_SPEED_X_BODY,
-                Observation::LINEAR_SPEED_Y_BODY) = 5;
+  observation.R(Observation::LINEAR_SPEED_X_BODY, Observation::LINEAR_SPEED_Y_BODY) = 5;
 
-  observation.R(Observation::LINEAR_SPEED_X_BODY,
-                Observation::ANGULAR_SPEED_Z_BODY) = 6;
+  observation.R(Observation::LINEAR_SPEED_X_BODY, Observation::ANGULAR_SPEED_Z_BODY) = 6;
 
-  observation.R(Observation::LINEAR_SPEED_Y_BODY,
-                Observation::LINEAR_SPEED_X_BODY) = 7;
+  observation.R(Observation::LINEAR_SPEED_Y_BODY, Observation::LINEAR_SPEED_X_BODY) = 7;
 
-  observation.R(Observation::LINEAR_SPEED_Y_BODY,
-                Observation::LINEAR_SPEED_Y_BODY) = 8;
+  observation.R(Observation::LINEAR_SPEED_Y_BODY, Observation::LINEAR_SPEED_Y_BODY) = 8;
 
-  observation.R(Observation::LINEAR_SPEED_Y_BODY,
-                Observation::ANGULAR_SPEED_Z_BODY) = 9;
+  observation.R(Observation::LINEAR_SPEED_Y_BODY, Observation::ANGULAR_SPEED_Z_BODY) = 9;
 
-  observation.R(Observation::ANGULAR_SPEED_Z_BODY,
-                Observation::LINEAR_SPEED_X_BODY) = 10;
+  observation.R(Observation::ANGULAR_SPEED_Z_BODY, Observation::LINEAR_SPEED_X_BODY) = 10;
 
-  observation.R(Observation::ANGULAR_SPEED_Z_BODY,
-                Observation::LINEAR_SPEED_Y_BODY) = 11;
+  observation.R(Observation::ANGULAR_SPEED_Z_BODY, Observation::LINEAR_SPEED_Y_BODY) = 11;
 
-  observation.R(Observation::ANGULAR_SPEED_Z_BODY,
-                Observation::ANGULAR_SPEED_Z_BODY) = 12;
+  observation.R(Observation::ANGULAR_SPEED_Z_BODY, Observation::ANGULAR_SPEED_Z_BODY) = 12;
 
   romea::core::Duration t(1000);
   MetaState metaState;
@@ -69,16 +61,20 @@ TEST(TestAngularSpeedUpdater, checkUpdate) {
 
   EXPECT_EQ(fsm_state, FSMState::INIT);
 
-  EXPECT_EQ(metaState.input.U(MetaState::InputIndex::LINEAR_SPEED_X_BODY),
-            observation.Y(Observation::LINEAR_SPEED_X_BODY));
-  EXPECT_EQ(metaState.input.U(MetaState::InputIndex::LINEAR_SPEED_Y_BODY),
-            observation.Y(Observation::LINEAR_SPEED_Y_BODY));
-  EXPECT_EQ(metaState.input.U(MetaState::InputIndex::ANGULAR_SPEED_Z_BODY),
-            observation.Y(Observation::ANGULAR_SPEED_Z_BODY));
+  EXPECT_EQ(
+    metaState.input.U(MetaState::InputIndex::LINEAR_SPEED_X_BODY),
+    observation.Y(Observation::LINEAR_SPEED_X_BODY));
+  EXPECT_EQ(
+    metaState.input.U(MetaState::InputIndex::LINEAR_SPEED_Y_BODY),
+    observation.Y(Observation::LINEAR_SPEED_Y_BODY));
+  EXPECT_EQ(
+    metaState.input.U(MetaState::InputIndex::ANGULAR_SPEED_Z_BODY),
+    observation.Y(Observation::ANGULAR_SPEED_Z_BODY));
 }
 
 //-----------------------------------------------------------------------------
-int main(int argc, char** argv) {
+int main(int argc, char ** argv)
+{
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

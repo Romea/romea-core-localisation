@@ -35,8 +35,7 @@ Observation make_position_observation()
 {
   Observation observation;
   observation.Y() << 12.0, -3.0;
-  observation.R() << 0.4, 0.01,
-                     0.01, 0.5;
+  observation.R() << 0.4, 0.01, 0.01, 0.5;
   observation.lever_arm.setZero();
   return observation;
 }
@@ -59,10 +58,7 @@ TEST(TestR2WKFPositionUpdater, initWaitsForMotionInputsAndCourse)
   Updater updater("position_updater", 10.0, TriggerMode::ALWAYS, 10.0, "");
 
   updater.update(
-    romea::core::durationFromSecond(1.0),
-    make_position_observation(),
-    fsm_state,
-    meta_state);
+    romea::core::durationFromSecond(1.0), make_position_observation(), fsm_state, meta_state);
 
   EXPECT_EQ(fsm_state, FSMState::INIT);
   EXPECT_TRUE(std::isnan(meta_state.state.X(MetaState::POSITION_X)));
@@ -98,10 +94,7 @@ TEST(TestR2WKFPositionUpdater, onceTriggerDoesNotUpdateAfterInitialisation)
   Updater updater("position_updater", 10.0, TriggerMode::ONCE, 10.0, "");
 
   updater.update(
-    romea::core::durationFromSecond(1.0),
-    make_position_observation(),
-    fsm_state,
-    meta_state);
+    romea::core::durationFromSecond(1.0), make_position_observation(), fsm_state, meta_state);
 
   ASSERT_EQ(fsm_state, FSMState::RUNNING);
   const auto state_after_init = meta_state.state.X();
@@ -109,11 +102,7 @@ TEST(TestR2WKFPositionUpdater, onceTriggerDoesNotUpdateAfterInitialisation)
   Observation second_observation = make_position_observation();
   second_observation.Y() << 20.0, 30.0;
 
-  updater.update(
-    romea::core::durationFromSecond(2.0),
-    second_observation,
-    fsm_state,
-    meta_state);
+  updater.update(romea::core::durationFromSecond(2.0), second_observation, fsm_state, meta_state);
 
   EXPECT_TRUE(meta_state.state.X().isApprox(state_after_init));
 }
@@ -136,17 +125,12 @@ TEST(TestR2WKFPositionUpdater, mahalanobisRejectionKeepsPreviousState)
   observation.R().setIdentity();
   observation.R() *= 0.01;
 
-  updater.update(
-    romea::core::durationFromSecond(1.0),
-    observation,
-    fsm_state,
-    meta_state);
+  updater.update(romea::core::durationFromSecond(1.0), observation, fsm_state, meta_state);
 
   EXPECT_EQ(fsm_state, FSMState::RUNNING);
   EXPECT_TRUE(meta_state.state.X().isApprox(previous_state));
   EXPECT_TRUE(meta_state.state.P().isApprox(previous_covariance));
-  EXPECT_EQ(meta_state.addon.last_exteroceptive_update.time,
-            romea::core::Duration::zero());
+  EXPECT_EQ(meta_state.addon.last_exteroceptive_update.time, romea::core::Duration::zero());
 }
 
 int main(int argc, char ** argv)

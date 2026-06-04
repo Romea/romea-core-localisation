@@ -22,7 +22,8 @@
 // local
 #include "romea_core_localisation/robot_to_world/kalman/updater_range.hpp"
 
-namespace {
+namespace
+{
 
 const double UNSCENTED_TRANFORM_KAPPA = 3;
 const double UNSCENTED_TRANFORM_ALPHA = 0.75;
@@ -30,61 +31,69 @@ const double UNSCENTED_TRANFORM_BETA = 2;
 
 }  // namespace
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
 //--------------------------------------------------------------------------
-R2WKFUpdaterRange::R2WKFUpdaterRange(const std::string& updater_name,
-                                     const double& minimal_rate,
-                                     const trigger_mode& trigger_mode,
-                                     const double& maximal_mahalanobis_distance,
-                                     const std::string& logFilename)
-    : UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode,
-                           logFilename),
-      UKFUpdaterBase(UNSCENTED_TRANFORM_KAPPA, UNSCENTED_TRANFORM_ALPHA,
-                     UNSCENTED_TRANFORM_BETA, maximal_mahalanobis_distance),
-      lever_arm_compensation_() {
-  set_log_file_header_({"stamp",
-                        "range",
-                        "cov_range",
-                        "x",
-                        "y",
-                        "theta",
-                        "cov_x",
-                        "cov_xy",
-                        "cov_xtheta",
-                        "cov_y",
-                        "cov_ytheta",
-                        "cov_theta",
-                        "ix",
-                        "iy",
-                        "iz",
-                        "rx",
-                        "ry",
-                        "rz",
-                        "apriori_range",
-                        "cov_apriori_range",
-                        "mahalanobis_distance",
-                        "sucess"});
+R2WKFUpdaterRange::R2WKFUpdaterRange(
+  const std::string & updater_name,
+  const double & minimal_rate,
+  const trigger_mode & trigger_mode,
+  const double & maximal_mahalanobis_distance,
+  const std::string & logFilename)
+: UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode, logFilename),
+  UKFUpdaterBase(
+    UNSCENTED_TRANFORM_KAPPA,
+    UNSCENTED_TRANFORM_ALPHA,
+    UNSCENTED_TRANFORM_BETA,
+    maximal_mahalanobis_distance),
+  lever_arm_compensation_()
+{
+  set_log_file_header_(
+    {"stamp",
+     "range",
+     "cov_range",
+     "x",
+     "y",
+     "theta",
+     "cov_x",
+     "cov_xy",
+     "cov_xtheta",
+     "cov_y",
+     "cov_ytheta",
+     "cov_theta",
+     "ix",
+     "iy",
+     "iz",
+     "rx",
+     "ry",
+     "rz",
+     "apriori_range",
+     "cov_apriori_range",
+     "mahalanobis_distance",
+     "sucess"});
 }
 
 //-----------------------------------------------------------------------------
-void R2WKFUpdaterRange::update(const Duration& duration,
-                               const Observation& current_observation,
-                               FSMState& current_fsm_State,
-                               MetaState& current_meta_state) {
+void R2WKFUpdaterRange::update(
+  const Duration & duration,
+  const Observation & current_observation,
+  FSMState & current_fsm_State,
+  MetaState & current_meta_state)
+{
   //  std::cout << " update range " << std::endl;
   rate_diagnostic_.evaluate(duration);
 
   if (current_fsm_State == FSMState::RUNNING) {
     if (trigger_mode_ == trigger_mode::ALWAYS) {
       try {
-        update_(duration, current_observation, current_meta_state.state,
-                current_meta_state.addon);
+        update_(duration, current_observation, current_meta_state.state, current_meta_state.addon);
       } catch (...) {
-        std::cout << " FSM : RANGE UPDATE HAS FAILED, RESET AND GO TO INIT MODE"
-                  << std::endl;
+        std::cout << " FSM : RANGE UPDATE HAS FAILED, RESET AND GO TO INIT MODE" << std::endl;
         current_meta_state.state.reset();
         current_meta_state.state.reset();
         current_fsm_State = FSMState::INIT;
@@ -94,39 +103,44 @@ void R2WKFUpdaterRange::update(const Duration& duration,
 }
 
 //--------------------------------------------------------------------------
-void R2WKFUpdaterRange::update_(const Duration& duration,
-                                const Observation& current_observation,
-                                State& current_state, AddOn& current_add_on) {
+void R2WKFUpdaterRange::update_(
+  const Duration & duration,
+  const Observation & current_observation,
+  State & current_state,
+  AddOn & current_add_on)
+{
   // compute antenna attitude compensation
-  lever_arm_compensation_.compute(current_add_on.roll, current_add_on.pitch,
-                                  current_add_on.roll_pitch_variance, 0, 0,
-                                  current_observation.initiator_position);
+  lever_arm_compensation_.compute(
+    current_add_on.roll,
+    current_add_on.pitch,
+    current_add_on.roll_pitch_variance,
+    0,
+    0,
+    current_observation.initiator_position);
 
-  const Eigen::Vector3d& tagAntennaPosition =
-      lever_arm_compensation_.getPosition();
+  const Eigen::Vector3d & tagAntennaPosition = lever_arm_compensation_.getPosition();
 
-  const double& ix = tagAntennaPosition.x();
-  const double& iy = tagAntennaPosition.y();
-  const double& iz =
-      tagAntennaPosition.z() + current_observation.terrain_elevation;
+  const double & ix = tagAntennaPosition.x();
+  const double & iy = tagAntennaPosition.y();
+  const double & iz = tagAntennaPosition.z() + current_observation.terrain_elevation;
 
-  const double& rx = current_observation.responder_position.x();
-  const double& ry = current_observation.responder_position.y();
-  const double& rz = current_observation.responder_position.z();
+  const double & rx = current_observation.responder_position.x();
+  const double & ry = current_observation.responder_position.y();
+  const double & rz = current_observation.responder_position.z();
 
   // compute sigma points
   compute_state_sigma_points_(current_state);
 
   // progation of the sigma points
   for (size_t n = 0; n < 7; ++n) {
-    const double& x = state_sigma_points_[n](0);
-    const double& y = state_sigma_points_[n](1);
+    const double & x = state_sigma_points_[n](0);
+    const double & y = state_sigma_points_[n](1);
     const double coso = std::cos(state_sigma_points_[n](2));
     const double sino = std::sin(state_sigma_points_[n](2));
 
     propagated_sigma_points_[n] = std::sqrt(
-        std::pow(x + ix * coso - iy * sino - rx, 2) +
-        std::pow(y + ix * sino + iy * coso - ry, 2) + (iz - rz) * (iz - rz));
+      std::pow(x + ix * coso - iy * sino - rx, 2) + std::pow(y + ix * sino + iy * coso - ry, 2) +
+      (iz - rz) * (iz - rz));
   }
 
   if (log_file_.is_open()) {
@@ -155,8 +169,7 @@ void R2WKFUpdaterRange::update_(const Duration& duration,
 
   if (success) {
     current_add_on.last_exteroceptive_update.time = duration;
-    current_add_on.last_exteroceptive_update.travelled_distance =
-        current_add_on.travelled_distance;
+    current_add_on.last_exteroceptive_update.travelled_distance = current_add_on.travelled_distance;
   }
 
   // log

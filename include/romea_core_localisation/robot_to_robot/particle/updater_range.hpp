@@ -30,13 +30,16 @@
 #include "romea_core_localisation/robot_to_robot/particle/meta_state.hpp"
 #include "romea_core_localisation/updater_exteroceptive.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-class R2RPFUpdaterRange : public UpdaterExteroceptive,
-                          public PFGaussianUpdaterBase<double, 3, 1> {
- public:
+class R2RPFUpdaterRange : public UpdaterExteroceptive, public PFGaussianUpdaterBase<double, 3, 1>
+{
+public:
   using Observation = ObservationRange;
   using MetaState = R2RPFMetaState;
   using State = R2RPFMetaState::State;
@@ -44,21 +47,29 @@ class R2RPFUpdaterRange : public UpdaterExteroceptive,
   using AddOn = R2RPFMetaState::AddOn;
   using RowMajorVector = R2RPFMetaState::State::RowMajorVector;
 
- public:
-  R2RPFUpdaterRange(const std::string& updater_name, const double& minimal_rate,
-                    const trigger_mode& trigger_mode,
-                    const size_t& number_of_particles,
-                    const double& maximal_mahalanobis_distance,
-                    const std::string& logFilename);
+public:
+  R2RPFUpdaterRange(
+    const std::string & updater_name,
+    const double & minimal_rate,
+    const trigger_mode & trigger_mode,
+    const size_t & number_of_particles,
+    const double & maximal_mahalanobis_distance,
+    const std::string & logFilename);
 
-  void update(const Duration& duration, const Observation& current_observation,
-              FSMState& current_fsm_State, MetaState& current_meta_state);
+  void update(
+    const Duration & duration,
+    const Observation & current_observation,
+    FSMState & current_fsm_State,
+    MetaState & current_meta_state);
 
- protected:
-  void update_(const Duration& duration, const Observation& current_observation,
-               State& current_state, AddOn& current_add_on);
+protected:
+  void update_(
+    const Duration & duration,
+    const Observation & current_observation,
+    State & current_state,
+    AddOn & current_add_on);
 
- protected:
+protected:
   RowMajorVector cos_courses_;
   RowMajorVector sin_courses_;
 };

@@ -26,32 +26,43 @@
 #include "romea_core_localisation/robot_to_robot/kalman/meta_state.hpp"
 #include "romea_core_localisation/updater_exteroceptive.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-class R2RKFUpdaterLeaderPose : public UpdaterExteroceptive {
- public:
+class R2RKFUpdaterLeaderPose : public UpdaterExteroceptive
+{
+public:
   using Observation = ObservationPose;
   using MetaState = R2RKFMetaState;
   using State = R2RKFMetaState::State;
   using Input = R2RKFMetaState::Input;
   using AddOn = R2RKFMetaState::AddOn;
 
- public:
-  R2RKFUpdaterLeaderPose(const std::string& updater_name,
-                         const double& minimal_rate,
-                         const trigger_mode& trigger_mode,
-                         const double& maximal_mahalanobis_distance,
-                         const std::string& logFilename);
+public:
+  R2RKFUpdaterLeaderPose(
+    const std::string & updater_name,
+    const double & minimal_rate,
+    const trigger_mode & trigger_mode,
+    const double & maximal_mahalanobis_distance,
+    const std::string & logFilename);
 
-  void update(const Duration& duration, const Observation& current_observation,
-              FSMState& current_fsm_State, MetaState& current_meta_state);
+  void update(
+    const Duration & duration,
+    const Observation & current_observation,
+    FSMState & current_fsm_State,
+    MetaState & current_meta_state);
 
- protected:
-  bool set_(const Duration& duration, const Observation& current_observation,
-            const Input& current_input, State& current_state,
-            AddOn& current_add_on);
+protected:
+  bool set_(
+    const Duration & duration,
+    const Observation & current_observation,
+    const Input & current_input,
+    State & current_state,
+    AddOn & current_add_on);
 };
 
 }  // namespace localisation

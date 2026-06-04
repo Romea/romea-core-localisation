@@ -27,36 +27,47 @@
 #include "romea_core_localisation/robot_to_human/kalman/meta_state.hpp"
 #include "romea_core_localisation/updater_exteroceptive.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-class R2HKFUpdaterRange : public UpdaterExteroceptive,
-                          public EKFUpdaterBase<double, 2, 1> {
- public:
+class R2HKFUpdaterRange : public UpdaterExteroceptive, public EKFUpdaterBase<double, 2, 1>
+{
+public:
   using Observation = ObservationRange;
   using MetaState = R2HKFMetaState;
   using State = R2HKFMetaState::State;
   using Input = R2HKFMetaState::Input;
   using AddOn = R2HKFMetaState::AddOn;
 
- public:
-  R2HKFUpdaterRange(const std::string& updater_name, const double& minimal_rate,
-                    const trigger_mode& trigger_mode,
-                    const double& maximal_mahalanobis_distance,
-                    const std::string& logFilename,
-                    const bool& usedConstraints);
+public:
+  R2HKFUpdaterRange(
+    const std::string & updater_name,
+    const double & minimal_rate,
+    const trigger_mode & trigger_mode,
+    const double & maximal_mahalanobis_distance,
+    const std::string & logFilename,
+    const bool & usedConstraints);
 
-  void update(const Duration& duration, const Observation& current_observation,
-              FSMState& current_fsm_State, MetaState& current_meta_state);
+  void update(
+    const Duration & duration,
+    const Observation & current_observation,
+    FSMState & current_fsm_State,
+    MetaState & current_meta_state);
 
   void useConstraints();
 
- private:
-  void update_(const Duration& duration, const Observation& current_observation,
-               State& current_state, AddOn& current_add_on);
+private:
+  void update_(
+    const Duration & duration,
+    const Observation & current_observation,
+    State & current_state,
+    AddOn & current_add_on);
 
- private:
+private:
   // Covariance Eigen Vector decomposition
   Eigen::MatrixXd U_;
   Eigen::MatrixXd W_;

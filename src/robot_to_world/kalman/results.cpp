@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "romea_core_localisation/robot_to_world/kalman/results.hpp"
 
 namespace romea
@@ -23,8 +22,7 @@ namespace localisation
 {
 
 //-----------------------------------------------------------------------------
-R2WKFResults::R2WKFResults()
-: R2WResultsBase()
+R2WKFResults::R2WKFResults() : R2WResultsBase()
 {
 }
 
@@ -34,8 +32,7 @@ Pose2D R2WKFResults::to_pose2d() const
   Pose2D pose2d;
   pose2d.position.x() = get_x();
   pose2d.position.y() = get_y();
-  pose2d.yaw = get_yaw(),
-  pose2d.covariance = get_pose_covariance();
+  pose2d.yaw = get_yaw(), pose2d.covariance = get_pose_covariance();
   return pose2d;
 }
 
@@ -136,7 +133,7 @@ Eigen::Vector3d R2WKFResults::get_twist() const
 }
 
 //--------------------------------------------------------------------------
-Eigen::Matrix3d R2WKFResults::get_twist_covariance()const
+Eigen::Matrix3d R2WKFResults::get_twist_covariance() const
 {
   return input.QU();
 }

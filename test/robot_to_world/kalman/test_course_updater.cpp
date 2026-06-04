@@ -34,22 +34,23 @@ using trigger_mode = romea::core::localisation::Updatertrigger_mode;
 const double initialCourse = 0.1;
 const double initialCourseVariance = 0.1;
 
-class TestCourseUpdater : public ::testing::Test {
- public:
-  TestCourseUpdater()
-      : metastate(), fsm_state(FSMState::INIT), updater(nullptr) {}
+class TestCourseUpdater : public ::testing::Test
+{
+public:
+  TestCourseUpdater() : metastate(), fsm_state(FSMState::INIT), updater(nullptr) {}
 
-  void init(const FSMState& fsm_state_, const trigger_mode& trigger_mode_) {
-    updater = std::make_unique<Updater>("course_updater", 100, trigger_mode_, 5,
-                                        "course_updater.dat");
+  void init(const FSMState & fsm_state_, const trigger_mode & trigger_mode_)
+  {
+    updater =
+      std::make_unique<Updater>("course_updater", 100, trigger_mode_, 5, "course_updater.dat");
 
     metastate.state.X() << 0, 0, initialCourse;
     metastate.state.P() << 1, 0, 0, 0, 1, 0, 0, 0, initialCourseVariance;
     fsm_state = fsm_state_;
   }
 
-  void update(const romea::core::Duration& duration,
-              const Observation& observation) {
+  void update(const romea::core::Duration & duration, const Observation & observation)
+  {
     updater->update(duration, observation, fsm_state, metastate);
   }
 
@@ -58,7 +59,8 @@ class TestCourseUpdater : public ::testing::Test {
   std::unique_ptr<Updater> updater;
 };
 
-TEST_F(TestCourseUpdater, testSetObservation) {
+TEST_F(TestCourseUpdater, testSetObservation)
+{
   init(FSMState::INIT, trigger_mode::ALWAYS);
 
   romea::core::Duration duration = romea::core::durationFromSecond(2);
@@ -70,16 +72,15 @@ TEST_F(TestCourseUpdater, testSetObservation) {
 
   EXPECT_EQ(fsm_state, FSMState::INIT);
   EXPECT_EQ(metastate.state.X(MetaState::ORIENTATION_Z), observation.Y());
-  EXPECT_EQ(
-      metastate.state.P(MetaState::ORIENTATION_Z, MetaState::ORIENTATION_Z),
-      observation.R());
+  EXPECT_EQ(metastate.state.P(MetaState::ORIENTATION_Z, MetaState::ORIENTATION_Z), observation.R());
   // EXPECT_EQ(metastate.addon.lastExteroceptiveUpdate.time.count(),
   // duration.count());
   // EXPECT_DOUBLE_EQ(metastate.addon.lastExteroceptiveUpdate.travelledDistance,
   // 0);
 }
 
-TEST_F(TestCourseUpdater, testUpdate) {
+TEST_F(TestCourseUpdater, testUpdate)
+{
   init(FSMState::RUNNING, trigger_mode::ALWAYS);
 
   romea::core::Duration duration = romea::core::durationFromSecond(2);
@@ -90,16 +91,13 @@ TEST_F(TestCourseUpdater, testUpdate) {
 
   EXPECT_EQ(fsm_state, FSMState::RUNNING);
   EXPECT_EQ(metastate.state.X(MetaState::ORIENTATION_Z), initialCourse);
-  EXPECT_EQ(
-      metastate.state.P(MetaState::ORIENTATION_Z, MetaState::ORIENTATION_Z),
-      0.05);
-  EXPECT_EQ(metastate.addon.last_exteroceptive_update.time.count(),
-            duration.count());
-  EXPECT_DOUBLE_EQ(metastate.addon.last_exteroceptive_update.travelled_distance,
-                   0);
+  EXPECT_EQ(metastate.state.P(MetaState::ORIENTATION_Z, MetaState::ORIENTATION_Z), 0.05);
+  EXPECT_EQ(metastate.addon.last_exteroceptive_update.time.count(), duration.count());
+  EXPECT_DOUBLE_EQ(metastate.addon.last_exteroceptive_update.travelled_distance, 0);
 }
 
-TEST_F(TestCourseUpdater, testMahalanobisRejection) {
+TEST_F(TestCourseUpdater, testMahalanobisRejection)
+{
   init(FSMState::RUNNING, trigger_mode::ALWAYS);
 
   romea::core::Duration duration = romea::core::durationFromSecond(2);
@@ -111,21 +109,18 @@ TEST_F(TestCourseUpdater, testMahalanobisRejection) {
   EXPECT_EQ(fsm_state, FSMState::RUNNING);
   EXPECT_EQ(metastate.state.X(MetaState::ORIENTATION_Z), initialCourse);
   EXPECT_EQ(
-      metastate.state.P(MetaState::ORIENTATION_Z, MetaState::ORIENTATION_Z),
-      initialCourseVariance);
-  EXPECT_EQ(metastate.addon.last_exteroceptive_update.time.count(),
-            duration.count());
-  EXPECT_DOUBLE_EQ(metastate.addon.last_exteroceptive_update.travelled_distance,
-                   0);
+    metastate.state.P(MetaState::ORIENTATION_Z, MetaState::ORIENTATION_Z), initialCourseVariance);
+  EXPECT_EQ(metastate.addon.last_exteroceptive_update.time.count(), duration.count());
+  EXPECT_DOUBLE_EQ(metastate.addon.last_exteroceptive_update.travelled_distance, 0);
 }
 
-TEST_F(TestCourseUpdater, testWrappedCourseInnovationIsAccepted) {
+TEST_F(TestCourseUpdater, testWrappedCourseInnovationIsAccepted)
+{
   init(FSMState::RUNNING, trigger_mode::ALWAYS);
 
   const double two_pi = 2.0 * std::acos(-1.0);
   metastate.state.X(MetaState::ORIENTATION_Z) = two_pi - 1e-3;
-  metastate.state.P(MetaState::ORIENTATION_Z, MetaState::ORIENTATION_Z) =
-      initialCourseVariance;
+  metastate.state.P(MetaState::ORIENTATION_Z, MetaState::ORIENTATION_Z) = initialCourseVariance;
 
   romea::core::Duration duration = romea::core::durationFromSecond(2);
   Observation observation;
@@ -137,15 +132,13 @@ TEST_F(TestCourseUpdater, testWrappedCourseInnovationIsAccepted) {
   EXPECT_EQ(fsm_state, FSMState::RUNNING);
   EXPECT_GT(metastate.state.X(MetaState::ORIENTATION_Z), two_pi - 1e-3);
   EXPECT_LT(metastate.state.X(MetaState::ORIENTATION_Z), two_pi);
-  EXPECT_EQ(
-      metastate.state.P(MetaState::ORIENTATION_Z, MetaState::ORIENTATION_Z),
-      0.05);
-  EXPECT_EQ(metastate.addon.last_exteroceptive_update.time.count(),
-            duration.count());
+  EXPECT_EQ(metastate.state.P(MetaState::ORIENTATION_Z, MetaState::ORIENTATION_Z), 0.05);
+  EXPECT_EQ(metastate.addon.last_exteroceptive_update.time.count(), duration.count());
 }
 
 //-----------------------------------------------------------------------------
-int main(int argc, char** argv) {
+int main(int argc, char ** argv)
+{
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

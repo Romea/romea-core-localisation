@@ -30,42 +30,56 @@
 #include "romea_core_localisation/robot_to_world/particle/meta_state.hpp"
 #include "romea_core_localisation/updater_exteroceptive.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-class R2WPFUpdaterPose : public UpdaterExteroceptive,
-                         public PFGaussianUpdaterBase<double, 3, 3> {
- public:
+class R2WPFUpdaterPose : public UpdaterExteroceptive, public PFGaussianUpdaterBase<double, 3, 3>
+{
+public:
   using Observation = ObservationPose;
   using MetaState = R2WPFMetaState;
   using State = R2WPFMetaState::State;
   using Input = R2WPFMetaState::Input;
   using AddOn = R2WPFMetaState::AddOn;
 
- public:
-  R2WPFUpdaterPose(const std::string& updater_name, const double& minimal_rate,
-                   const trigger_mode& trigger_mode,
-                   const size_t& number_of_particles,
-                   const double& maximal_mahalanobis_distance,
-                   const std::string& logFilename);
+public:
+  R2WPFUpdaterPose(
+    const std::string & updater_name,
+    const double & minimal_rate,
+    const trigger_mode & trigger_mode,
+    const size_t & number_of_particles,
+    const double & maximal_mahalanobis_distance,
+    const std::string & logFilename);
 
-  void update(const Duration& duration, const Observation& current_observation,
-              FSMState& current_fsm_State, MetaState& current_meta_state);
+  void update(
+    const Duration & duration,
+    const Observation & current_observation,
+    FSMState & current_fsm_State,
+    MetaState & current_meta_state);
 
- private:
+private:
   void compute_innovation_(
-      const PFGaussianUpdaterBase::Observation& observation,
-      const RawMajorVector& weights) override;
+    const PFGaussianUpdaterBase::Observation & observation,
+    const RawMajorVector & weights) override;
 
-  void update_(const Duration& duration, Observation current_observation,
-               State& current_state, AddOn& current_add_on);
+  void update_(
+    const Duration & duration,
+    Observation current_observation,
+    State & current_state,
+    AddOn & current_add_on);
 
-  bool set_(const Duration& duration, const Observation& current_observation,
-            const Input& current_input, State& current_state,
-            AddOn& current_add_on);
+  bool set_(
+    const Duration & duration,
+    const Observation & current_observation,
+    const Input & current_input,
+    State & current_state,
+    AddOn & current_add_on);
 
- private:
+private:
   RowMajorVector cos_courses_;
   RowMajorVector sin_courses_;
   LeverArmCompensation lever_arm_compensation_;

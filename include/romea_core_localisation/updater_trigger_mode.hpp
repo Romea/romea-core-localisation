@@ -18,15 +18,22 @@
 
 #include <string>
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-enum class Updatertrigger_mode { ALWAYS, ONCE };
+enum class Updatertrigger_mode
+{
+  ALWAYS,
+  ONCE
+};
 
-std::string to_string(const Updatertrigger_mode& trigger_mode);
+std::string to_string(const Updatertrigger_mode & trigger_mode);
 
-Updatertrigger_mode to_trigger_mode(const std::string& trigger_mode);
+Updatertrigger_mode to_trigger_mode(const std::string & trigger_mode);
 
 }  // namespace localisation
 }  // namespace core

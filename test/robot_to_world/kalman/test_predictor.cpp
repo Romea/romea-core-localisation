@@ -81,13 +81,7 @@ TEST(TestR2WKFPredictor, zeroElapsedTimeCopiesRunningState)
   FSMState current_fsm_state = FSMState::INIT;
   const auto timestamp = romea::core::durationFromSecond(1.0);
 
-  predictor.predict(
-    timestamp,
-    FSMState::RUNNING,
-    previous,
-    timestamp,
-    current_fsm_state,
-    current);
+  predictor.predict(timestamp, FSMState::RUNNING, previous, timestamp, current_fsm_state, current);
 
   EXPECT_EQ(current_fsm_state, FSMState::RUNNING);
   EXPECT_TRUE(current.state.X().isApprox(previous.state.X()));
@@ -118,13 +112,11 @@ TEST(TestR2WKFPredictor, runningStateIsPropagated)
   const double theta_next = theta + w * dt;
 
   Eigen::Vector3d expected_pose;
-  expected_pose << previous.state.X(MetaState::POSITION_X) +
-                     vx * dt * std::cos(theta_next) -
+  expected_pose << previous.state.X(MetaState::POSITION_X) + vx * dt * std::cos(theta_next) -
                      vy * dt * std::sin(theta_next),
-                   previous.state.X(MetaState::POSITION_Y) +
-                     vx * dt * std::sin(theta_next) +
-                     vy * dt * std::cos(theta_next),
-                   theta_next;
+    previous.state.X(MetaState::POSITION_Y) + vx * dt * std::sin(theta_next) +
+      vy * dt * std::cos(theta_next),
+    theta_next;
 
   EXPECT_EQ(current_fsm_state, FSMState::RUNNING);
   EXPECT_TRUE(current.state.X().isApprox(expected_pose, 1e-12));
@@ -132,8 +124,8 @@ TEST(TestR2WKFPredictor, runningStateIsPropagated)
   EXPECT_DOUBLE_EQ(
     current.addon.travelled_distance,
     previous.addon.travelled_distance + std::hypot(vx * dt, vy * dt));
-  EXPECT_EQ(current.addon.last_exteroceptive_update.time,
-            previous.addon.last_exteroceptive_update.time);
+  EXPECT_EQ(
+    current.addon.last_exteroceptive_update.time, previous.addon.last_exteroceptive_update.time);
 }
 
 TEST(TestR2WKFPredictor, deadReckoningLimitsResetState)

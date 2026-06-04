@@ -18,9 +18,12 @@
 
 #include "romea_core_filtering/gaussian/observation.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
 using ObservationLinearSpeed = GaussianObservation<double, 1>;
 

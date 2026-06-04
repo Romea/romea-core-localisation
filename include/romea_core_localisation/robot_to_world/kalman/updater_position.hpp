@@ -29,37 +29,50 @@
 #include "romea_core_localisation/robot_to_world/lever_arm_compensation.hpp"
 #include "romea_core_localisation/updater_exteroceptive.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-class R2WKFUpdaterPosition : public UpdaterExteroceptive,
-                             public EKFUpdaterBase<double, 3, 2> {
- public:
+class R2WKFUpdaterPosition : public UpdaterExteroceptive, public EKFUpdaterBase<double, 3, 2>
+{
+public:
   using Observation = ObservationPosition;
   using MetaState = R2WKFMetaState;
   using State = R2WKFMetaState::State;
   using Input = R2WKFMetaState::Input;
   using AddOn = R2WKFMetaState::AddOn;
 
- public:
-  R2WKFUpdaterPosition(const std::string& updater_name,
-                       const double& minimal_rate,
-                       const trigger_mode& trigger_mode,
-                       const double& maximal_mahalanobis_distance,
-                       const std::string& logFilename);
+public:
+  R2WKFUpdaterPosition(
+    const std::string & updater_name,
+    const double & minimal_rate,
+    const trigger_mode & trigger_mode,
+    const double & maximal_mahalanobis_distance,
+    const std::string & logFilename);
 
-  void update(const Duration& duration, const Observation& current_observation,
-              FSMState& current_fsm_State, MetaState& current_meta_state);
+  void update(
+    const Duration & duration,
+    const Observation & current_observation,
+    FSMState & current_fsm_State,
+    MetaState & current_meta_state);
 
-  void update_(const Duration& duration, const Observation& current_observation,
-               State& current_state, AddOn& current_add_on);
+  void update_(
+    const Duration & duration,
+    const Observation & current_observation,
+    State & current_state,
+    AddOn & current_add_on);
 
-  bool set_(const Duration& duration, const Observation& current_observation,
-            const Input& current_input, State& current_state,
-            AddOn& current_add_on);
+  bool set_(
+    const Duration & duration,
+    const Observation & current_observation,
+    const Input & current_input,
+    State & current_state,
+    AddOn & current_add_on);
 
- private:
+private:
   LeverArmCompensation lever_arm_compensation_;
 };
 

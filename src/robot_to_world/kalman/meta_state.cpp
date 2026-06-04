@@ -17,31 +17,39 @@
 
 #include <romea_core_common/math/Matrix.hpp>
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
 //--------------------------------------------------------------------------
-R2WKFMetaState::R2WKFMetaState() : R2WMetaStateBase(), state() {}
+R2WKFMetaState::R2WKFMetaState() : R2WMetaStateBase(), state()
+{
+}
 
 //--------------------------------------------------------------------------
-void apply_lever_arm_compensation(R2WKFMetaState::State& current_state,
-                                  R2WKFMetaState::AddOn& current_add_on,
-                                  LeverArmCompensation& lever_arm_compensation,
-                                  const Eigen::Vector3d& lever_arm) {
-  lever_arm_compensation.compute(current_add_on.roll, current_add_on.pitch,
-                                 current_add_on.roll_pitch_variance,
-                                 current_state.X(R2WKFMetaState::ORIENTATION_Z),
-                                 0, lever_arm);
+void apply_lever_arm_compensation(
+  R2WKFMetaState::State & current_state,
+  R2WKFMetaState::AddOn & current_add_on,
+  LeverArmCompensation & lever_arm_compensation,
+  const Eigen::Vector3d & lever_arm)
+{
+  lever_arm_compensation.compute(
+    current_add_on.roll,
+    current_add_on.pitch,
+    current_add_on.roll_pitch_variance,
+    current_state.X(R2WKFMetaState::ORIENTATION_Z),
+    0,
+    lever_arm);
 
   current_state.X().segment<2>(R2WKFMetaState::POSITION_X) -=
-      lever_arm_compensation.getPosition().segment<2>(
-          R2WKFMetaState::POSITION_X);
+    lever_arm_compensation.getPosition().segment<2>(R2WKFMetaState::POSITION_X);
 
-  current_state.P().block<2, 2>(R2WKFMetaState::POSITION_X,
-                                R2WKFMetaState::POSITION_X) +=
-      lever_arm_compensation.getPositionCovariance().block<2, 2>(
-          R2WKFMetaState::POSITION_X, R2WKFMetaState::POSITION_X);
+  current_state.P().block<2, 2>(R2WKFMetaState::POSITION_X, R2WKFMetaState::POSITION_X) +=
+    lever_arm_compensation.getPositionCovariance().block<2, 2>(
+      R2WKFMetaState::POSITION_X, R2WKFMetaState::POSITION_X);
 
   assert(isPositiveSemiDefiniteMatrix(current_state.P()));
 }

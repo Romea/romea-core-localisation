@@ -20,37 +20,41 @@
 #include "romea_core_localisation/predictor_base.hpp"
 #include "romea_core_localisation/robot_to_robot/kalman/meta_state.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-class R2RKFPredictor : public PredictorBase<R2RKFMetaState> {
- public:
+class R2RKFPredictor : public PredictorBase<R2RKFMetaState>
+{
+public:
   using MetaState = R2RKFMetaState;
   using State = R2RKFMetaState::State;
   using Input = R2RKFMetaState::Input;
   using AddOn = R2RKFMetaState::AddOn;
 
- public:
-  R2RKFPredictor(const Duration& maximal_duration_in_dead_reckoning,
-                 const double& maximal_travelled_distance_in_dead_reckoning,
-                 const double& maximal_position_circular_error_probable);
+public:
+  R2RKFPredictor(
+    const Duration & maximal_duration_in_dead_reckoning,
+    const double & maximal_travelled_distance_in_dead_reckoning,
+    const double & maximal_position_circular_error_probable);
 
- private:
-  bool stop_(const Duration& duration, const MetaState& metaState) override;
+private:
+  bool stop_(const Duration & duration, const MetaState & metaState) override;
 
-  void predict_(const MetaState& previous_meta_state,
-                MetaState& current_meta_state) override;
+  void predict_(const MetaState & previous_meta_state, MetaState & current_meta_state) override;
 
-  void reset_(R2RKFMetaState& metaState) override;
+  void reset_(R2RKFMetaState & metaState) override;
 
-  void predictState_(const State& previous_state, const Input& previous_input,
-                     State& current_state);
+  void predictState_(
+    const State & previous_state, const Input & previous_input, State & current_state);
 
-  void predictAddOn_(const AddOn& previous_add_on, const State& current_state,
-                     AddOn& current_add_on);
+  void predictAddOn_(
+    const AddOn & previous_add_on, const State & current_state, AddOn & current_add_on);
 
- private:
+private:
   Eigen::MatrixXd jFl_;
   Eigen::MatrixXd jGl_;
   Eigen::MatrixXd jFf_;

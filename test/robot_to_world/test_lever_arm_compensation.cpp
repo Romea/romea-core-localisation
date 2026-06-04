@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // gtest
 #include <gtest/gtest.h>
 
@@ -23,31 +22,20 @@ class TestLeverArmCompensation : public ::testing::Test
 {
 public:
   TestLeverArmCompensation()
-  : lever_arm_compensation(),
-    antenna_position(0.5, 1, 2),
-    angle_variance(0.1)
+  : lever_arm_compensation(), antenna_position(0.5, 1, 2), angle_variance(0.1)
   {
   }
 
-  void compute(
-    const double & roll,
-    const double & pitch,
-    const double & yaw)
+  void compute(const double & roll, const double & pitch, const double & yaw)
   {
     lever_arm_compensation.compute(
-      roll,
-      pitch,
-      angle_variance,
-      yaw,
-      angle_variance,
-      antenna_position);
+      roll, pitch, angle_variance, yaw, angle_variance, antenna_position);
   }
 
   romea::core::localisation::LeverArmCompensation lever_arm_compensation;
   Eigen::Vector3d antenna_position;
   double angle_variance;
 };
-
 
 TEST_F(TestLeverArmCompensation, roll_compensation)
 {

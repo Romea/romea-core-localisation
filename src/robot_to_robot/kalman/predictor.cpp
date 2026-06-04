@@ -23,63 +23,66 @@
 
 #include "romea_core_localisation/robot_to_robot/kalman/predictor.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
 //-----------------------------------------------------------------------------
 R2RKFPredictor::R2RKFPredictor(
-    const Duration& maximal_duration_in_dead_reckoning,
-    const double& maximal_travelled_distance_in_dead_reckoning,
-    const double& maximal_position_circular_error_probable)
-    : PredictorBase<MetaState>(maximal_duration_in_dead_reckoning,
-                               maximal_travelled_distance_in_dead_reckoning,
-                               maximal_position_circular_error_probable),
-      jFl_(Eigen::MatrixXd::Identity(MetaState::STATE_SIZE,
-                                     MetaState::STATE_SIZE)),
-      jGl_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE, MetaState::INPUT_SIZE)),
-      jFf_(Eigen::MatrixXd::Identity(MetaState::STATE_SIZE,
-                                     MetaState::STATE_SIZE)),
-      jGf_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE, MetaState::INPUT_SIZE)),
-      xl_(0),
-      yl_(0),
-      thetal_(0),
-      vxl_(0),
-      vyl_(0),
-      wl_(0),
-      vxldT_(0),
-      vyldT_(0),
-      wldT_(0),
-      dT_cos_thetal_wldT_(0),
-      dT_sin_thetal_wldT_(0),
-      vxf_(0),
-      vyf_(0),
-      wf_(0),
-      vxfdT_(0),
-      vyfdT_(0),
-      wfdT_(0),
-      dT_cos_wfdT_(0),
-      dT_sin_wfdT_(0) {}
+  const Duration & maximal_duration_in_dead_reckoning,
+  const double & maximal_travelled_distance_in_dead_reckoning,
+  const double & maximal_position_circular_error_probable)
+: PredictorBase<MetaState>(
+    maximal_duration_in_dead_reckoning,
+    maximal_travelled_distance_in_dead_reckoning,
+    maximal_position_circular_error_probable),
+  jFl_(Eigen::MatrixXd::Identity(MetaState::STATE_SIZE, MetaState::STATE_SIZE)),
+  jGl_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE, MetaState::INPUT_SIZE)),
+  jFf_(Eigen::MatrixXd::Identity(MetaState::STATE_SIZE, MetaState::STATE_SIZE)),
+  jGf_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE, MetaState::INPUT_SIZE)),
+  xl_(0),
+  yl_(0),
+  thetal_(0),
+  vxl_(0),
+  vyl_(0),
+  wl_(0),
+  vxldT_(0),
+  vyldT_(0),
+  wldT_(0),
+  dT_cos_thetal_wldT_(0),
+  dT_sin_thetal_wldT_(0),
+  vxf_(0),
+  vyf_(0),
+  wf_(0),
+  vxfdT_(0),
+  vyfdT_(0),
+  wfdT_(0),
+  dT_cos_wfdT_(0),
+  dT_sin_wfdT_(0)
+{
+}
 
 //-----------------------------------------------------------------------------
-void R2RKFPredictor::predict_(const R2RKFMetaState& previous_meta_state,
-                              R2RKFMetaState& current_meta_state) {
+void R2RKFPredictor::predict_(
+  const R2RKFMetaState & previous_meta_state, R2RKFMetaState & current_meta_state)
+{
   current_meta_state.input = previous_meta_state.input;
 
-  predictState_(previous_meta_state.state, previous_meta_state.input,
-                current_meta_state.state);
+  predictState_(previous_meta_state.state, previous_meta_state.input, current_meta_state.state);
 
-  predictAddOn_(previous_meta_state.addon, current_meta_state.state,
-                current_meta_state.addon);
+  predictAddOn_(previous_meta_state.addon, current_meta_state.state, current_meta_state.addon);
 
   assert(isPositiveSemiDefiniteMatrix(current_meta_state.state.P()));
   assert(isPositiveSemiDefiniteMatrix(current_meta_state.input.QU()));
 }
 
 //-----------------------------------------------------------------------------
-void R2RKFPredictor::predictState_(const State& previous_state,
-                                   const Input& previous_input,
-                                   State& current_state) {
+void R2RKFPredictor::predictState_(
+  const State & previous_state, const Input & previous_input, State & current_state)
+{
   // Predict state vector according leader displacement
   xl_ = previous_state.X(MetaState::LEADER_POSITION_X);
   yl_ = previous_state.X(MetaState::LEADER_POSITION_Y);
@@ -98,36 +101,30 @@ void R2RKFPredictor::predictState_(const State& previous_state,
   dT_sin_thetal_wldT_ = dt_ * std::sin(thetal_ + wldT_);
 
   current_state.X(MetaState::LEADER_POSITION_X) =
-      xl_ + vxl_ * dT_cos_thetal_wldT_ - vyl_ * dT_sin_thetal_wldT_;
+    xl_ + vxl_ * dT_cos_thetal_wldT_ - vyl_ * dT_sin_thetal_wldT_;
   current_state.X(MetaState::LEADER_POSITION_Y) =
-      yl_ + vxl_ * dT_sin_thetal_wldT_ + vyl_ * dT_cos_thetal_wldT_;
-  current_state.X(MetaState::LEADER_ORIENTATION_Z) =
-      betweenMinusPiAndPi(thetal_ + wldT_);
+    yl_ + vxl_ * dT_sin_thetal_wldT_ + vyl_ * dT_cos_thetal_wldT_;
+  current_state.X(MetaState::LEADER_ORIENTATION_Z) = betweenMinusPiAndPi(thetal_ + wldT_);
 
   // Predict state covariance
   jFl_(MetaState::LEADER_POSITION_X, MetaState::LEADER_POSITION_X) = 1;
   jFl_(MetaState::LEADER_POSITION_X, MetaState::LEADER_ORIENTATION_Z) =
-      -vxl_ * dT_sin_thetal_wldT_ - vyl_ * dT_cos_thetal_wldT_;
+    -vxl_ * dT_sin_thetal_wldT_ - vyl_ * dT_cos_thetal_wldT_;
   jFl_(MetaState::LEADER_POSITION_Y, MetaState::LEADER_POSITION_Y) = 1;
   jFl_(MetaState::LEADER_POSITION_Y, MetaState::LEADER_ORIENTATION_Z) =
-      vxl_ * dT_cos_thetal_wldT_ - vyl_ * dT_sin_thetal_wldT_;
+    vxl_ * dT_cos_thetal_wldT_ - vyl_ * dT_sin_thetal_wldT_;
   jFl_(MetaState::LEADER_ORIENTATION_Z, MetaState::LEADER_ORIENTATION_Z) = 1;
 
-  jGl_(MetaState::LEADER_POSITION_X, MetaState::LEADER_LINEAR_SPEED_X_BODY) =
-      dT_cos_thetal_wldT_;
-  jGl_(MetaState::LEADER_POSITION_Y, MetaState::LEADER_LINEAR_SPEED_X_BODY) =
-      dT_sin_thetal_wldT_;
-  jGl_(MetaState::LEADER_POSITION_X, MetaState::LEADER_LINEAR_SPEED_Y_BODY) =
-      -dT_sin_thetal_wldT_;
-  jGl_(MetaState::LEADER_POSITION_Y, MetaState::LEADER_LINEAR_SPEED_Y_BODY) =
-      dT_cos_thetal_wldT_;
+  jGl_(MetaState::LEADER_POSITION_X, MetaState::LEADER_LINEAR_SPEED_X_BODY) = dT_cos_thetal_wldT_;
+  jGl_(MetaState::LEADER_POSITION_Y, MetaState::LEADER_LINEAR_SPEED_X_BODY) = dT_sin_thetal_wldT_;
+  jGl_(MetaState::LEADER_POSITION_X, MetaState::LEADER_LINEAR_SPEED_Y_BODY) = -dT_sin_thetal_wldT_;
+  jGl_(MetaState::LEADER_POSITION_Y, MetaState::LEADER_LINEAR_SPEED_Y_BODY) = dT_cos_thetal_wldT_;
 
   jGl_(MetaState::LEADER_POSITION_X, MetaState::LEADER_ANGULAR_SPEED_Z_BODY) =
-      -vxldT_ * dT_sin_thetal_wldT_ - vyldT_ * dT_cos_thetal_wldT_;
+    -vxldT_ * dT_sin_thetal_wldT_ - vyldT_ * dT_cos_thetal_wldT_;
   jGl_(MetaState::LEADER_POSITION_Y, MetaState::LEADER_ANGULAR_SPEED_Z_BODY) =
-      vxldT_ * dT_cos_thetal_wldT_ - vyldT_ * dT_sin_thetal_wldT_;
-  jGl_(MetaState::LEADER_ORIENTATION_Z,
-       MetaState::LEADER_ANGULAR_SPEED_Z_BODY) = dt_;
+    vxldT_ * dT_cos_thetal_wldT_ - vyldT_ * dT_sin_thetal_wldT_;
+  jGl_(MetaState::LEADER_ORIENTATION_Z, MetaState::LEADER_ANGULAR_SPEED_Z_BODY) = dt_;
 
   current_state.P().noalias() = jFl_ * previous_state.P() * jFl_.transpose();
   current_state.P().noalias() += jGl_ * previous_input.QU() * jGl_.transpose();
@@ -154,59 +151,50 @@ void R2RKFPredictor::predictState_(const State& previous_state,
   jGf_(1, 2) = -vxfdT_ * dT_cos_wfdT_ + vyfdT_ * dT_sin_wfdT_;
   jGf_(2, 2) = -dt_;
 
-  current_state.X() =
-      jFf_ * (current_state.X() - Eigen::Vector3d(vxfdT_, vyfdT_, wfdT_));
-  current_state.P() = jFf_ * current_state.P() * jFf_.transpose() +
-                      jGf_ * previous_input.QU() * jGf_.transpose();
+  current_state.X() = jFf_ * (current_state.X() - Eigen::Vector3d(vxfdT_, vyfdT_, wfdT_));
+  current_state.P() =
+    jFf_ * current_state.P() * jFf_.transpose() + jGf_ * previous_input.QU() * jGf_.transpose();
 }
 
 //-----------------------------------------------------------------------------
-void R2RKFPredictor::predictAddOn_(const AddOn& previous_add_on,
-                                   const State& current_state,
-                                   AddOn& current_add_on) {
+void R2RKFPredictor::predictAddOn_(
+  const AddOn & previous_add_on, const State & current_state, AddOn & current_add_on)
+{
   Eigen::Matrix2d R = Eigen::Matrix2d(Eigen::Rotation2D<double>(-wfdT_));
   Eigen::Vector2d T = -R * Eigen::Vector2d(vxfdT_, vyfdT_);
 
   // Predict additional data
-  transform(previous_add_on.robot_trajectory.get(),
-            current_add_on.robot_trajectory.get(), R, T);
+  transform(previous_add_on.robot_trajectory.get(), current_add_on.robot_trajectory.get(), R, T);
 
-  transform(previous_add_on.leader_trajectory.get(),
-            current_add_on.leader_trajectory.get(), R, T);
+  transform(previous_add_on.leader_trajectory.get(), current_add_on.leader_trajectory.get(), R, T);
 
-  current_add_on.robot_trajectory.ringIndex_ =
-      previous_add_on.robot_trajectory.ringIndex_;
-  current_add_on.leader_trajectory.ringIndex_ =
-      previous_add_on.leader_trajectory.ringIndex_;
+  current_add_on.robot_trajectory.ringIndex_ = previous_add_on.robot_trajectory.ringIndex_;
+  current_add_on.leader_trajectory.ringIndex_ = previous_add_on.leader_trajectory.ringIndex_;
 
-  if (current_add_on.robot_trajectory.size() == 0 ||
-      current_add_on.robot_trajectory[0].norm() > 0.1) {
+  if (
+    current_add_on.robot_trajectory.size() == 0 ||
+    current_add_on.robot_trajectory[0].norm() > 0.1) {
     current_add_on.robot_trajectory.append(Eigen::Vector2d::Zero());
     current_add_on.leader_trajectory.append(current_state.X().head<2>());
   }
 
   current_add_on.travelled_distance =
-      previous_add_on.travelled_distance +
-      std::sqrt(vxfdT_ * vxfdT_ + vyfdT_ * vyfdT_);
-  current_add_on.last_exteroceptive_update =
-      previous_add_on.last_exteroceptive_update;
+    previous_add_on.travelled_distance + std::sqrt(vxfdT_ * vxfdT_ + vyfdT_ * vyfdT_);
+  current_add_on.last_exteroceptive_update = previous_add_on.last_exteroceptive_update;
 }
 
 //-----------------------------------------------------------------------------
-bool R2RKFPredictor::stop_(const Duration& duration,
-                           const R2RKFMetaState& metaState) {
-  Duration durationInDeadReckoningMode =
-      duration - metaState.addon.last_exteroceptive_update.time;
+bool R2RKFPredictor::stop_(const Duration & duration, const R2RKFMetaState & metaState)
+{
+  Duration durationInDeadReckoningMode = duration - metaState.addon.last_exteroceptive_update.time;
 
   double travelledDistanceInDeadReckoningMode =
-      metaState.addon.travelled_distance -
-      metaState.addon.last_exteroceptive_update.travelled_distance;
+    metaState.addon.travelled_distance -
+    metaState.addon.last_exteroceptive_update.travelled_distance;
 
-  double positionCircularErrorProbability =
-      std::sqrt(metaState.state.P(MetaState::LEADER_POSITION_X,
-                                  MetaState::LEADER_POSITION_X) +
-                metaState.state.P(MetaState::LEADER_POSITION_Y,
-                                  MetaState::LEADER_POSITION_Y));
+  double positionCircularErrorProbability = std::sqrt(
+    metaState.state.P(MetaState::LEADER_POSITION_X, MetaState::LEADER_POSITION_X) +
+    metaState.state.P(MetaState::LEADER_POSITION_Y, MetaState::LEADER_POSITION_Y));
 
   // std::cout << " kalman dr elapsed time " << durationToSecond(duration) << "
   // " <<
@@ -219,15 +207,14 @@ bool R2RKFPredictor::stop_(const Duration& duration,
   //   shutoffParameters_.maximal_travelled_distance_in_dead_reckoning <<
   //   std::endl;
 
-  return positionCircularErrorProbability >
-             maximal_position_circular_error_probable_ ||
-         travelledDistanceInDeadReckoningMode >
-             maximal_travelled_distance_in_dead_reckoning_ ||
+  return positionCircularErrorProbability > maximal_position_circular_error_probable_ ||
+         travelledDistanceInDeadReckoningMode > maximal_travelled_distance_in_dead_reckoning_ ||
          durationInDeadReckoningMode > maximal_duration_in_dead_reckoning_;
 }
 
 //-----------------------------------------------------------------------------
-void R2RKFPredictor::reset_(R2RKFMetaState& metaState) {
+void R2RKFPredictor::reset_(R2RKFMetaState & metaState)
+{
   metaState.state.reset();
   metaState.addon.reset();
 }

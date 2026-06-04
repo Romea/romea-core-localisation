@@ -23,7 +23,8 @@
 using namespace romea::core::localisation;  // NOLINT
 
 //-----------------------------------------------------------------------------
-TEST(TestFSMStateConversion, checkfsm_stateToString) {
+TEST(TestFSMStateConversion, checkfsm_stateToString)
+{
   EXPECT_STREQ(to_string(FSMState::ABORTED).c_str(), "ABORTED");
   EXPECT_STREQ(to_string(FSMState::RUNNING).c_str(), "RUNNING");
   EXPECT_STREQ(to_string(FSMState::RESET).c_str(), "RESET");
@@ -31,19 +32,17 @@ TEST(TestFSMStateConversion, checkfsm_stateToString) {
 }
 
 //-----------------------------------------------------------------------------
-TEST(TestFSMStateConversion, checkfsm_stateToDiagnosticStatus) {
-  EXPECT_EQ(to_diagnostic_status(FSMState::ABORTED),
-            romea::core::DiagnosticStatus::ERROR);
-  EXPECT_EQ(to_diagnostic_status(FSMState::RUNNING),
-            romea::core::DiagnosticStatus::OK);
-  EXPECT_EQ(to_diagnostic_status(FSMState::RESET),
-            romea::core::DiagnosticStatus::WARN);
-  EXPECT_EQ(to_diagnostic_status(FSMState::INIT),
-            romea::core::DiagnosticStatus::WARN);
+TEST(TestFSMStateConversion, checkfsm_stateToDiagnosticStatus)
+{
+  EXPECT_EQ(to_diagnostic_status(FSMState::ABORTED), romea::core::DiagnosticStatus::ERROR);
+  EXPECT_EQ(to_diagnostic_status(FSMState::RUNNING), romea::core::DiagnosticStatus::OK);
+  EXPECT_EQ(to_diagnostic_status(FSMState::RESET), romea::core::DiagnosticStatus::WARN);
+  EXPECT_EQ(to_diagnostic_status(FSMState::INIT), romea::core::DiagnosticStatus::WARN);
 }
 
 //-----------------------------------------------------------------------------
-int main(int argc, char** argv) {
+int main(int argc, char ** argv)
+{
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

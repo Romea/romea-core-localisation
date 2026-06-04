@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_HUMAN__RESULTS_BASE_HPP_
 #define ROMEA_CORE_LOCALISATION__ROBOT_TO_HUMAN__RESULTS_BASE_HPP_
 
@@ -34,9 +33,8 @@ template<class MetaState>
 class R2HResultsBase : public MetaState
 {
 public:
-  template<typename ... Args>
-  explicit R2HResultsBase(Args ... args)
-  : MetaState(std::forward<Args>(args)...)
+  template<typename... Args>
+  explicit R2HResultsBase(Args... args) : MetaState(std::forward<Args>(args)...)
   {
   }
 

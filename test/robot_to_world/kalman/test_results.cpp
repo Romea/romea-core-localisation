@@ -26,13 +26,9 @@ Results make_results()
 {
   Results results;
   results.state.X() << 1.0, 2.0, 0.3;
-  results.state.P() << 0.1, 0.01, 0.02,
-                       0.01, 0.2, 0.03,
-                       0.02, 0.03, 0.3;
+  results.state.P() << 0.1, 0.01, 0.02, 0.01, 0.2, 0.03, 0.02, 0.03, 0.3;
   results.input.U() << 4.0, 5.0, 0.6;
-  results.input.QU() << 0.4, 0.04, 0.05,
-                        0.04, 0.5, 0.06,
-                        0.05, 0.06, 0.6;
+  results.input.QU() << 0.4, 0.04, 0.05, 0.04, 0.5, 0.06, 0.05, 0.06, 0.6;
   results.addon.roll = 0.01;
   results.addon.pitch = -0.02;
   results.addon.roll_pitch_variance = 0.03;
@@ -77,15 +73,9 @@ TEST(TestR2WKFResults, convertsToPoseAndBodyTwist2D)
   EXPECT_DOUBLE_EQ(pose_and_twist.pose.position.x(), results.get_x());
   EXPECT_DOUBLE_EQ(pose_and_twist.pose.position.y(), results.get_y());
   EXPECT_DOUBLE_EQ(pose_and_twist.pose.yaw, results.get_yaw());
-  EXPECT_DOUBLE_EQ(
-    pose_and_twist.twist.linearSpeeds.x(),
-    results.get_linear_speed());
-  EXPECT_DOUBLE_EQ(
-    pose_and_twist.twist.linearSpeeds.y(),
-    results.get_lateral_speed());
-  EXPECT_DOUBLE_EQ(
-    pose_and_twist.twist.angularSpeed,
-    results.get_angular_speed());
+  EXPECT_DOUBLE_EQ(pose_and_twist.twist.linearSpeeds.x(), results.get_linear_speed());
+  EXPECT_DOUBLE_EQ(pose_and_twist.twist.linearSpeeds.y(), results.get_lateral_speed());
+  EXPECT_DOUBLE_EQ(pose_and_twist.twist.angularSpeed, results.get_angular_speed());
   EXPECT_TRUE(pose_and_twist.pose.covariance.isApprox(results.get_pose_covariance()));
   EXPECT_TRUE(pose_and_twist.twist.covariance.isApprox(results.get_twist_covariance()));
 }

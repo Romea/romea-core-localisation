@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__RESULTS_BASE_HPP_
 #define ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__RESULTS_BASE_HPP_
 
@@ -20,8 +19,8 @@
 #include <utility>
 
 // romea
-#include "romea_core_common/time/Time.hpp"
 #include "romea_core_common/geometry/PoseAndTwist3D.hpp"
+#include "romea_core_common/time/Time.hpp"
 
 namespace romea
 {
@@ -34,18 +33,14 @@ template<class State>
 class R2RResultsBase : public State
 {
 public:
-  template<typename ... Args>
-  R2RResultsBase(Args... args)
-  :State(std::forward<Args>(args)...), duration_(Duration::zero())
+  template<typename... Args>
+  R2RResultsBase(Args... args) : State(std::forward<Args>(args)...), duration_(Duration::zero())
   {
   }
 
   virtual ~R2RResultsBase() = default;
 
-  virtual void set_duration(const Duration & duration)
-  {
-    duration_ = duration;
-  }
+  virtual void set_duration(const Duration & duration) { duration_ = duration; }
 
   virtual const double & get_leader_x() const = 0;
   virtual const double & get_leader_y() const = 0;

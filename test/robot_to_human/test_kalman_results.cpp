@@ -26,12 +26,9 @@ Results make_results()
 {
   Results results;
   results.state.X() << 1.0, 2.0;
-  results.state.P() << 0.1, 0.01,
-                       0.01, 0.2;
+  results.state.P() << 0.1, 0.01, 0.01, 0.2;
   results.input.U() << 3.0, 4.0, 0.5;
-  results.input.QU() << 0.3, 0.03, 0.04,
-                        0.03, 0.4, 0.05,
-                        0.04, 0.05, 0.5;
+  results.input.QU() << 0.3, 0.03, 0.04, 0.03, 0.4, 0.05, 0.04, 0.05, 0.5;
   return results;
 }
 

@@ -35,8 +35,7 @@ Observation make_observation()
 {
   Observation observation;
   observation.Y() << 2.0, 3.0;
-  observation.R() << 0.2, 0.01,
-                     0.01, 0.3;
+  observation.R() << 0.2, 0.01, 0.01, 0.3;
   return observation;
 }
 
@@ -55,11 +54,7 @@ TEST(TestR2HLeaderPositionUpdater, initWaitsForFollowerInputs)
   FSMState fsm_state = FSMState::INIT;
   Updater updater("leader_position_updater", 10.0, TriggerMode::ALWAYS, 10.0, "");
 
-  updater.update(
-    romea::core::durationFromSecond(1.0),
-    make_observation(),
-    fsm_state,
-    meta_state);
+  updater.update(romea::core::durationFromSecond(1.0), make_observation(), fsm_state, meta_state);
 
   EXPECT_EQ(fsm_state, FSMState::INIT);
   EXPECT_TRUE(std::isnan(meta_state.state.X(MetaState::LEADER_POSITION_X)));

@@ -19,41 +19,45 @@
 #include "romea_core_localisation/predictor_base.hpp"
 #include "romea_core_localisation/robot_to_human/kalman/meta_state.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-class R2HKFPredictor : public PredictorBase<R2HKFMetaState> {
- public:
+class R2HKFPredictor : public PredictorBase<R2HKFMetaState>
+{
+public:
   using MetaState = R2HKFMetaState;
   using State = R2HKFMetaState::State;
   using Input = R2HKFMetaState::Input;
   using AddOn = R2HKFMetaState::AddOn;
 
- public:
-  R2HKFPredictor(const Duration& maximal_duration_in_dead_reckoning,
-                 const double& maximal_travelled_distance_in_dead_reckoning,
-                 const double& maximal_position_circular_error_probable,
-                 const double& leaderMotionStd);
+public:
+  R2HKFPredictor(
+    const Duration & maximal_duration_in_dead_reckoning,
+    const double & maximal_travelled_distance_in_dead_reckoning,
+    const double & maximal_position_circular_error_probable,
+    const double & leaderMotionStd);
 
   virtual ~R2HKFPredictor() = default;
 
- private:
-  bool stop_(const Duration& duration, const MetaState& state) override;
+private:
+  bool stop_(const Duration & duration, const MetaState & state) override;
 
-  void predict_(const MetaState& previous_meta_state,
-                MetaState& current_meta_state) override;
+  void predict_(const MetaState & previous_meta_state, MetaState & current_meta_state) override;
 
-  void reset_(MetaState& metaState) override;
+  void reset_(MetaState & metaState) override;
 
- private:
-  void predictState_(const State& previous_state, const Input& prviousInput,
-                     State& current_state);
+private:
+  void predictState_(
+    const State & previous_state, const Input & prviousInput, State & current_state);
 
-  void predictAddOn_(const AddOn& previous_add_on, const State& current_state,
-                     AddOn& current_add_on);
+  void predictAddOn_(
+    const AddOn & previous_add_on, const State & current_state, AddOn & current_add_on);
 
- private:
+private:
   Eigen::MatrixXd jF_;
   Eigen::MatrixXd jG_;
   Eigen::MatrixXd leaderMotionCovariance_;

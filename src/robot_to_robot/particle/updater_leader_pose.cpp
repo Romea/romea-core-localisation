@@ -22,31 +22,43 @@
 // local
 #include "romea_core_localisation/robot_to_robot/particle/updater_leader_pose.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
 // TODO(jean) add update stage
 //-----------------------------------------------------------------------------
 R2RPFUpdaterLeaderPose::R2RPFUpdaterLeaderPose(
-    const std::string& updater_name, const double& minimal_rate,
-    const trigger_mode& trigger_mode, const size_t& /*number_of_particles*/,
-    const double& /*maximal_mahalanobis_distance*/,
-    const std::string& logFilename)
-    : UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode,
-                           logFilename) {}
+  const std::string & updater_name,
+  const double & minimal_rate,
+  const trigger_mode & trigger_mode,
+  const size_t & /*number_of_particles*/,
+  const double & /*maximal_mahalanobis_distance*/,
+  const std::string & logFilename)
+: UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode, logFilename)
+{
+}
 
 //--------------------------------------------------------------------------
-void R2RPFUpdaterLeaderPose::update(const Duration& duration,
-                                    const Observation& current_observation,
-                                    FSMState& current_fsm_State,
-                                    MetaState& current_meta_state) {
+void R2RPFUpdaterLeaderPose::update(
+  const Duration & duration,
+  const Observation & current_observation,
+  FSMState & current_fsm_State,
+  MetaState & current_meta_state)
+{
   rate_diagnostic_.evaluate(duration);
 
   switch (current_fsm_State) {
     case FSMState::INIT:
-      if (set_(duration, current_observation, current_meta_state.input,
-               current_meta_state.state, current_meta_state.addon)) {
+      if (set_(
+            duration,
+            current_observation,
+            current_meta_state.input,
+            current_meta_state.state,
+            current_meta_state.addon)) {
         std::cout << " FSM : INIT DONE, GO TO RUNNING MODE " << std::endl;
         current_fsm_State = FSMState::RUNNING;
       }
@@ -57,26 +69,26 @@ void R2RPFUpdaterLeaderPose::update(const Duration& duration,
 }
 
 //-----------------------------------------------------------------------------
-bool R2RPFUpdaterLeaderPose::set_(const Duration& duration,
-                                  const Observation& current_observation,
-                                  const Input& current_input,
-                                  State& current_state, AddOn& current_add_on) {
-  if (!std::isnan(current_input.U(R2RPFMetaState::LINEAR_SPEED_X_BODY)) &&
-      !std::isnan(current_input.U(R2RPFMetaState::LINEAR_SPEED_Y_BODY)) &&
-      !std::isnan(current_input.U(R2RPFMetaState::ANGULAR_SPEED_Z_BODY)) &&
-      !std::isnan(
-          current_input.U(R2RPFMetaState::LEADER_LINEAR_SPEED_X_BODY)) &&
-      !std::isnan(
-          current_input.U(R2RPFMetaState::LEADER_LINEAR_SPEED_X_BODY)) &&
-      !std::isnan(
-          current_input.U(R2RPFMetaState::LEADER_LINEAR_SPEED_X_BODY))) {
+bool R2RPFUpdaterLeaderPose::set_(
+  const Duration & duration,
+  const Observation & current_observation,
+  const Input & current_input,
+  State & current_state,
+  AddOn & current_add_on)
+{
+  if (
+    !std::isnan(current_input.U(R2RPFMetaState::LINEAR_SPEED_X_BODY)) &&
+    !std::isnan(current_input.U(R2RPFMetaState::LINEAR_SPEED_Y_BODY)) &&
+    !std::isnan(current_input.U(R2RPFMetaState::ANGULAR_SPEED_Z_BODY)) &&
+    !std::isnan(current_input.U(R2RPFMetaState::LEADER_LINEAR_SPEED_X_BODY)) &&
+    !std::isnan(current_input.U(R2RPFMetaState::LEADER_LINEAR_SPEED_X_BODY)) &&
+    !std::isnan(current_input.U(R2RPFMetaState::LEADER_LINEAR_SPEED_X_BODY))) {
     NormalRandomArrayGenerator3D<double> randomGenerator;
     randomGenerator.init(current_observation.Y(), current_observation.R());
     randomGenerator.fill(current_state.particles);
 
     current_add_on.last_exteroceptive_update.time = duration;
-    current_add_on.last_exteroceptive_update.travelled_distance =
-        current_add_on.travelled_distance;
+    current_add_on.last_exteroceptive_update.travelled_distance = current_add_on.travelled_distance;
 
     assert(!std::isnan(current_state.particles(0, 0)));
     assert(!std::isnan(current_state.particles(0, 1)));

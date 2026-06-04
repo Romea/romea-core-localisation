@@ -39,10 +39,8 @@ TEST(TestR2WMetaStateBase, defaultStateIsConsistent)
   romea::core::localisation::R2WMetaStateBase meta_state;
 
   expect_input_is_uninitialized(meta_state.input);
-  EXPECT_EQ(meta_state.addon.last_exteroceptive_update.time,
-            romea::core::Duration::zero());
-  EXPECT_TRUE(std::isnan(
-    meta_state.addon.last_exteroceptive_update.travelled_distance));
+  EXPECT_EQ(meta_state.addon.last_exteroceptive_update.time, romea::core::Duration::zero());
+  EXPECT_TRUE(std::isnan(meta_state.addon.last_exteroceptive_update.travelled_distance));
   EXPECT_DOUBLE_EQ(meta_state.addon.roll, 0.0);
   EXPECT_DOUBLE_EQ(meta_state.addon.pitch, 0.0);
   EXPECT_DOUBLE_EQ(meta_state.addon.roll_pitch_variance, 0.0);
@@ -52,8 +50,7 @@ TEST(TestR2WMetaStateBase, defaultStateIsConsistent)
 TEST(TestR2WMetaStateBase, resetClearsRuntimeAddOnData)
 {
   romea::core::localisation::R2WMetaStateBase meta_state;
-  meta_state.addon.last_exteroceptive_update.time =
-    romea::core::durationFromSecond(42.0);
+  meta_state.addon.last_exteroceptive_update.time = romea::core::durationFromSecond(42.0);
   meta_state.addon.last_exteroceptive_update.travelled_distance = 12.0;
   meta_state.addon.roll = 0.1;
   meta_state.addon.pitch = 0.2;
@@ -62,10 +59,8 @@ TEST(TestR2WMetaStateBase, resetClearsRuntimeAddOnData)
 
   meta_state.addon.reset();
 
-  EXPECT_EQ(meta_state.addon.last_exteroceptive_update.time,
-            romea::core::Duration::max());
-  EXPECT_DOUBLE_EQ(meta_state.addon.last_exteroceptive_update.travelled_distance,
-                   0.0);
+  EXPECT_EQ(meta_state.addon.last_exteroceptive_update.time, romea::core::Duration::max());
+  EXPECT_DOUBLE_EQ(meta_state.addon.last_exteroceptive_update.travelled_distance, 0.0);
   EXPECT_DOUBLE_EQ(meta_state.addon.roll, 0.0);
   EXPECT_DOUBLE_EQ(meta_state.addon.pitch, 0.0);
   EXPECT_DOUBLE_EQ(meta_state.addon.roll_pitch_variance, 0.0);

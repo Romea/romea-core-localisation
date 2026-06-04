@@ -20,11 +20,15 @@
 #include "romea_core_filtering/gaussian/state.hpp"
 #include "romea_core_localisation/robot_to_human/meta_state_base.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-struct R2HKFMetaState : R2HMetaStateBase {
+struct R2HKFMetaState : R2HMetaStateBase
+{
   using State = GaussianState<double, STATE_SIZE>;
 
   R2HKFMetaState();

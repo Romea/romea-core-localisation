@@ -61,16 +61,12 @@ TEST(TestR2RKFRangeUpdater, mahalanobisRejectionKeepsPreviousState)
   const auto previous_covariance = meta_state.state.P();
 
   updater.update(
-    romea::core::durationFromSecond(1.0),
-    make_range_observation(100.0),
-    fsm_state,
-    meta_state);
+    romea::core::durationFromSecond(1.0), make_range_observation(100.0), fsm_state, meta_state);
 
   EXPECT_EQ(fsm_state, FSMState::RUNNING);
   EXPECT_TRUE(meta_state.state.X().isApprox(previous_state));
   EXPECT_TRUE(meta_state.state.P().isApprox(previous_covariance));
-  EXPECT_EQ(meta_state.addon.last_exteroceptive_update.time,
-            romea::core::Duration::zero());
+  EXPECT_EQ(meta_state.addon.last_exteroceptive_update.time, romea::core::Duration::zero());
 }
 
 int main(int argc, char ** argv)

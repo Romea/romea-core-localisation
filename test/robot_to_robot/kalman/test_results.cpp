@@ -26,19 +26,11 @@ Results make_results()
 {
   Results results;
   results.state.X() << 1.0, 2.0, 0.3;
-  results.state.P() << 0.1, 0.01, 0.02,
-                       0.01, 0.2, 0.03,
-                       0.02, 0.03, 0.3;
+  results.state.P() << 0.1, 0.01, 0.02, 0.01, 0.2, 0.03, 0.02, 0.03, 0.3;
   results.input.U() << 4.0, 5.0, 0.6, 7.0, 8.0, 0.9;
   results.input.QU().setZero();
-  results.input.QU().block<3, 3>(0, 0) <<
-    0.4, 0.04, 0.05,
-    0.04, 0.5, 0.06,
-    0.05, 0.06, 0.6;
-  results.input.QU().block<3, 3>(3, 3) <<
-    0.7, 0.07, 0.08,
-    0.07, 0.8, 0.09,
-    0.08, 0.09, 0.9;
+  results.input.QU().block<3, 3>(0, 0) << 0.4, 0.04, 0.05, 0.04, 0.5, 0.06, 0.05, 0.06, 0.6;
+  results.input.QU().block<3, 3>(3, 3) << 0.7, 0.07, 0.08, 0.07, 0.8, 0.09, 0.08, 0.09, 0.9;
   return results;
 }
 

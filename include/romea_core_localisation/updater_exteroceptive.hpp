@@ -24,24 +24,29 @@
 // romea
 #include "romea_core_localisation/updater_base.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-class UpdaterExteroceptive : public UpdaterBase {
- public:
-  UpdaterExteroceptive(const std::string& updater_name,
-                       const double& minimal_rate,
-                       const trigger_mode& trigger_mode,
-                       const std::string& log_filename);
+class UpdaterExteroceptive : public UpdaterBase
+{
+public:
+  UpdaterExteroceptive(
+    const std::string & updater_name,
+    const double & minimal_rate,
+    const trigger_mode & trigger_mode,
+    const std::string & log_filename);
 
   virtual ~UpdaterExteroceptive() = default;
 
-  void open_log_file_(const std::string& log_filename);
+  void open_log_file_(const std::string & log_filename);
 
-  void set_log_file_header_(const std::vector<std::string>& log_column_names);
+  void set_log_file_header_(const std::vector<std::string> & log_column_names);
 
- protected:
+protected:
   std::ofstream log_file_;
 };
 

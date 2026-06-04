@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "romea_core_localisation/robot_to_human/meta_state_base.hpp"
 
 namespace
@@ -47,9 +46,7 @@ void R2HMetaStateBase::AddOn::reset()
 }
 
 //-----------------------------------------------------------------------------
-R2HMetaStateBase::R2HMetaStateBase()
-: input(),
-  addon()
+R2HMetaStateBase::R2HMetaStateBase() : input(), addon()
 {
 }
 

@@ -32,9 +32,7 @@ Observation make_observation()
 {
   Observation observation;
   observation.Y() << 1.0, 2.0, 3.0;
-  observation.R() << 0.1, 0.01, 0.02,
-                     0.01, 0.2, 0.03,
-                     0.02, 0.03, 0.3;
+  observation.R() << 0.1, 0.01, 0.02, 0.01, 0.2, 0.03, 0.02, 0.03, 0.3;
   return observation;
 }
 
@@ -47,21 +45,16 @@ TEST(TestR2RLeaderTwistUpdater, writesLeaderInputs)
   Updater updater("leader_twist_updater", 10.0);
   const auto observation = make_observation();
 
-  updater.update(
-    romea::core::durationFromSecond(1.0),
-    observation,
-    fsm_state,
-    meta_state);
+  updater.update(romea::core::durationFromSecond(1.0), observation, fsm_state, meta_state);
 
   EXPECT_EQ(fsm_state, FSMState::INIT);
   EXPECT_TRUE(meta_state.input.U()
                 .segment<3>(MetaState::LEADER_LINEAR_SPEED_X_BODY)
                 .isApprox(observation.Y()));
-  EXPECT_TRUE((meta_state.input.QU()
-                .block<3, 3>(
-                  MetaState::LEADER_LINEAR_SPEED_X_BODY,
-                  MetaState::LEADER_LINEAR_SPEED_X_BODY)
-                .isApprox(observation.R())));
+  EXPECT_TRUE(
+    (meta_state.input.QU()
+       .block<3, 3>(MetaState::LEADER_LINEAR_SPEED_X_BODY, MetaState::LEADER_LINEAR_SPEED_X_BODY)
+       .isApprox(observation.R())));
 }
 
 int main(int argc, char ** argv)

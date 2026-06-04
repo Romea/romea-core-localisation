@@ -20,36 +20,40 @@
 #include "romea_core_localisation/predictor_base.hpp"
 #include "romea_core_localisation/robot_to_world/kalman/meta_state.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-class R2WKFPredictor : public PredictorBase<R2WKFMetaState> {
- public:
+class R2WKFPredictor : public PredictorBase<R2WKFMetaState>
+{
+public:
   using MetaState = R2WKFMetaState;
   using State = R2WKFMetaState::State;
   using Input = R2WKFMetaState::Input;
   using AddOn = R2WKFMetaState::AddOn;
 
- public:
-  R2WKFPredictor(const Duration& maximal_duration_in_dead_reckoning,
-                 const double& maximal_travelled_distance_in_dead_reckoning,
-                 const double& maximal_position_circular_error_probable);
+public:
+  R2WKFPredictor(
+    const Duration & maximal_duration_in_dead_reckoning,
+    const double & maximal_travelled_distance_in_dead_reckoning,
+    const double & maximal_position_circular_error_probable);
 
- protected:
-  bool stop_(const Duration& duration, const MetaState& state) override;
+protected:
+  bool stop_(const Duration & duration, const MetaState & state) override;
 
-  void predict_(const MetaState& previous_state,
-                MetaState& next_state) override;
+  void predict_(const MetaState & previous_state, MetaState & next_state) override;
 
-  void reset_(MetaState& state) override;
+  void reset_(MetaState & state) override;
 
-  void predictState_(const State& previous_state, const Input& previous_input,
-                     State& current_state);
+  void predictState_(
+    const State & previous_state, const Input & previous_input, State & current_state);
 
-  void predictAddOn_(const AddOn& previous_add_on, AddOn& current_add_on);
+  void predictAddOn_(const AddOn & previous_add_on, AddOn & current_add_on);
 
- private:
+private:
   Eigen::MatrixXd jF_;
   Eigen::MatrixXd jG_;
 

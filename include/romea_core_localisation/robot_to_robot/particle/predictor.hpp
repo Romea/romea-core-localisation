@@ -20,12 +20,16 @@
 #include "romea_core_localisation/predictor_base.hpp"
 #include "romea_core_localisation/robot_to_robot/particle/meta_state.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-class R2RPFPredictor : public PredictorBase<R2RPFMetaState> {
- public:
+class R2RPFPredictor : public PredictorBase<R2RPFMetaState>
+{
+public:
   using MetaState = R2RPFMetaState;
   using State = R2RPFMetaState::State;
   using Input = R2RPFMetaState::Input;
@@ -33,31 +37,31 @@ class R2RPFPredictor : public PredictorBase<R2RPFMetaState> {
   using RowMajorVector = R2RPFMetaState::State::RowMajorVector;
   using RowMajorMatrix = R2RPFMetaState::State::RowMajorMatrix;
 
- public:
-  R2RPFPredictor(const Duration& maximal_duration_in_dead_reckoning,
-                 const double& maximal_travelled_distance_in_dead_reckoning,
-                 const double& maximal_position_circular_error_probable,
-                 const size_t& number_of_particles);
+public:
+  R2RPFPredictor(
+    const Duration & maximal_duration_in_dead_reckoning,
+    const double & maximal_travelled_distance_in_dead_reckoning,
+    const double & maximal_position_circular_error_probable,
+    const size_t & number_of_particles);
 
- private:
-  bool stop_(const Duration& duration, const MetaState& meatastate) override;
+private:
+  bool stop_(const Duration & duration, const MetaState & meatastate) override;
 
-  void predict_(const MetaState& previous_meta_state,
-                MetaState& current_meta_state) override;
+  void predict_(const MetaState & previous_meta_state, MetaState & current_meta_state) override;
 
-  void reset_(MetaState& metaState) override;
+  void reset_(MetaState & metaState) override;
 
-  void predictState_(const State& previous_state, const Input& previous_input,
-                     State& current_state);
+  void predictState_(
+    const State & previous_state, const Input & previous_input, State & current_state);
 
-  void predictAddOn_(const AddOn& previous_add_on, const State& current_state,
-                     AddOn& current_add_on);
+  void predictAddOn_(
+    const AddOn & previous_add_on, const State & current_state, AddOn & current_add_on);
 
-  void drawFollowerInputs(const Input& previous_input);
+  void drawFollowerInputs(const Input & previous_input);
 
-  void drawLeaderInputs(const Input& previous_input);
+  void drawLeaderInputs(const Input & previous_input);
 
- private:
+private:
   RowMajorVector cos_courses_;
   RowMajorVector sin_courses_;
 

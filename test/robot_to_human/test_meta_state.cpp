@@ -21,17 +21,14 @@
 TEST(TestR2HMetaStateBase, resetClearsRuntimeAddOnData)
 {
   romea::core::localisation::R2HMetaStateBase meta_state;
-  meta_state.addon.last_exteroceptive_update.time =
-    romea::core::durationFromSecond(42.0);
+  meta_state.addon.last_exteroceptive_update.time = romea::core::durationFromSecond(42.0);
   meta_state.addon.last_exteroceptive_update.travelled_distance = 12.0;
   meta_state.addon.travelled_distance = 4.0;
 
   meta_state.addon.reset();
 
-  EXPECT_EQ(meta_state.addon.last_exteroceptive_update.time,
-            romea::core::Duration::max());
-  EXPECT_DOUBLE_EQ(meta_state.addon.last_exteroceptive_update.travelled_distance,
-                   0.0);
+  EXPECT_EQ(meta_state.addon.last_exteroceptive_update.time, romea::core::Duration::max());
+  EXPECT_DOUBLE_EQ(meta_state.addon.last_exteroceptive_update.travelled_distance, 0.0);
   EXPECT_DOUBLE_EQ(meta_state.addon.travelled_distance, 0.0);
 }
 

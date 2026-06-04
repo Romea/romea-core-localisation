@@ -12,13 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // std
 #include <cmath>
 
 // romea
 #include "romea_core_localisation/update_monitoring.hpp"
-
 
 namespace romea
 {
@@ -28,9 +26,7 @@ namespace localisation
 {
 
 //---------------------------------------------------------------------------
-UpdateMonitoring::UpdateMonitoring()
-: time(Duration::zero()),
-  travelled_distance(NAN)
+UpdateMonitoring::UpdateMonitoring() : time(Duration::zero()), travelled_distance(NAN)
 {
 }
 

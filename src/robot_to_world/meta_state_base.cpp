@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "romea_core_localisation/robot_to_world/meta_state_base.hpp"
 
 namespace romea
@@ -24,11 +23,7 @@ namespace localisation
 
 //-----------------------------------------------------------------------------
 R2WMetaStateBase::AddOn::AddOn()
-: last_exteroceptive_update(),
-  roll(0),
-  pitch(0),
-  roll_pitch_variance(0),
-  travelled_distance(0)
+: last_exteroceptive_update(), roll(0), pitch(0), roll_pitch_variance(0), travelled_distance(0)
 {
 }
 
@@ -44,9 +39,7 @@ void R2WMetaStateBase::AddOn::reset()
 }
 
 //-----------------------------------------------------------------------------
-R2WMetaStateBase::R2WMetaStateBase()
-: input(),
-  addon()
+R2WMetaStateBase::R2WMetaStateBase() : input(), addon()
 {
 }
 

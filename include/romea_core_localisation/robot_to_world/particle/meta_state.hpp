@@ -25,15 +25,19 @@
 // local
 #include "romea_core_localisation/robot_to_world/meta_state_base.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-struct R2WPFMetaState : R2WMetaStateBase {
- public:
+struct R2WPFMetaState : R2WMetaStateBase
+{
+public:
   using State = ParticleFilterState<double, STATE_SIZE>;
 
-  explicit R2WPFMetaState(const size_t& number_of_particles);
+  explicit R2WPFMetaState(const size_t & number_of_particles);
 
   virtual ~R2WPFMetaState() = default;
 

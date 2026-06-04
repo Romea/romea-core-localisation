@@ -15,24 +15,22 @@
 #ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__TRAITS_HPP_
 #define ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__TRAITS_HPP_
 
-
 // romea
 #include "romea_core_filtering/filter/kalman/filter.hpp"
 #include "romea_core_filtering/filter/particle/filter.hpp"
-#include "romea_core_localisation/updater_twist.hpp"
+#include "romea_core_localisation/robot_to_robot/kalman/predictor.hpp"
+#include "romea_core_localisation/robot_to_robot/kalman/results.hpp"
+#include "romea_core_localisation/robot_to_robot/kalman/updater_leader_pose.hpp"
+#include "romea_core_localisation/robot_to_robot/kalman/updater_range.hpp"
+#include "romea_core_localisation/robot_to_robot/particle/predictor.hpp"
+#include "romea_core_localisation/robot_to_robot/particle/results.hpp"
+#include "romea_core_localisation/robot_to_robot/particle/updater_leader_pose.hpp"
+#include "romea_core_localisation/robot_to_robot/particle/updater_range.hpp"
+#include "romea_core_localisation/robot_to_robot/updater_leader_twist.hpp"
+#include "romea_core_localisation/updater_angular_speed.hpp"
 #include "romea_core_localisation/updater_linear_speed.hpp"
 #include "romea_core_localisation/updater_linear_speeds.hpp"
-#include "romea_core_localisation/updater_angular_speed.hpp"
-#include "romea_core_localisation/robot_to_robot/updater_leader_twist.hpp"
-#include "romea_core_localisation/robot_to_robot/kalman/results.hpp"
-#include "romea_core_localisation/robot_to_robot/kalman/updater_range.hpp"
-#include "romea_core_localisation/robot_to_robot/kalman/updater_leader_pose.hpp"
-#include "romea_core_localisation/robot_to_robot/kalman/predictor.hpp"
-#include "romea_core_localisation/robot_to_robot/particle/results.hpp"
-#include "romea_core_localisation/robot_to_robot/particle/updater_range.hpp"
-#include "romea_core_localisation/robot_to_robot/particle/updater_leader_pose.hpp"
-#include "romea_core_localisation/robot_to_robot/particle/predictor.hpp"
-
+#include "romea_core_localisation/updater_twist.hpp"
 
 namespace romea
 {
@@ -44,8 +42,7 @@ namespace localisation
 template<FilterType type>
 struct R2RTraits
 {
-}
-;
+};
 
 template<>
 struct R2RTraits<KALMAN>

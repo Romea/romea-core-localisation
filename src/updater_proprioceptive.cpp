@@ -19,14 +19,19 @@
 // local
 #include "romea_core_localisation/updater_proprioceptive.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
 //-----------------------------------------------------------------------------
-UpdaterProprioceptive::UpdaterProprioceptive(const std::string& updater_name,
-                                             const double& minimal_rate)
-    : UpdaterBase(updater_name, minimal_rate, trigger_mode::ALWAYS) {}
+UpdaterProprioceptive::UpdaterProprioceptive(
+  const std::string & updater_name, const double & minimal_rate)
+: UpdaterBase(updater_name, minimal_rate, trigger_mode::ALWAYS)
+{
+}
 
 }  // namespace localisation
 }  // namespace core

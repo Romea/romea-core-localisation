@@ -21,12 +21,16 @@
 #include <sstream>
 #include <string>
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
 //-----------------------------------------------------------------------------
-std::string to_string(const Updatertrigger_mode& trigger_mode) {
+std::string to_string(const Updatertrigger_mode & trigger_mode)
+{
   if (trigger_mode == Updatertrigger_mode::ALWAYS) {
     return "always";
   } else {
@@ -35,7 +39,8 @@ std::string to_string(const Updatertrigger_mode& trigger_mode) {
 }
 
 //-----------------------------------------------------------------------------
-Updatertrigger_mode to_trigger_mode(const std::string& trigger_mode) {
+Updatertrigger_mode to_trigger_mode(const std::string & trigger_mode)
+{
   if (trigger_mode == "always") {
     return Updatertrigger_mode::ALWAYS;
   } else if (trigger_mode == "once") {

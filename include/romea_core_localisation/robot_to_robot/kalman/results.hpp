@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__KALMAN__RESULTS_HPP_
 #define ROMEA_CORE_LOCALISATION__ROBOT_TO_ROBOT__KALMAN__RESULTS_HPP_
 
-#include "romea_core_localisation/robot_to_robot/results_base.hpp"
 #include "romea_core_localisation/robot_to_robot/kalman/meta_state.hpp"
+#include "romea_core_localisation/robot_to_robot/results_base.hpp"
 
 namespace romea
 {

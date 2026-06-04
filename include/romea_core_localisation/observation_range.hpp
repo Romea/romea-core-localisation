@@ -18,15 +18,21 @@
 
 #include "romea_core_filtering/gaussian/observation.hpp"
 
-namespace romea {
-namespace core {
-namespace localisation {
+namespace romea
+{
+namespace core
+{
+namespace localisation
+{
 
-struct ObservationRange : GaussianObservation<double, 1> {
+struct ObservationRange : GaussianObservation<double, 1>
+{
   ObservationRange()
-      : responder_position(Eigen::Vector3d::Zero()),
-        initiator_position(Eigen::Vector3d::Zero()),
-        terrain_elevation(0) {}
+  : responder_position(Eigen::Vector3d::Zero()),
+    initiator_position(Eigen::Vector3d::Zero()),
+    terrain_elevation(0)
+  {
+  }
 
   Eigen::Vector3d responder_position;
   Eigen::Vector3d initiator_position;

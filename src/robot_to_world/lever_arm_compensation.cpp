@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "romea_core_localisation/robot_to_world/lever_arm_compensation.hpp"
 
 namespace romea
@@ -55,19 +54,19 @@ void LeverArmCompensation::compute(
 }
 
 //-----------------------------------------------------------------------------
-const Eigen::Vector3d & LeverArmCompensation::getPosition()const
+const Eigen::Vector3d & LeverArmCompensation::getPosition() const
 {
   return position_;
 }
 
 //-----------------------------------------------------------------------------
-const Eigen::Matrix3d & LeverArmCompensation::getPositionCovariance()const
+const Eigen::Matrix3d & LeverArmCompensation::getPositionCovariance() const
 {
   return positionCovariance_;
 }
 
 //-----------------------------------------------------------------------------
-const Eigen::Matrix3d & LeverArmCompensation::getJacobian()const
+const Eigen::Matrix3d & LeverArmCompensation::getJacobian() const
 {
   return jacobian_;
 }

@@ -29,7 +29,8 @@ using MetaState = romea::core::localisation::R2WMetaStateBase;
 using Observation = romea::core::localisation::ObservationLinearSpeed;
 using Updater = romea::core::localisation::UpdaterLinearSpeed<MetaState>;
 
-TEST(TestAngularSpeedUpdater, checkUpdate) {
+TEST(TestAngularSpeedUpdater, checkUpdate)
+{
   Observation observation;
   observation.Y() = 1;
   observation.R() = 2;
@@ -42,51 +43,59 @@ TEST(TestAngularSpeedUpdater, checkUpdate) {
   updater.update(t, observation, fsm_state, metaState);
 
   EXPECT_EQ(fsm_state, FSMState::INIT);
-  EXPECT_EQ(metaState.input.U(MetaState::InputIndex::LINEAR_SPEED_X_BODY),
-            observation.Y());
+  EXPECT_EQ(metaState.input.U(MetaState::InputIndex::LINEAR_SPEED_X_BODY), observation.Y());
   EXPECT_EQ(metaState.input.U(MetaState::InputIndex::LINEAR_SPEED_Y_BODY), 0);
-  EXPECT_FALSE(std::isfinite(
-      metaState.input.U(MetaState::InputIndex::ANGULAR_SPEED_Z_BODY)));
+  EXPECT_FALSE(std::isfinite(metaState.input.U(MetaState::InputIndex::ANGULAR_SPEED_Z_BODY)));
 
-  EXPECT_EQ(metaState.input.QU(MetaState::InputIndex::LINEAR_SPEED_X_BODY,
-                               MetaState::InputIndex::LINEAR_SPEED_X_BODY),
-            observation.R());
+  EXPECT_EQ(
+    metaState.input.QU(
+      MetaState::InputIndex::LINEAR_SPEED_X_BODY, MetaState::InputIndex::LINEAR_SPEED_X_BODY),
+    observation.R());
 
-  EXPECT_EQ(metaState.input.QU(MetaState::InputIndex::LINEAR_SPEED_X_BODY,
-                               MetaState::InputIndex::LINEAR_SPEED_Y_BODY),
-            0);
+  EXPECT_EQ(
+    metaState.input.QU(
+      MetaState::InputIndex::LINEAR_SPEED_X_BODY, MetaState::InputIndex::LINEAR_SPEED_Y_BODY),
+    0);
 
-  EXPECT_EQ(metaState.input.QU(MetaState::InputIndex::LINEAR_SPEED_X_BODY,
-                               MetaState::InputIndex::ANGULAR_SPEED_Z_BODY),
-            0);
+  EXPECT_EQ(
+    metaState.input.QU(
+      MetaState::InputIndex::LINEAR_SPEED_X_BODY, MetaState::InputIndex::ANGULAR_SPEED_Z_BODY),
+    0);
 
-  EXPECT_EQ(metaState.input.QU(MetaState::InputIndex::LINEAR_SPEED_Y_BODY,
-                               MetaState::InputIndex::LINEAR_SPEED_X_BODY),
-            0);
+  EXPECT_EQ(
+    metaState.input.QU(
+      MetaState::InputIndex::LINEAR_SPEED_Y_BODY, MetaState::InputIndex::LINEAR_SPEED_X_BODY),
+    0);
 
-  EXPECT_EQ(metaState.input.QU(MetaState::InputIndex::LINEAR_SPEED_Y_BODY,
-                               MetaState::InputIndex::LINEAR_SPEED_Y_BODY),
-            0);
+  EXPECT_EQ(
+    metaState.input.QU(
+      MetaState::InputIndex::LINEAR_SPEED_Y_BODY, MetaState::InputIndex::LINEAR_SPEED_Y_BODY),
+    0);
 
-  EXPECT_EQ(metaState.input.QU(MetaState::InputIndex::LINEAR_SPEED_Y_BODY,
-                               MetaState::InputIndex::ANGULAR_SPEED_Z_BODY),
-            0);
+  EXPECT_EQ(
+    metaState.input.QU(
+      MetaState::InputIndex::LINEAR_SPEED_Y_BODY, MetaState::InputIndex::ANGULAR_SPEED_Z_BODY),
+    0);
 
-  EXPECT_EQ(metaState.input.QU(MetaState::InputIndex::ANGULAR_SPEED_Z_BODY,
-                               MetaState::InputIndex::LINEAR_SPEED_X_BODY),
-            0);
+  EXPECT_EQ(
+    metaState.input.QU(
+      MetaState::InputIndex::ANGULAR_SPEED_Z_BODY, MetaState::InputIndex::LINEAR_SPEED_X_BODY),
+    0);
 
-  EXPECT_EQ(metaState.input.QU(MetaState::InputIndex::ANGULAR_SPEED_Z_BODY,
-                               MetaState::InputIndex::LINEAR_SPEED_Y_BODY),
-            0);
+  EXPECT_EQ(
+    metaState.input.QU(
+      MetaState::InputIndex::ANGULAR_SPEED_Z_BODY, MetaState::InputIndex::LINEAR_SPEED_Y_BODY),
+    0);
 
-  EXPECT_EQ(metaState.input.QU(MetaState::InputIndex::ANGULAR_SPEED_Z_BODY,
-                               MetaState::InputIndex::ANGULAR_SPEED_Z_BODY),
-            0);
+  EXPECT_EQ(
+    metaState.input.QU(
+      MetaState::InputIndex::ANGULAR_SPEED_Z_BODY, MetaState::InputIndex::ANGULAR_SPEED_Z_BODY),
+    0);
 }
 
 //-----------------------------------------------------------------------------
-int main(int argc, char** argv) {
+int main(int argc, char ** argv)
+{
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
