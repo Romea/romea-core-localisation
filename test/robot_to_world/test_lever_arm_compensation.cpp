@@ -16,7 +16,36 @@
 #include <gtest/gtest.h>
 
 // romea
+#include "romea_core_common/transform/SmartRotation3D.hpp"
 #include "romea_core_localisation/robot_to_world/lever_arm_compensation.hpp"
+
+namespace
+{
+
+Eigen::Matrix3d computeNumericalJacobian(
+  const Eigen::Vector3d & angles,
+  const Eigen::Vector3d & antenna_position)
+{
+  constexpr double epsilon = 1e-6;
+
+  Eigen::Matrix3d jacobian;
+  for (int n = 0; n < 3; ++n) {
+    Eigen::Vector3d forward_angles = angles;
+    Eigen::Vector3d backward_angles = angles;
+    forward_angles(n) += epsilon;
+    backward_angles(n) -= epsilon;
+
+    romea::core::SmartRotation3D forward_rotation(forward_angles);
+    romea::core::SmartRotation3D backward_rotation(backward_angles);
+
+    jacobian.col(n) =
+      (forward_rotation * antenna_position - backward_rotation * antenna_position) / (2 * epsilon);
+  }
+
+  return jacobian;
+}
+
+}  // namespace
 
 class TestLeverArmCompensation : public ::testing::Test
 {
@@ -59,6 +88,27 @@ TEST_F(TestLeverArmCompensation, yaw_compensation)
   EXPECT_NEAR(lever_arm_compensation.getPosition().x(), -antenna_position.y(), 0.0001);
   EXPECT_NEAR(lever_arm_compensation.getPosition().y(), antenna_position.x(), 0.0001);
   EXPECT_NEAR(lever_arm_compensation.getPosition().z(), antenna_position.z(), 0.0001);
+}
+
+TEST_F(TestLeverArmCompensation, jacobian_and_covariance)
+{
+  const Eigen::Vector3d angles(0.2, -0.3, 0.4);
+  const double yaw_variance = 0.2;
+
+  lever_arm_compensation.compute(
+    angles.x(), angles.y(), angle_variance, angles.z(), yaw_variance, antenna_position);
+
+  Eigen::Matrix3d expected_jacobian = computeNumericalJacobian(angles, antenna_position);
+  Eigen::Matrix3d attitude_covariance = Eigen::Matrix3d::Zero();
+  attitude_covariance(0, 0) = angle_variance;
+  attitude_covariance(1, 1) = angle_variance;
+  attitude_covariance(2, 2) = yaw_variance;
+
+  Eigen::Matrix3d expected_covariance =
+    expected_jacobian * attitude_covariance * expected_jacobian.transpose();
+
+  EXPECT_TRUE(lever_arm_compensation.getJacobian().isApprox(expected_jacobian, 1e-5));
+  EXPECT_TRUE(lever_arm_compensation.getPositionCovariance().isApprox(expected_covariance, 1e-5));
 }
 
 //-----------------------------------------------------------------------------
