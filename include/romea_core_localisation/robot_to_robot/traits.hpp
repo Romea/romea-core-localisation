@@ -19,11 +19,10 @@
 #include "romea_core_filtering/filter/kalman/filter.hpp"
 #include "romea_core_filtering/filter/particle/filter.hpp"
 #include "romea_core_localisation/robot_to_robot/kalman/predictor.hpp"
-#include "romea_core_localisation/robot_to_robot/kalman/results.hpp"
+#include "romea_core_localisation/robot_to_robot/results.hpp"
 #include "romea_core_localisation/robot_to_robot/kalman/updater_leader_pose.hpp"
 #include "romea_core_localisation/robot_to_robot/kalman/updater_range.hpp"
 #include "romea_core_localisation/robot_to_robot/particle/predictor.hpp"
-#include "romea_core_localisation/robot_to_robot/particle/results.hpp"
 #include "romea_core_localisation/robot_to_robot/particle/updater_leader_pose.hpp"
 #include "romea_core_localisation/robot_to_robot/particle/updater_range.hpp"
 #include "romea_core_localisation/robot_to_robot/updater_leader_twist.hpp"
@@ -48,6 +47,7 @@ template<>
 struct R2RTraits<KALMAN>
 {
   using Filter = KalmanFilter<R2RKFMetaState, FSMState, Duration>;
+  using MetaState = R2RKFMetaState;
   using UpdaterTwist = romea::core::localisation::UpdaterTwist<R2RKFMetaState>;
   using UpdaterLeaderTwist = R2RUpdaterLeaderTwist<R2RKFMetaState>;
   using UpdaterLinearSpeed = romea::core::localisation::UpdaterLinearSpeed<R2RKFMetaState>;
@@ -56,13 +56,15 @@ struct R2RTraits<KALMAN>
   using UpdaterPose = R2RKFUpdaterLeaderPose;
   using UpdaterRange = R2RKFUpdaterRange;
   using Predictor = R2RKFPredictor;
-  using Results = R2RKFResults;
+  using Results = R2RResults;
+  using MetaStateToResults = R2RKFMetaStateToResults;
 };
 
 template<>
 struct R2RTraits<PARTICLE>
 {
   using Filter = ParticleFilter<R2RPFMetaState, FSMState, Duration>;
+  using MetaState = R2RPFMetaState;
   using UpdaterTwist = romea::core::localisation::UpdaterTwist<R2RPFMetaState>;
   using UpdaterLeaderTwist = R2RUpdaterLeaderTwist<R2RPFMetaState>;
   using UpdaterLinearSpeed = romea::core::localisation::UpdaterLinearSpeed<R2RPFMetaState>;
@@ -71,7 +73,8 @@ struct R2RTraits<PARTICLE>
   using UpdaterPose = R2RPFUpdaterLeaderPose;
   using UpdaterRange = R2RPFUpdaterRange;
   using Predictor = R2RPFPredictor;
-  using Results = R2RPFResults;
+  using Results = R2RResults;
+  using MetaStateToResults = R2RPFMetaStateToResults;
 };
 
 }  // namespace localisation

@@ -112,7 +112,7 @@ For example, a robot-to-world Kalman localisation filter is assembled from the f
 | Predictor | `R2WKFPredictor` | Propagates the vehicle state from motion inputs and the vehicle kinematic model. |
 | Exteroceptive updaters | `R2WKFUpdaterPosition`, `R2WKFUpdaterCourse`, `R2WKFUpdaterPose`, `R2WKFUpdaterRange` | Correct the predicted state with external observations. |
 | Proprioceptive updaters | `UpdaterTwist`, `UpdaterLinearSpeed`, `UpdaterLinearSpeeds`, `UpdaterAngularSpeed`, `R2WUpdaterAttitude` | Update the motion inputs and attitude data used by the predictor. |
-| Results | `R2WKFResults` | Extract the estimated pose, twist and covariance information from the current filter state. |
+| Results | `R2WResults` | Stores the estimated pose, twist and covariance information converted from the current filter state. |
 
 The corresponding traits can be used to select the right component set:
 
@@ -163,10 +163,11 @@ auto position_update = std::bind(
 
 filter->process(position_observation_time, std::move(position_update));
 
-Traits::Results current_results;
-if (filter->get_current_state(query_time, &current_results)) {
-  current_results.set_duration(query_time);
-  auto current_pose = current_results.to_pose2d();
+Traits::MetaState current_meta_state;
+Traits::MetaStateToResults meta_state_to_results;
+if (filter->get_state(query_time, &current_meta_state)) {
+  const auto current_results = meta_state_to_results.convert(current_meta_state);
+  const auto & current_pose = current_results.robot_pose;
   auto current_status = filter->get_fsm_state();
 }
 ```

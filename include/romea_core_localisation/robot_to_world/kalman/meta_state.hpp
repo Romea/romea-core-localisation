@@ -25,6 +25,7 @@
 // local
 #include "romea_core_localisation/robot_to_world/lever_arm_compensation.hpp"
 #include "romea_core_localisation/robot_to_world/meta_state_base.hpp"
+#include "romea_core_localisation/robot_to_world/results.hpp"
 
 namespace romea
 {
@@ -42,6 +43,11 @@ struct R2WKFMetaState : R2WMetaStateBase
   virtual ~R2WKFMetaState() = default;
 
   State state;
+};
+
+struct R2WKFMetaStateToResults
+{
+  R2WResults convert(const R2WKFMetaState & meta_state) const;
 };
 
 void apply_lever_arm_compensation(

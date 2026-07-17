@@ -15,67 +15,60 @@
 
 #include <gtest/gtest.h>
 
-#include "romea_core_localisation/robot_to_robot/kalman/results.hpp"
+#include "romea_core_localisation/robot_to_robot/kalman/meta_state.hpp"
 
 namespace
 {
 
-using Results = romea::core::localisation::R2RKFResults;
+using Results = romea::core::localisation::R2RResults;
+using State = romea::core::localisation::R2RKFMetaState;
 
 Results make_results()
 {
-  Results results;
-  results.state.X() << 1.0, 2.0, 0.3;
-  results.state.P() << 0.1, 0.01, 0.02, 0.01, 0.2, 0.03, 0.02, 0.03, 0.3;
-  results.input.U() << 4.0, 5.0, 0.6, 7.0, 8.0, 0.9;
-  results.input.QU().setZero();
-  results.input.QU().block<3, 3>(0, 0) << 0.4, 0.04, 0.05, 0.04, 0.5, 0.06, 0.05, 0.06, 0.6;
-  results.input.QU().block<3, 3>(3, 3) << 0.7, 0.07, 0.08, 0.07, 0.8, 0.09, 0.08, 0.09, 0.9;
-  return results;
+  State state;
+  state.state.X() << 1.0, 2.0, 0.3;
+  state.state.P() << 0.1, 0.01, 0.02, 0.01, 0.2, 0.03, 0.02, 0.03, 0.3;
+  state.input.U() << 4.0, 5.0, 0.6, 7.0, 8.0, 0.9;
+  state.input.QU().setZero();
+  state.input.QU().block<3, 3>(0, 0) << 0.4, 0.04, 0.05, 0.04, 0.5, 0.06, 0.05, 0.06, 0.6;
+  state.input.QU().block<3, 3>(3, 3) << 0.7, 0.07, 0.08, 0.07, 0.8, 0.09, 0.08, 0.09, 0.9;
+
+  return romea::core::localisation::R2RKFMetaStateToResults().convert(state);
 }
 
 }  // namespace
 
-TEST(TestR2RKFResults, exposesLeaderPoseAndRobotTwistAccessors)
+TEST(TestR2RResults, storesLeaderPoseAndFollowerTwist)
 {
   const auto results = make_results();
 
-  EXPECT_DOUBLE_EQ(results.get_leader_x(), 1.0);
-  EXPECT_DOUBLE_EQ(results.get_leader_y(), 2.0);
-  EXPECT_DOUBLE_EQ(results.get_leader_orientation(), 0.3);
-  EXPECT_TRUE(results.get_leader_pose().isApprox(results.state.X()));
-  EXPECT_TRUE(results.get_leader_pose_covariance().isApprox(results.state.P()));
-  EXPECT_DOUBLE_EQ(results.get_linear_speed(), 4.0);
-  EXPECT_DOUBLE_EQ(results.get_lateral_speed(), 5.0);
-  EXPECT_DOUBLE_EQ(results.get_angular_speed(), 0.6);
-  EXPECT_TRUE(results.get_twist().isApprox(results.input.U().segment<3>(0)));
-  EXPECT_TRUE(results.get_twist_covariance().isApprox(results.input.QU().block<3, 3>(0, 0)));
+  EXPECT_DOUBLE_EQ(results.leader_pose.position.x(), 1.0);
+  EXPECT_DOUBLE_EQ(results.leader_pose.position.y(), 2.0);
+  EXPECT_DOUBLE_EQ(results.leader_pose.yaw, 0.3);
+  EXPECT_TRUE(results.leader_pose.covariance.isApprox(
+    (Eigen::Matrix3d() << 0.1, 0.01, 0.02, 0.01, 0.2, 0.03, 0.02, 0.03, 0.3).finished()));
+  EXPECT_DOUBLE_EQ(results.follower_twist.linearSpeeds.x(), 4.0);
+  EXPECT_DOUBLE_EQ(results.follower_twist.linearSpeeds.y(), 5.0);
+  EXPECT_DOUBLE_EQ(results.follower_twist.angularSpeed, 0.6);
 }
 
-TEST(TestR2RKFResults, exposesLeaderTwistAccessors)
+TEST(TestR2RResults, storesLeaderTwist)
 {
   const auto results = make_results();
 
-  EXPECT_DOUBLE_EQ(results.get_leader_linear_speed(), 7.0);
-  EXPECT_DOUBLE_EQ(results.get_leader_lateral_speed(), 8.0);
-  EXPECT_DOUBLE_EQ(results.get_leader_angular_speed(), 0.9);
-  EXPECT_TRUE(results.get_leader_twist().isApprox(results.input.U().segment<3>(3)));
-  EXPECT_TRUE(results.get_leader_twist_covariance().isApprox(results.input.QU().block<3, 3>(3, 3)));
+  EXPECT_DOUBLE_EQ(results.leader_twist.linearSpeeds.x(), 7.0);
+  EXPECT_DOUBLE_EQ(results.leader_twist.linearSpeeds.y(), 8.0);
+  EXPECT_DOUBLE_EQ(results.leader_twist.angularSpeed, 0.9);
+  EXPECT_TRUE(results.leader_twist.covariance.isApprox(
+    (Eigen::Matrix3d() << 0.7, 0.07, 0.08, 0.07, 0.8, 0.09, 0.08, 0.09, 0.9).finished()));
 }
 
-TEST(TestR2RKFResults, convertsToLeaderPoseAndBodyTwist2D)
+TEST(TestR2RResults, storesFollowerTwistCovariance)
 {
   const auto results = make_results();
-  const auto pose_and_twist = results.to_leader_pose_and_body_twist2d();
 
-  EXPECT_DOUBLE_EQ(pose_and_twist.pose.position.x(), results.get_leader_x());
-  EXPECT_DOUBLE_EQ(pose_and_twist.pose.position.y(), results.get_leader_y());
-  EXPECT_DOUBLE_EQ(pose_and_twist.pose.yaw, results.get_leader_orientation());
-  EXPECT_TRUE(pose_and_twist.pose.covariance.isApprox(results.get_leader_pose_covariance()));
-  EXPECT_DOUBLE_EQ(pose_and_twist.twist.linearSpeeds.x(), results.get_leader_linear_speed());
-  EXPECT_DOUBLE_EQ(pose_and_twist.twist.linearSpeeds.y(), results.get_leader_lateral_speed());
-  EXPECT_DOUBLE_EQ(pose_and_twist.twist.angularSpeed, results.get_leader_angular_speed());
-  EXPECT_TRUE(pose_and_twist.twist.covariance.isApprox(results.get_leader_twist_covariance()));
+  EXPECT_TRUE(results.follower_twist.covariance.isApprox(
+    (Eigen::Matrix3d() << 0.4, 0.04, 0.05, 0.04, 0.5, 0.06, 0.05, 0.06, 0.6).finished()));
 }
 
 int main(int argc, char ** argv)

@@ -24,6 +24,7 @@
 
 // local
 #include "romea_core_localisation/robot_to_world/meta_state_base.hpp"
+#include "romea_core_localisation/robot_to_world/results.hpp"
 
 namespace romea
 {
@@ -42,6 +43,27 @@ public:
   virtual ~R2WPFMetaState() = default;
 
   State state;
+};
+
+class R2WPFMetaStateToResults
+{
+public:
+  using RowMajorMatrix = R2WPFMetaState::State::RowMajorMatrix;
+
+public:
+  explicit R2WPFMetaStateToResults(const size_t & number_of_particles);
+
+  R2WResults convert(const R2WPFMetaState & meta_state) const;
+
+private:
+  Eigen::Vector3d compute_estimate_(const R2WPFMetaState & meta_state) const;
+
+  Eigen::Matrix3d compute_estimate_covariance_(
+    const R2WPFMetaState & meta_state,
+    const Eigen::Vector3d & estimate) const;
+
+private:
+  mutable RowMajorMatrix mean_centered_particles_;
 };
 
 }  // namespace localisation

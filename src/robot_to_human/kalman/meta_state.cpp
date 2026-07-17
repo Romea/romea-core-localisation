@@ -26,6 +26,26 @@ R2HKFMetaState::R2HKFMetaState() : R2HMetaStateBase(), state()
 {
 }
 
+//-----------------------------------------------------------------------------
+R2HResults R2HKFMetaStateToResults::convert(const R2HKFMetaState & meta_state) const
+{
+  R2HResults results;
+
+  results.leader_position.position.x() = meta_state.state.X(R2HKFMetaState::LEADER_POSITION_X);
+  results.leader_position.position.y() = meta_state.state.X(R2HKFMetaState::LEADER_POSITION_Y);
+  results.leader_position.covariance = meta_state.state.P();
+
+  results.follower_twist.linearSpeeds.x() =
+    meta_state.input.U(R2HKFMetaState::LINEAR_SPEED_X_BODY);
+  results.follower_twist.linearSpeeds.y() =
+    meta_state.input.U(R2HKFMetaState::LINEAR_SPEED_Y_BODY);
+  results.follower_twist.angularSpeed =
+    meta_state.input.U(R2HKFMetaState::ANGULAR_SPEED_Z_BODY);
+  results.follower_twist.covariance = meta_state.input.QU();
+
+  return results;
+}
+
 }  // namespace localisation
 }  // namespace core
 }  // namespace romea

@@ -16,66 +16,60 @@
 #include <gtest/gtest.h>
 
 #include "romea_core_common/time/Time.hpp"
-#include "romea_core_localisation/robot_to_world/particle/results.hpp"
+#include "romea_core_localisation/robot_to_world/particle/meta_state.hpp"
 
 namespace
 {
 
-using Results = romea::core::localisation::R2WPFResults;
+using Results = romea::core::localisation::R2WResults;
+using State = romea::core::localisation::R2WPFMetaState;
 
 Results make_results()
 {
-  Results results(3);
-  results.set_duration(romea::core::durationFromSecond(1.0));
-  results.state.particles.row(Results::POSITION_X) << 1.0, 2.0, 3.0;
-  results.state.particles.row(Results::POSITION_Y) << 4.0, 5.0, 6.0;
-  results.state.particles.row(Results::ORIENTATION_Z) << 0.4, 0.4, 0.4;
-  results.state.weights.setConstant(1.0 / 3.0);
-  results.input.U() << 0.7, -0.2, 0.3;
-  results.input.QU().setIdentity();
-  results.input.QU() *= 0.01;
-  results.addon.roll = 0.01;
-  results.addon.pitch = -0.02;
-  results.addon.roll_pitch_variance = 0.03;
-  return results;
+  State state(3);
+  state.state.particles.row(State::POSITION_X) << 1.0, 2.0, 3.0;
+  state.state.particles.row(State::POSITION_Y) << 4.0, 5.0, 6.0;
+  state.state.particles.row(State::ORIENTATION_Z) << 0.4, 0.4, 0.4;
+  state.state.weights.setConstant(1.0 / 3.0);
+  state.input.U() << 0.7, -0.2, 0.3;
+  state.input.QU().setIdentity();
+  state.input.QU() *= 0.01;
+  state.addon.roll = 0.01;
+  state.addon.pitch = -0.02;
+  state.addon.roll_pitch_variance = 0.03;
+
+  return romea::core::localisation::R2WPFMetaStateToResults(3).convert(state);
 }
 
 }  // namespace
 
-TEST(TestR2WPFResults, computesWeightedPoseEstimate)
+TEST(TestR2WResults, computesWeightedPoseEstimate)
 {
   const auto results = make_results();
 
-  EXPECT_NEAR(results.get_x(), 2.0, 1e-12);
-  EXPECT_NEAR(results.get_y(), 5.0, 1e-12);
-  EXPECT_NEAR(results.get_yaw(), 0.4, 1e-12);
-  EXPECT_TRUE(results.get_pose().isApprox(Eigen::Vector3d(2.0, 5.0, 0.4), 1e-12));
+  EXPECT_NEAR(results.robot_pose.position.x(), 2.0, 1e-12);
+  EXPECT_NEAR(results.robot_pose.position.y(), 5.0, 1e-12);
+  EXPECT_NEAR(results.robot_pose.orientation.z(), 0.4, 1e-12);
 }
 
-TEST(TestR2WPFResults, DISABLED_computesPoseCovarianceFromParticles)
+TEST(TestR2WResults, DISABLED_computesPoseCovarianceFromParticles)
 {
   const auto results = make_results();
-  const auto covariance = results.get_pose_covariance();
+  const auto & covariance = results.robot_pose.covariance;
 
-  EXPECT_NEAR(covariance(Results::POSITION_X, Results::POSITION_X), 2.0 / 3.0, 1e-12);
-  EXPECT_NEAR(covariance(Results::POSITION_Y, Results::POSITION_Y), 2.0 / 3.0, 1e-12);
-  EXPECT_NEAR(covariance(Results::ORIENTATION_Z, Results::ORIENTATION_Z), 0.0, 1e-12);
-  EXPECT_NEAR(results.get_yaw_variance(), 0.0, 1e-12);
+  EXPECT_NEAR(covariance(State::POSITION_X, State::POSITION_X), 2.0 / 3.0, 1e-12);
+  EXPECT_NEAR(covariance(State::POSITION_Y, State::POSITION_Y), 2.0 / 3.0, 1e-12);
+  EXPECT_NEAR(covariance(State::ORIENTATION_Z, State::ORIENTATION_Z), 0.0, 1e-12);
+  EXPECT_NEAR(results.robot_pose.covariance(2, 2), 0.0, 1e-12);
 }
 
-TEST(TestR2WPFResults, exposesTwistAndConversions)
+TEST(TestR2WResults, storesTwist)
 {
   const auto results = make_results();
-  const auto pose_and_twist = results.to_pose_and_body_twist2d();
 
-  EXPECT_TRUE(results.get_twist().isApprox(results.input.U()));
-  EXPECT_TRUE(results.get_twist_covariance().isApprox(results.input.QU()));
-  EXPECT_NEAR(pose_and_twist.pose.position.x(), results.get_x(), 1e-12);
-  EXPECT_NEAR(pose_and_twist.pose.position.y(), results.get_y(), 1e-12);
-  EXPECT_NEAR(pose_and_twist.pose.yaw, results.get_yaw(), 1e-12);
-  EXPECT_NEAR(pose_and_twist.twist.linearSpeeds.x(), results.get_linear_speed(), 1e-12);
-  EXPECT_NEAR(pose_and_twist.twist.linearSpeeds.y(), results.get_lateral_speed(), 1e-12);
-  EXPECT_NEAR(pose_and_twist.twist.angularSpeed, results.get_angular_speed(), 1e-12);
+  EXPECT_DOUBLE_EQ(results.robot_twist.linearSpeeds.x(), 0.7);
+  EXPECT_DOUBLE_EQ(results.robot_twist.linearSpeeds.y(), -0.2);
+  EXPECT_DOUBLE_EQ(results.robot_twist.angularSpeeds.z(), 0.3);
 }
 
 int main(int argc, char ** argv)

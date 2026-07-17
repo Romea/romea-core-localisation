@@ -16,67 +16,62 @@
 #include <gtest/gtest.h>
 
 #include "romea_core_common/time/Time.hpp"
-#include "romea_core_localisation/robot_to_robot/particle/results.hpp"
+#include "romea_core_localisation/robot_to_robot/particle/meta_state.hpp"
 
 namespace
 {
 
-using Results = romea::core::localisation::R2RPFResults;
+using Results = romea::core::localisation::R2RResults;
+using State = romea::core::localisation::R2RPFMetaState;
 
 Results make_results()
 {
-  Results results(3);
-  results.set_duration(romea::core::durationFromSecond(1.0));
-  results.state.particles.row(Results::LEADER_POSITION_X) << 1.0, 2.0, 3.0;
-  results.state.particles.row(Results::LEADER_POSITION_Y) << 4.0, 5.0, 6.0;
-  results.state.particles.row(Results::LEADER_ORIENTATION_Z) << 0.4, 0.4, 0.4;
-  results.state.weights.setConstant(1.0 / 3.0);
-  results.input.U() << 0.7, -0.2, 0.3, 1.7, -1.2, 1.3;
-  results.input.QU().setZero();
-  results.input.QU().block<3, 3>(0, 0).setIdentity();
-  results.input.QU().block<3, 3>(0, 0) *= 0.01;
-  results.input.QU().block<3, 3>(3, 3).setIdentity();
-  results.input.QU().block<3, 3>(3, 3) *= 0.02;
-  return results;
+  State state(3);
+  state.state.particles.row(State::LEADER_POSITION_X) << 1.0, 2.0, 3.0;
+  state.state.particles.row(State::LEADER_POSITION_Y) << 4.0, 5.0, 6.0;
+  state.state.particles.row(State::LEADER_ORIENTATION_Z) << 0.4, 0.4, 0.4;
+  state.state.weights.setConstant(1.0 / 3.0);
+  state.input.U() << 0.7, -0.2, 0.3, 1.7, -1.2, 1.3;
+  state.input.QU().setZero();
+  state.input.QU().block<3, 3>(0, 0).setIdentity();
+  state.input.QU().block<3, 3>(0, 0) *= 0.01;
+  state.input.QU().block<3, 3>(3, 3).setIdentity();
+  state.input.QU().block<3, 3>(3, 3) *= 0.02;
+
+  return romea::core::localisation::R2RPFMetaStateToResults(3).convert(state);
 }
 
 }  // namespace
 
-TEST(TestR2RPFResults, computesWeightedLeaderPoseEstimate)
+TEST(TestR2RResults, computesWeightedLeaderPoseEstimate)
 {
   const auto results = make_results();
 
-  EXPECT_NEAR(results.get_leader_x(), 2.0, 1e-12);
-  EXPECT_NEAR(results.get_leader_y(), 5.0, 1e-12);
-  EXPECT_NEAR(results.get_leader_orientation(), 0.4, 1e-12);
-  EXPECT_TRUE(results.get_leader_pose().isApprox(Eigen::Vector3d(2.0, 5.0, 0.4), 1e-12));
+  EXPECT_NEAR(results.leader_pose.position.x(), 2.0, 1e-12);
+  EXPECT_NEAR(results.leader_pose.position.y(), 5.0, 1e-12);
+  EXPECT_NEAR(results.leader_pose.yaw, 0.4, 1e-12);
 }
 
-TEST(TestR2RPFResults, computesLeaderPoseCovarianceFromParticles)
+TEST(TestR2RResults, computesLeaderPoseCovarianceFromParticles)
 {
   const auto results = make_results();
-  const auto covariance = results.get_leader_pose_covariance();
+  const auto & covariance = results.leader_pose.covariance;
 
-  EXPECT_NEAR(covariance(Results::LEADER_POSITION_X, Results::LEADER_POSITION_X), 2.0 / 3.0, 1e-12);
-  EXPECT_NEAR(covariance(Results::LEADER_POSITION_Y, Results::LEADER_POSITION_Y), 2.0 / 3.0, 1e-12);
-  EXPECT_NEAR(covariance(Results::LEADER_ORIENTATION_Z, Results::LEADER_ORIENTATION_Z), 0.0, 1e-12);
+  EXPECT_NEAR(covariance(State::LEADER_POSITION_X, State::LEADER_POSITION_X), 2.0 / 3.0, 1e-12);
+  EXPECT_NEAR(covariance(State::LEADER_POSITION_Y, State::LEADER_POSITION_Y), 2.0 / 3.0, 1e-12);
+  EXPECT_NEAR(covariance(State::LEADER_ORIENTATION_Z, State::LEADER_ORIENTATION_Z), 0.0, 1e-12);
 }
 
-TEST(TestR2RPFResults, exposesRobotAndLeaderTwists)
+TEST(TestR2RResults, storesFollowerAndLeaderTwists)
 {
   const auto results = make_results();
-  const auto pose_and_twist = results.to_leader_pose_and_body_twist2d();
 
-  EXPECT_TRUE(results.get_twist().isApprox(results.input.U().segment<3>(0)));
-  EXPECT_TRUE(results.get_twist_covariance().isApprox(results.input.QU().block<3, 3>(0, 0)));
-  EXPECT_TRUE(results.get_leader_twist().isApprox(results.input.U().segment<3>(3)));
-  EXPECT_TRUE(results.get_leader_twist_covariance().isApprox(results.input.QU().block<3, 3>(3, 3)));
-  EXPECT_NEAR(pose_and_twist.pose.position.x(), results.get_leader_x(), 1e-12);
-  EXPECT_NEAR(pose_and_twist.pose.position.y(), results.get_leader_y(), 1e-12);
-  EXPECT_NEAR(pose_and_twist.pose.yaw, results.get_leader_orientation(), 1e-12);
-  EXPECT_NEAR(pose_and_twist.twist.linearSpeeds.x(), results.get_leader_linear_speed(), 1e-12);
-  EXPECT_NEAR(pose_and_twist.twist.linearSpeeds.y(), results.get_leader_lateral_speed(), 1e-12);
-  EXPECT_NEAR(pose_and_twist.twist.angularSpeed, results.get_leader_angular_speed(), 1e-12);
+  EXPECT_DOUBLE_EQ(results.follower_twist.linearSpeeds.x(), 0.7);
+  EXPECT_DOUBLE_EQ(results.follower_twist.linearSpeeds.y(), -0.2);
+  EXPECT_DOUBLE_EQ(results.follower_twist.angularSpeed, 0.3);
+  EXPECT_DOUBLE_EQ(results.leader_twist.linearSpeeds.x(), 1.7);
+  EXPECT_DOUBLE_EQ(results.leader_twist.linearSpeeds.y(), -1.2);
+  EXPECT_DOUBLE_EQ(results.leader_twist.angularSpeed, 1.3);
 }
 
 int main(int argc, char ** argv)

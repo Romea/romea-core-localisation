@@ -19,6 +19,7 @@
 // namespace romea
 #include "romea_core_filtering/gaussian/state.hpp"
 #include "romea_core_localisation/robot_to_human/meta_state_base.hpp"
+#include "romea_core_localisation/robot_to_human/results.hpp"
 
 namespace romea
 {
@@ -36,6 +37,11 @@ struct R2HKFMetaState : R2HMetaStateBase
   virtual ~R2HKFMetaState() = default;
 
   State state;
+};
+
+struct R2HKFMetaStateToResults
+{
+  R2HResults convert(const R2HKFMetaState & meta_state) const;
 };
 
 }  // namespace localisation

@@ -26,6 +26,38 @@ R2RKFMetaState::R2RKFMetaState() : R2RMetaStateBase(), state()
 {
 }
 
+//-----------------------------------------------------------------------------
+R2RResults R2RKFMetaStateToResults::convert(const R2RKFMetaState & meta_state) const
+{
+  R2RResults results;
+
+  results.leader_pose.position.x() = meta_state.state.X(R2RKFMetaState::LEADER_POSITION_X);
+  results.leader_pose.position.y() = meta_state.state.X(R2RKFMetaState::LEADER_POSITION_Y);
+  results.leader_pose.yaw = meta_state.state.X(R2RKFMetaState::LEADER_ORIENTATION_Z);
+  results.leader_pose.covariance = meta_state.state.P();
+
+  results.follower_twist.linearSpeeds.x() =
+    meta_state.input.U(R2RKFMetaState::LINEAR_SPEED_X_BODY);
+  results.follower_twist.linearSpeeds.y() =
+    meta_state.input.U(R2RKFMetaState::LINEAR_SPEED_Y_BODY);
+  results.follower_twist.angularSpeed =
+    meta_state.input.U(R2RKFMetaState::ANGULAR_SPEED_Z_BODY);
+  results.follower_twist.covariance = meta_state.input.QU().block<3, 3>(
+    R2RKFMetaState::LINEAR_SPEED_X_BODY, R2RKFMetaState::LINEAR_SPEED_X_BODY);
+
+  results.leader_twist.linearSpeeds.x() =
+    meta_state.input.U(R2RKFMetaState::LEADER_LINEAR_SPEED_X_BODY);
+  results.leader_twist.linearSpeeds.y() =
+    meta_state.input.U(R2RKFMetaState::LEADER_LINEAR_SPEED_Y_BODY);
+  results.leader_twist.angularSpeed =
+    meta_state.input.U(R2RKFMetaState::LEADER_ANGULAR_SPEED_Z_BODY);
+  results.leader_twist.covariance = meta_state.input.QU().block<3, 3>(
+    R2RKFMetaState::LEADER_LINEAR_SPEED_X_BODY,
+    R2RKFMetaState::LEADER_LINEAR_SPEED_X_BODY);
+
+  return results;
+}
+
 }  // namespace localisation
 }  // namespace core
 }  // namespace romea

@@ -21,25 +21,21 @@ add_library(${PROJECT_NAME} SHARED
   src/updater_trigger_mode.cpp
   src/update_monitoring.cpp
   src/robot_to_human/meta_state_base.cpp
-  src/robot_to_human/kalman/results.cpp
   src/robot_to_human/kalman/meta_state.cpp
   src/robot_to_human/kalman/predictor.cpp
   src/robot_to_human/kalman/updater_range.cpp
   src/robot_to_human/kalman/updater_leader_position.cpp
   src/robot_to_robot/meta_state_base.cpp
-  src/robot_to_robot/kalman/results.cpp
   src/robot_to_robot/kalman/meta_state.cpp
   src/robot_to_robot/kalman/predictor.cpp
   src/robot_to_robot/kalman/updater_range.cpp
   src/robot_to_robot/kalman/updater_leader_pose.cpp
-  src/robot_to_robot/particle/results.cpp
   src/robot_to_robot/particle/meta_state.cpp
   src/robot_to_robot/particle/predictor.cpp
   src/robot_to_robot/particle/updater_range.cpp
   src/robot_to_robot/particle/updater_leader_pose.cpp
   src/robot_to_world/lever_arm_compensation.cpp
   src/robot_to_world/meta_state_base.cpp
-  src/robot_to_world/kalman/results.cpp
   src/robot_to_world/kalman/meta_state.cpp
   src/robot_to_world/kalman/predictor.cpp
   src/robot_to_world/kalman/updater_course.cpp
@@ -48,7 +44,6 @@ add_library(${PROJECT_NAME} SHARED
   src/robot_to_world/kalman/updater_position.cpp
   src/robot_to_world/particle/predictor.cpp
   src/robot_to_world/particle/meta_state.cpp
-  src/robot_to_world/particle/results.cpp
   src/robot_to_world/particle/updater_course.cpp
   src/robot_to_world/particle/updater_range.cpp
   src/robot_to_world/particle/updater_pose.cpp

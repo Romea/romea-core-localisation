@@ -20,13 +20,12 @@
 #include "romea_core_filtering/filter/kalman/filter.hpp"
 #include "romea_core_filtering/filter/particle/filter.hpp"
 #include "romea_core_localisation/robot_to_world/kalman/predictor.hpp"
-#include "romea_core_localisation/robot_to_world/kalman/results.hpp"
+#include "romea_core_localisation/robot_to_world/results.hpp"
 #include "romea_core_localisation/robot_to_world/kalman/updater_course.hpp"
 #include "romea_core_localisation/robot_to_world/kalman/updater_pose.hpp"
 #include "romea_core_localisation/robot_to_world/kalman/updater_position.hpp"
 #include "romea_core_localisation/robot_to_world/kalman/updater_range.hpp"
 #include "romea_core_localisation/robot_to_world/particle/predictor.hpp"
-#include "romea_core_localisation/robot_to_world/particle/results.hpp"
 #include "romea_core_localisation/robot_to_world/particle/updater_course.hpp"
 #include "romea_core_localisation/robot_to_world/particle/updater_pose.hpp"
 #include "romea_core_localisation/robot_to_world/particle/updater_position.hpp"
@@ -53,6 +52,7 @@ template<>
 struct R2WTraits<KALMAN>
 {
   using Filter = romea::core::KalmanFilter<R2WKFMetaState, FSMState, Duration>;
+  using MetaState = R2WKFMetaState;
   using UpdaterTwist = romea::core::localisation::UpdaterTwist<R2WKFMetaState>;
   using UpdaterLinearSpeed = romea::core::localisation::UpdaterLinearSpeed<R2WKFMetaState>;
   using UpdaterLinearSpeeds = romea::core::localisation::UpdaterLinearSpeeds<R2WKFMetaState>;
@@ -63,13 +63,15 @@ struct R2WTraits<KALMAN>
   using UpdaterPosition = R2WKFUpdaterPosition;
   using UpdaterRange = R2WKFUpdaterRange;
   using Predictor = R2WKFPredictor;
-  using Results = R2WKFResults;
+  using Results = R2WResults;
+  using MetaStateToResults = R2WKFMetaStateToResults;
 };
 
 template<>
 struct R2WTraits<PARTICLE>
 {
   using Filter = romea::core::ParticleFilter<R2WPFMetaState, FSMState, Duration>;
+  using MetaState = R2WPFMetaState;
   using UpdaterTwist = romea::core::localisation::UpdaterTwist<R2WPFMetaState>;
   using UpdaterLinearSpeed = romea::core::localisation::UpdaterLinearSpeed<R2WPFMetaState>;
   using UpdaterLinearSpeeds = romea::core::localisation::UpdaterLinearSpeeds<R2WPFMetaState>;
@@ -80,7 +82,8 @@ struct R2WTraits<PARTICLE>
   using UpdaterPosition = R2WPFUpdaterPosition;
   using UpdaterRange = R2WPFUpdaterRange;
   using Predictor = R2WPFPredictor;
-  using Results = R2WPFResults;
+  using Results = R2WResults;
+  using MetaStateToResults = R2WPFMetaStateToResults;
 };
 
 }  // namespace localisation
