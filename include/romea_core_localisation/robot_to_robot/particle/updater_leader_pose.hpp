@@ -50,8 +50,7 @@ public:
     const double & minimal_rate,
     const trigger_mode & trigger_mode,
     const size_t & number_of_particles,
-    const double & maximal_mahalanobis_distance,
-    const std::string & logFilename);
+    const double & maximal_mahalanobis_distance);
 
   void update(
     const Duration & duration,

@@ -37,9 +37,8 @@ R2WPFUpdaterCourse::R2WPFUpdaterCourse(
   const double & minimal_rate,
   const trigger_mode & trigger_mode,
   const size_t & number_of_particles,
-  const double & /*maximal_mahalanobis_distance*/,
-  const std::string & logFilename)
-: UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode, logFilename),
+  const double & /*maximal_mahalanobis_distance*/)
+: UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode),
   PFUpdaterBase(number_of_particles)
 {
 }

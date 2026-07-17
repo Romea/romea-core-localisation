@@ -62,7 +62,7 @@ TEST(TestR2RLeaderPoseUpdater, initWaitsForAllFollowerAndLeaderInputs)
   meta_state.input.U(MetaState::LEADER_LINEAR_SPEED_X_BODY) = 1.5;
 
   FSMState fsm_state = FSMState::INIT;
-  Updater updater("leader_pose_updater", 10.0, TriggerMode::ALWAYS, 10.0, "");
+  Updater updater("leader_pose_updater", 10.0, TriggerMode::ALWAYS, 10.0);
 
   updater.update(romea::core::durationFromSecond(1.0), make_observation(), fsm_state, meta_state);
 
@@ -76,7 +76,7 @@ TEST(TestR2RLeaderPoseUpdater, initialisesRelativePose)
   set_valid_leader_inputs(meta_state);
 
   FSMState fsm_state = FSMState::INIT;
-  Updater updater("leader_pose_updater", 10.0, TriggerMode::ALWAYS, 10.0, "");
+  Updater updater("leader_pose_updater", 10.0, TriggerMode::ALWAYS, 10.0);
   const auto timestamp = romea::core::durationFromSecond(1.0);
   const auto observation = make_observation();
 

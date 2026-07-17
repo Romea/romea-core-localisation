@@ -132,9 +132,7 @@ bool R2WKFPredictor::stop_(const Duration & duration, const MetaState & metaStat
     metaState.addon.travelled_distance -
     metaState.addon.last_exteroceptive_update.travelled_distance;
 
-  double positionCircularErrorProbability = std::sqrt(
-    metaState.state.P(MetaState::POSITION_X, MetaState::POSITION_X) +
-    metaState.state.P(MetaState::POSITION_Y, MetaState::POSITION_Y));
+  double positionCircularErrorProbability = position_circular_error_probability_(metaState);
 
   if (
     positionCircularErrorProbability > maximal_position_circular_error_probable_ ||
@@ -150,6 +148,14 @@ bool R2WKFPredictor::stop_(const Duration & duration, const MetaState & metaStat
   } else {
     return false;
   }
+}
+
+//-----------------------------------------------------------------------------
+double R2WKFPredictor::position_circular_error_probability_(const MetaState & metaState) const
+{
+  return std::sqrt(
+    metaState.state.P(MetaState::POSITION_X, MetaState::POSITION_X) +
+    metaState.state.P(MetaState::POSITION_Y, MetaState::POSITION_Y));
 }
 
 //-----------------------------------------------------------------------------

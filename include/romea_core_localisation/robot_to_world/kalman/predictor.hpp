@@ -44,6 +44,8 @@ public:
 protected:
   bool stop_(const Duration & duration, const MetaState & state) override;
 
+  double position_circular_error_probability_(const MetaState & current_state) const override;
+
   void predict_(const MetaState & previous_state, MetaState & next_state) override;
 
   void reset_(MetaState & state) override;

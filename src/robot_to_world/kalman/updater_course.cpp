@@ -35,13 +35,11 @@ R2WKFUpdaterCourse::R2WKFUpdaterCourse(
   const std::string & updater_name,
   const double & minimal_rate,
   const trigger_mode & trigger_mode,
-  const double & maximal_mahalanobis_distance,
-  const std::string & logFilename)
-: UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode, logFilename),
+  const double & maximal_mahalanobis_distance)
+: UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode),
   EKFUpdaterBase<double, 3, 1>(maximal_mahalanobis_distance)
 {
   H_(0, MetaState::ORIENTATION_Z) = 1;
-  set_log_file_header_({"stamp", "course", "cov_course", "theta", "cov_theta"});
 }
 
 //--------------------------------------------------------------------------
@@ -89,12 +87,13 @@ void R2WKFUpdaterCourse::update_(
     current_observation.R() + current_state.P(MetaState::ORIENTATION_Z, MetaState::ORIENTATION_Z);
 
   // log
-  if (log_file_.is_open()) {
-    log_file_ << duration.count() << ",";
-    log_file_ << current_observation.Y() << ",";
-    log_file_ << current_observation.R() << ",";
-    log_file_ << current_state.X(2) << ",";
-    log_file_ << current_state.P(2, 2) << ",/n";
+  if (logger_) {
+    logger_->addEntry("stamp", durationToSecond(duration));
+    logger_->addEntry("course", current_observation.Y());
+    logger_->addEntry("cov_course", current_observation.R());
+    logger_->addEntry("theta", current_state.X(2));
+    logger_->addEntry("cov_theta", current_state.P(2, 2));
+    logger_->writeRow();
   }
 
   if (!update_state_(current_state)) {

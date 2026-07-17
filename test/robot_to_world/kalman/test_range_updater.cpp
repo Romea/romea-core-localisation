@@ -56,7 +56,7 @@ TEST(TestR2WKFRangeUpdater, mahalanobisRejectionKeepsPreviousState)
 {
   auto meta_state = make_running_state();
   FSMState fsm_state = FSMState::RUNNING;
-  Updater updater("range_updater", 10.0, TriggerMode::ALWAYS, 1.0, "");
+  Updater updater("range_updater", 10.0, TriggerMode::ALWAYS, 1.0);
 
   const auto previous_state = meta_state.state.X();
   const auto previous_covariance = meta_state.state.P();

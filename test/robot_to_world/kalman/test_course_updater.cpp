@@ -41,8 +41,7 @@ public:
 
   void init(const FSMState & fsm_state_, const trigger_mode & trigger_mode_)
   {
-    updater =
-      std::make_unique<Updater>("course_updater", 100, trigger_mode_, 5, "course_updater.dat");
+    updater = std::make_unique<Updater>("course_updater", 100, trigger_mode_, 5);
 
     metastate.state.X() << 0, 0, initialCourse;
     metastate.state.P() << 1, 0, 0, 0, 1, 0, 0, 0, initialCourseVariance;

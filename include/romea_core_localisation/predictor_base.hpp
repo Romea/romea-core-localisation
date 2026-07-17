@@ -17,12 +17,15 @@
 #define ROMEA_CORE_LOCALISATION__PREDICTOR_BASE_HPP_
 
 // romea
+#include <romea_core_common/log/Logger.hpp>
 #include <romea_core_common/time/Time.hpp>
 #include <romea_core_filtering/filter/predictor_base.hpp>
 
 // std
 #include <iostream>
 #include <limits>
+#include <memory>
+#include <utility>
 
 // local
 #include "romea_core_localisation/fsm_state.hpp"
@@ -46,6 +49,8 @@ public:
   virtual ~PredictorBase() = default;
 
 public:
+  void register_logger(std::shared_ptr<Logger> logger);
+
   virtual void predict(
     const Duration & previous_duration,
     const FSMState & previous_fsm_state,
@@ -61,7 +66,10 @@ protected:
 
   virtual void reset_(State & current_state) = 0;
 
+  virtual double position_circular_error_probability_(const State & current_state) const = 0;
+
 protected:
+  std::shared_ptr<Logger> logger_;
   Duration maximal_duration_in_dead_reckoning_;
   double maximal_travelled_distance_in_dead_reckoning_;
   double maximal_position_circular_error_probable_;
@@ -74,7 +82,8 @@ PredictorBase<State>::PredictorBase(
   const Duration & maximal_duration_in_dead_reckoning,
   const double & maximal_travelled_distance_in_dead_reckoning,
   const double & maximal_position_circular_error_probable)
-: maximal_duration_in_dead_reckoning_(maximal_duration_in_dead_reckoning),
+: logger_(nullptr),
+  maximal_duration_in_dead_reckoning_(maximal_duration_in_dead_reckoning),
   maximal_travelled_distance_in_dead_reckoning_(maximal_travelled_distance_in_dead_reckoning),
   maximal_position_circular_error_probable_(maximal_position_circular_error_probable),
   dt_(0)
@@ -83,27 +92,53 @@ PredictorBase<State>::PredictorBase(
 
 //-----------------------------------------------------------------------------
 template<class State>
+void PredictorBase<State>::register_logger(std::shared_ptr<Logger> logger)
+{
+  logger_ = std::move(logger);
+}
+
+//-----------------------------------------------------------------------------
+template<class State>
 void PredictorBase<State>::predict(
   const Duration & previous_duration,
   const FSMState & previous_fsm_state,
   const State & previous_state,
-  const Duration & currentduration,
+  const Duration & current_duration,
   FSMState & current_fsm_State,
   State & current_state)
 {
-  assert(currentduration >= previous_duration);
+  assert(current_duration >= previous_duration);
 
   current_fsm_State = previous_fsm_state;
-  if (previous_fsm_state == FSMState::RUNNING) {
-    dt_ = durationToSecond(currentduration - previous_duration);
+  dt_ = durationToSecond(current_duration - previous_duration);
 
+  if (previous_fsm_state == FSMState::RUNNING) {
     if (dt_ > 0) {
       predict_(previous_state, current_state);
     } else {
       current_state = previous_state;
     }
 
-    if (stop_(currentduration, current_state)) {
+    if (logger_) {
+      const auto duration_in_dead_reckoning =
+        current_duration - current_state.addon.last_exteroceptive_update.time;
+
+      const auto travelled_distance_in_dead_reckoning =
+        current_state.addon.travelled_distance -
+        current_state.addon.last_exteroceptive_update.travelled_distance;
+
+      const auto position_circular_error_probability =
+        position_circular_error_probability_(current_state);
+
+      logger_->addEntry("stamp", durationToSecond(current_duration));
+      logger_->addEntry("dt", dt_);
+      logger_->addEntry("pos_cep", position_circular_error_probability);
+      logger_->addEntry("dr_distance", travelled_distance_in_dead_reckoning);
+      logger_->addEntry("dr_duration", durationToSecond(duration_in_dead_reckoning));
+      logger_->writeRow();
+    }
+
+    if (stop_(current_duration, current_state)) {
       std::cout << "FSM : TOO LONG IN DEAD RECKONING, RESET AND GO TO INIT " << std::endl;
       reset_(current_state);
       current_fsm_State = FSMState::INIT;

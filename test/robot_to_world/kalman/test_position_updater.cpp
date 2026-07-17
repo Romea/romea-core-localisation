@@ -55,7 +55,7 @@ TEST(TestR2WKFPositionUpdater, initWaitsForMotionInputsAndCourse)
 {
   MetaState meta_state;
   FSMState fsm_state = FSMState::INIT;
-  Updater updater("position_updater", 10.0, TriggerMode::ALWAYS, 10.0, "");
+  Updater updater("position_updater", 10.0, TriggerMode::ALWAYS, 10.0);
 
   updater.update(
     romea::core::durationFromSecond(1.0), make_position_observation(), fsm_state, meta_state);
@@ -70,7 +70,7 @@ TEST(TestR2WKFPositionUpdater, initSetsPositionAndSwitchesToRunning)
   MetaState meta_state;
   set_valid_r2w_initialisation_inputs(meta_state);
   FSMState fsm_state = FSMState::INIT;
-  Updater updater("position_updater", 10.0, TriggerMode::ALWAYS, 10.0, "");
+  Updater updater("position_updater", 10.0, TriggerMode::ALWAYS, 10.0);
 
   const auto timestamp = romea::core::durationFromSecond(1.5);
   const auto observation = make_position_observation();
@@ -91,7 +91,7 @@ TEST(TestR2WKFPositionUpdater, onceTriggerDoesNotUpdateAfterInitialisation)
   MetaState meta_state;
   set_valid_r2w_initialisation_inputs(meta_state);
   FSMState fsm_state = FSMState::INIT;
-  Updater updater("position_updater", 10.0, TriggerMode::ONCE, 10.0, "");
+  Updater updater("position_updater", 10.0, TriggerMode::ONCE, 10.0);
 
   updater.update(
     romea::core::durationFromSecond(1.0), make_position_observation(), fsm_state, meta_state);
@@ -115,7 +115,7 @@ TEST(TestR2WKFPositionUpdater, mahalanobisRejectionKeepsPreviousState)
   meta_state.input.U() << 1.0, 0.0, 0.1;
   meta_state.input.QU().setIdentity();
   FSMState fsm_state = FSMState::RUNNING;
-  Updater updater("position_updater", 10.0, TriggerMode::ALWAYS, 1.0, "");
+  Updater updater("position_updater", 10.0, TriggerMode::ALWAYS, 1.0);
 
   const auto previous_state = meta_state.state.X();
   const auto previous_covariance = meta_state.state.P();

@@ -39,9 +39,8 @@ R2HKFUpdaterRange::R2HKFUpdaterRange(
   const double & minimal_rate,
   const trigger_mode & trigger_mode,
   const double & maximal_mahalanobis_distance,
-  const std::string & logFilename,
   const bool & usedConstraints)
-: UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode, logFilename),
+: UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode),
   EKFUpdaterBase<double, 2, 1>(maximal_mahalanobis_distance),
   U_(Eigen::VectorXd::Zero(MetaState::STATE_SIZE)),
   W_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE, MetaState::STATE_SIZE)),
@@ -54,22 +53,6 @@ R2HKFUpdaterRange::R2HKFUpdaterRange(
   isConstraintsUsed_(usedConstraints)
 {
   Dc_(1, 1) = 1;
-
-  set_log_file_header_(
-    {"stamp",
-     "range",
-     "cov_range",
-     "x",
-     "y",
-     "cov_x",
-     "cov_xy",
-     "cov_y",
-     "ix",
-     "iy",
-     "apriori_range",
-     "cov_apriori_range",
-     "mahalanobis_distance",
-     "sucess"});
 }
 
 //-----------------------------------------------------------------------------
@@ -114,17 +97,17 @@ void R2HKFUpdaterRange::update_(
   // Update state vector
   bool success = update_state_(current_state);
 
-  if (log_file_.is_open()) {
-    log_file_ << duration.count() << " ";
-    log_file_ << current_observation.Y() << " ";
-    log_file_ << current_observation.R() << " ";
-    log_file_ << current_state.X(0) << ",";
-    log_file_ << current_state.X(1) << ",";
-    log_file_ << current_state.P(0, 0) << ",";
-    log_file_ << current_state.P(0, 1) << ",";
-    log_file_ << current_state.P(1, 1) << ",";
-    log_file_ << current_observation.initiator_position(0) << ",";
-    log_file_ << current_observation.initiator_position(1) << ",";
+  if (logger_) {
+    logger_->addEntry("stamp", durationToSecond(duration));
+    logger_->addEntry("range", current_observation.Y());
+    logger_->addEntry("cov_range", current_observation.R());
+    logger_->addEntry("x", current_state.X(0));
+    logger_->addEntry("y", current_state.X(1));
+    logger_->addEntry("cov_x", current_state.P(0, 0));
+    logger_->addEntry("cov_xy", current_state.P(0, 1));
+    logger_->addEntry("cov_y", current_state.P(1, 1));
+    logger_->addEntry("initiator_x", current_observation.initiator_position(0));
+    logger_->addEntry("initiator_y", current_observation.initiator_position(1));
   }
 
   if (success) {
@@ -133,11 +116,12 @@ void R2HKFUpdaterRange::update_(
   }
 
   // log
-  if (log_file_.is_open()) {
-    log_file_ << aprioriRange << ",";
-    log_file_ << aprioriRangeVariance << ",";
-    log_file_ << this->mahalanobis_distance_ << ",";
-    log_file_ << success << ",\n";
+  if (logger_) {
+    logger_->addEntry("apriori_range", aprioriRange);
+    logger_->addEntry("cov_apriori_range", aprioriRangeVariance);
+    logger_->addEntry("mahalanobis_distance", this->mahalanobis_distance_);
+    logger_->addEntry("success", success);
+    logger_->writeRow();
   }
 
   //  if(isConstraintsUsed_){

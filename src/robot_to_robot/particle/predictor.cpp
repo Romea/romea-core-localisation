@@ -183,13 +183,7 @@ bool R2RPFPredictor::stop_(const Duration & duration, const MetaState & meatasta
     meatastate.addon.travelled_distance -
     meatastate.addon.last_exteroceptive_update.travelled_distance;
 
-  // double positionCircularErrorProbability = std::sqrt(
-  //   state.P(R2RKalmanLocalisationState::POSITION_X,
-  //   R2RKalmanLocalisationState::POSITION_X) +
-  //   state.P(R2RKalmanLocalisationState::POSITION_Y,
-  //   R2RKalmanLocalisationState::POSITION_Y));
-
-  double positionCircularErrorProbability = 0;
+  double positionCircularErrorProbability = position_circular_error_probability_(meatastate);
 
   // std::cout << " particle dr elapsed time " << durationToSecond(duration) <<
   // " " <<
@@ -205,6 +199,12 @@ bool R2RPFPredictor::stop_(const Duration & duration, const MetaState & meatasta
   return positionCircularErrorProbability > maximal_position_circular_error_probable_ ||
          travelledDistanceInDeadReckoningMode > maximal_travelled_distance_in_dead_reckoning_ ||
          durationInDeadReckoningMode > maximal_duration_in_dead_reckoning_;
+}
+
+//-----------------------------------------------------------------------------
+double R2RPFPredictor::position_circular_error_probability_(const MetaState & /*metaState*/) const
+{
+  return 0;
 }
 
 //-----------------------------------------------------------------------------

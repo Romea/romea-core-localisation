@@ -33,9 +33,8 @@ R2RPFUpdaterRange::R2RPFUpdaterRange(
   const double & minimal_rate,
   const trigger_mode & trigger_mode,
   const size_t & number_of_particles,
-  const double & maximal_mahalanobis_distance,
-  const std::string & logFilename)
-: UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode, logFilename),
+  const double & maximal_mahalanobis_distance)
+: UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode),
   PFGaussianUpdaterBase(number_of_particles, maximal_mahalanobis_distance),
   cos_courses_(RowMajorVector::Zero(number_of_particles_)),
   sin_courses_(RowMajorVector::Zero(number_of_particles_))
@@ -102,14 +101,15 @@ void R2RPFUpdaterRange::update_(
   }
 
   // log
-  if (log_file_.is_open()) {
-    log_file_ << duration.count() << " ";
-    log_file_ << success << " ";
-    log_file_ << current_observation.Y() << " ";
-    log_file_ << current_observation.R() << " ";
-    log_file_ << apriori_observation_.Y() << " ";
-    log_file_ << apriori_observation_.R() << " ";
-    log_file_ << this->mahalanobis_distance_ << std::endl;
+  if (logger_) {
+    logger_->addEntry("stamp", durationToSecond(duration));
+    logger_->addEntry("success", success);
+    logger_->addEntry("range", current_observation.Y());
+    logger_->addEntry("cov_range", current_observation.R());
+    logger_->addEntry("apriori_range", apriori_observation_.Y());
+    logger_->addEntry("cov_apriori_range", apriori_observation_.R());
+    logger_->addEntry("mahalanobis_distance", this->mahalanobis_distance_);
+    logger_->writeRow();
   }
 }
 

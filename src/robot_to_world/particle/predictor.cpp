@@ -121,18 +121,17 @@ bool R2WPFPredictor::stop_(const Duration & duration, const MetaState & metaStat
     metaState.addon.travelled_distance -
     metaState.addon.last_exteroceptive_update.travelled_distance;
 
-  // double positionCircularErrorProbability = std::sqrt(
-  //   state.P(R2WKalmanLocalisationState::POSITION_X,
-  //           R2WKalmanLocalisationState::POSITION_X)+
-  //   state.P(R2WKalmanLocalisationState::POSITION_Y,
-  //           R2WKalmanLocalisationState::POSITION_Y)
-  // );
-
-  double positionCircularErrorProbability = 0;
+  double positionCircularErrorProbability = position_circular_error_probability_(metaState);
 
   return positionCircularErrorProbability > maximal_position_circular_error_probable_ ||
          travelledDistanceInDeadReckoningMode > maximal_travelled_distance_in_dead_reckoning_ ||
          durationInDeadReckoningMode > maximal_duration_in_dead_reckoning_;
+}
+
+//-----------------------------------------------------------------------------
+double R2WPFPredictor::position_circular_error_probability_(const MetaState & /*metaState*/) const
+{
+  return 0;
 }
 
 //-----------------------------------------------------------------------------

@@ -31,40 +31,14 @@ R2WKFUpdaterPose::R2WKFUpdaterPose(
   const std::string & updater_name,
   const double & minimal_rate,
   const trigger_mode & trigger_mode,
-  const double & maximal_mahalanobis_distance,
-  const std::string & logFilename)
-: UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode, logFilename),
+  const double & maximal_mahalanobis_distance)
+: UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode),
   EKFUpdaterBase<double, 3, 3>(maximal_mahalanobis_distance),
   lever_arm_compensation_()
 {
   H_(0, MetaState::POSITION_X) = 1;
   H_(1, MetaState::POSITION_Y) = 1;
   H_(2, MetaState::ORIENTATION_Z) = 1;
-
-  set_log_file_header_(
-    {"stamp",
-     "x_obs",
-     "y_obs",
-     "theta_obs",
-     "cov_x_obs",
-     "cov_xy_obs",
-     "cov_xtheta_obs",
-     "cov_y_obs",
-     "cov_ytheta_obs",
-     "cov_theta_obs",
-     "x",
-     "y",
-     "theta",
-     "cov_x",
-     "cov_xy",
-     "cov_xtheta",
-     "cov_y",
-     "cov_ytheta",
-     "cov_theta",
-     "lever_arm_x",
-     "lever_arm_y"
-     "mahalanobis_distance",
-     "success"});
 }
 
 //--------------------------------------------------------------------------
@@ -143,34 +117,41 @@ void R2WKFUpdaterPose::update_(
     lever_arm_compensation_.getPositionCovariance().block<2, 2>(0, 0);
 
   // log
-  if (log_file_.is_open()) {
-    log_file_ << duration.count() << ",";
-    log_file_ << current_observation.Y(0) << ",";
-    log_file_ << current_observation.Y(1) << ",";
-    log_file_ << current_observation.Y(2) << ",";
-    log_file_ << current_observation.R(0, 0) << ",";
-    log_file_ << current_observation.R(0, 1) << ",";
-    log_file_ << current_observation.R(0, 2) << ",";
-    log_file_ << current_observation.R(1, 1) << ",";
-    log_file_ << current_observation.R(1, 2) << ",";
-    log_file_ << current_observation.R(2, 2) << ",";
-    log_file_ << current_state.X(0) << ",";
-    log_file_ << current_state.X(1) << ",";
-    log_file_ << current_state.X(2) << ",";
-    log_file_ << current_state.P(0, 0) << ",";
-    log_file_ << current_state.P(0, 1) << ",";
-    log_file_ << current_state.P(0, 2) << ",";
-    log_file_ << current_state.P(1, 1) << ",";
-    log_file_ << current_state.P(1, 2) << ",";
-    log_file_ << current_state.P(2, 2) << ",";
-    log_file_ << lever_arm_compensation_.getPosition()(0) << ",";
-    log_file_ << lever_arm_compensation_.getPosition()(1) << ",";
+  if (logger_) {
+    logger_->addEntry("stamp", durationToSecond(duration));
+    logger_->addEntry("x_obs", current_observation.Y(0));
+    logger_->addEntry("y_obs", current_observation.Y(1));
+    logger_->addEntry("theta_obs", current_observation.Y(2));
+    logger_->addEntry("cov_x_obs", current_observation.R(0, 0));
+    logger_->addEntry("cov_xy_obs", current_observation.R(0, 1));
+    logger_->addEntry("cov_xtheta_obs", current_observation.R(0, 2));
+    logger_->addEntry("cov_y_obs", current_observation.R(1, 1));
+    logger_->addEntry("cov_ytheta_obs", current_observation.R(1, 2));
+    logger_->addEntry("cov_theta_obs", current_observation.R(2, 2));
+    logger_->addEntry("x", current_state.X(0));
+    logger_->addEntry("y", current_state.X(1));
+    logger_->addEntry("theta", current_state.X(2));
+    logger_->addEntry("cov_x", current_state.P(0, 0));
+    logger_->addEntry("cov_xy", current_state.P(0, 1));
+    logger_->addEntry("cov_xtheta", current_state.P(0, 2));
+    logger_->addEntry("cov_y", current_state.P(1, 1));
+    logger_->addEntry("cov_ytheta", current_state.P(1, 2));
+    logger_->addEntry("cov_theta", current_state.P(2, 2));
+    logger_->addEntry("lever_arm_x", lever_arm_compensation_.getPosition()(0));
+    logger_->addEntry("lever_arm_y", lever_arm_compensation_.getPosition()(1));
   }
 
   // Update state vector
-  if (update_state_(current_state)) {
+  bool success = update_state_(current_state);
+  if (success) {
     current_add_on.last_exteroceptive_update.time = duration;
     current_add_on.last_exteroceptive_update.travelled_distance = current_add_on.travelled_distance;
+  }
+
+  if (logger_) {
+    logger_->addEntry("mahalanobis_distance", mahalanobis_distance_);
+    logger_->addEntry("success", success);
+    logger_->writeRow();
   }
 
   assert(isPositiveSemiDefiniteMatrix(current_state.P()));

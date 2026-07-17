@@ -46,38 +46,14 @@ R2RKFUpdaterRange::R2RKFUpdaterRange(
   const std::string & updater_name,
   const double & minimal_rate,
   const trigger_mode & trigger_mode,
-  const double & maximal_mahalanobis_distance,
-  const std::string & logFilename)
-: UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode, logFilename),
+  const double & maximal_mahalanobis_distance)
+: UpdaterExteroceptive(updater_name, minimal_rate, trigger_mode),
   UKFUpdaterBase(
     UNSCENTED_TRANSFORM_KAPPA,
     UNSCENTED_TRANSFORM_ALPHA,
     UNSCENTED_TRANSFORM_BETA,
     maximal_mahalanobis_distance)
 {
-  set_log_file_header_(
-    {"stamp",
-     "range",
-     "cov_range",
-     "x",
-     "y",
-     "theta",
-     "cov_x",
-     "cov_xy",
-     "cov_xtheta",
-     "cov_y",
-     "cov_ytheta",
-     "cov_theta",
-     "ix",
-     "iy",
-     "iz",
-     "rx",
-     "ry",
-     "rz",
-     "apriori_range",
-     "cov_apriori_range",
-     "mahalanobis_distance",
-     "sucess"});
 }
 
 //-----------------------------------------------------------------------------
@@ -136,25 +112,25 @@ void R2RKFUpdaterRange::update_(
   // update state
   bool success = update_state_(current_state, current_observation);
 
-  if (log_file_.is_open()) {
-    log_file_ << duration.count() << " ";
-    log_file_ << current_observation.Y() << " ";
-    log_file_ << current_observation.R() << " ";
-    log_file_ << current_state.X(0) << ",";
-    log_file_ << current_state.X(1) << ",";
-    log_file_ << current_state.X(2) << ",";
-    log_file_ << current_state.P(0, 0) << ",";
-    log_file_ << current_state.P(0, 1) << ",";
-    log_file_ << current_state.P(0, 1) << ",";
-    log_file_ << current_state.P(1, 1) << ",";
-    log_file_ << current_state.P(1, 2) << ",";
-    log_file_ << current_state.P(2, 2) << ",";
-    log_file_ << ix << ",";
-    log_file_ << iy << ",";
-    log_file_ << iz << ",";
-    log_file_ << rx << ",";
-    log_file_ << ry << ",";
-    log_file_ << rz << ",";
+  if (logger_) {
+    logger_->addEntry("stamp", durationToSecond(duration));
+    logger_->addEntry("range", current_observation.Y());
+    logger_->addEntry("cov_range", current_observation.R());
+    logger_->addEntry("x", current_state.X(0));
+    logger_->addEntry("y", current_state.X(1));
+    logger_->addEntry("theta", current_state.X(2));
+    logger_->addEntry("cov_x", current_state.P(0, 0));
+    logger_->addEntry("cov_xy", current_state.P(0, 1));
+    logger_->addEntry("cov_xtheta", current_state.P(0, 1));
+    logger_->addEntry("cov_y", current_state.P(1, 1));
+    logger_->addEntry("cov_ytheta", current_state.P(1, 2));
+    logger_->addEntry("cov_theta", current_state.P(2, 2));
+    logger_->addEntry("ix", ix);
+    logger_->addEntry("iy", iy);
+    logger_->addEntry("iz", iz);
+    logger_->addEntry("rx", rx);
+    logger_->addEntry("ry", ry);
+    logger_->addEntry("rz", rz);
   }
 
   if (success) {
@@ -163,11 +139,12 @@ void R2RKFUpdaterRange::update_(
   }
 
   // log
-  if (log_file_.is_open()) {
-    log_file_ << this->propagated_state_.Y() << " ";
-    log_file_ << this->propagated_state_.R() << " ";
-    log_file_ << this->mahalanobis_distance_ << std::endl;
-    log_file_ << success << " ";
+  if (logger_) {
+    logger_->addEntry("apriori_range", this->propagated_state_.Y());
+    logger_->addEntry("cov_apriori_range", this->propagated_state_.R());
+    logger_->addEntry("mahalanobis_distance", this->mahalanobis_distance_);
+    logger_->addEntry("success", success);
+    logger_->writeRow();
   }
 
   assert(isPositiveSemiDefiniteMatrix(current_state.P()));

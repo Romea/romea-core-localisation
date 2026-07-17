@@ -25,14 +25,14 @@ TEST(TestR2WTraits, exposesKalmanComponentSet)
 {
   using Traits = romea::core::localisation::R2WTraits<romea::core::KALMAN>;
 
-  static_assert(std::is_class<Traits::Filter>::value, "");
-  static_assert(std::is_class<Traits::Predictor>::value, "");
-  static_assert(std::is_class<Traits::Results>::value, "");
-  static_assert(std::is_class<Traits::UpdaterPosition>::value, "");
-  static_assert(std::is_class<Traits::UpdaterCourse>::value, "");
-  static_assert(std::is_class<Traits::UpdaterPose>::value, "");
-  static_assert(std::is_class<Traits::UpdaterRange>::value, "");
-  static_assert(std::is_class<Traits::UpdaterTwist>::value, "");
+  static_assert(std::is_class<Traits::Filter>::value);
+  static_assert(std::is_class<Traits::Predictor>::value);
+  static_assert(std::is_class<Traits::Results>::value);
+  static_assert(std::is_class<Traits::UpdaterPosition>::value);
+  static_assert(std::is_class<Traits::UpdaterCourse>::value);
+  static_assert(std::is_class<Traits::UpdaterPose>::value);
+  static_assert(std::is_class<Traits::UpdaterRange>::value);
+  static_assert(std::is_class<Traits::UpdaterTwist>::value);
 
   SUCCEED();
 }
@@ -41,14 +41,14 @@ TEST(TestR2WTraits, exposesParticleComponentSet)
 {
   using Traits = romea::core::localisation::R2WTraits<romea::core::PARTICLE>;
 
-  static_assert(std::is_class<Traits::Filter>::value, "");
-  static_assert(std::is_class<Traits::Predictor>::value, "");
-  static_assert(std::is_class<Traits::Results>::value, "");
-  static_assert(std::is_class<Traits::UpdaterPosition>::value, "");
-  static_assert(std::is_class<Traits::UpdaterCourse>::value, "");
-  static_assert(std::is_class<Traits::UpdaterPose>::value, "");
-  static_assert(std::is_class<Traits::UpdaterRange>::value, "");
-  static_assert(std::is_class<Traits::UpdaterTwist>::value, "");
+  static_assert(std::is_class<Traits::Filter>::value);
+  static_assert(std::is_class<Traits::Predictor>::value);
+  static_assert(std::is_class<Traits::Results>::value);
+  static_assert(std::is_class<Traits::UpdaterPosition>::value);
+  static_assert(std::is_class<Traits::UpdaterCourse>::value);
+  static_assert(std::is_class<Traits::UpdaterPose>::value);
+  static_assert(std::is_class<Traits::UpdaterRange>::value);
+  static_assert(std::is_class<Traits::UpdaterTwist>::value);
 
   SUCCEED();
 }
@@ -57,13 +57,13 @@ TEST(TestR2RTraits, exposesKalmanComponentSet)
 {
   using Traits = romea::core::localisation::R2RTraits<romea::core::KALMAN>;
 
-  static_assert(std::is_class<Traits::Filter>::value, "");
-  static_assert(std::is_class<Traits::Predictor>::value, "");
-  static_assert(std::is_class<Traits::Results>::value, "");
-  static_assert(std::is_class<Traits::UpdaterPose>::value, "");
-  static_assert(std::is_class<Traits::UpdaterRange>::value, "");
-  static_assert(std::is_class<Traits::UpdaterTwist>::value, "");
-  static_assert(std::is_class<Traits::UpdaterLeaderTwist>::value, "");
+  static_assert(std::is_class<Traits::Filter>::value);
+  static_assert(std::is_class<Traits::Predictor>::value);
+  static_assert(std::is_class<Traits::Results>::value);
+  static_assert(std::is_class<Traits::UpdaterPose>::value);
+  static_assert(std::is_class<Traits::UpdaterRange>::value);
+  static_assert(std::is_class<Traits::UpdaterTwist>::value);
+  static_assert(std::is_class<Traits::UpdaterLeaderTwist>::value);
 
   SUCCEED();
 }
@@ -72,13 +72,13 @@ TEST(TestR2RTraits, exposesParticleComponentSet)
 {
   using Traits = romea::core::localisation::R2RTraits<romea::core::PARTICLE>;
 
-  static_assert(std::is_class<Traits::Filter>::value, "");
-  static_assert(std::is_class<Traits::Predictor>::value, "");
-  static_assert(std::is_class<Traits::Results>::value, "");
-  static_assert(std::is_class<Traits::UpdaterPose>::value, "");
-  static_assert(std::is_class<Traits::UpdaterRange>::value, "");
-  static_assert(std::is_class<Traits::UpdaterTwist>::value, "");
-  static_assert(std::is_class<Traits::UpdaterLeaderTwist>::value, "");
+  static_assert(std::is_class<Traits::Filter>::value);
+  static_assert(std::is_class<Traits::Predictor>::value);
+  static_assert(std::is_class<Traits::Results>::value);
+  static_assert(std::is_class<Traits::UpdaterPose>::value);
+  static_assert(std::is_class<Traits::UpdaterRange>::value);
+  static_assert(std::is_class<Traits::UpdaterTwist>::value);
+  static_assert(std::is_class<Traits::UpdaterLeaderTwist>::value);
 
   SUCCEED();
 }

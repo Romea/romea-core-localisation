@@ -14,8 +14,8 @@
 // limitations under the License.
 
 // std
+#include <memory>
 #include <string>
-#include <vector>
 
 // local
 #include "romea_core_localisation/updater_exteroceptive.hpp"
@@ -29,37 +29,15 @@ namespace localisation
 
 //-----------------------------------------------------------------------------
 UpdaterExteroceptive::UpdaterExteroceptive(
-  const std::string & updater_name,
-  const double & minimal_rate,
-  const trigger_mode & trigger_mode,
-  const std::string & log_filename)
-: UpdaterBase(updater_name, minimal_rate, trigger_mode)
+  const std::string & updater_name, const double & minimal_rate, const trigger_mode & trigger_mode)
+: UpdaterBase(updater_name, minimal_rate, trigger_mode), logger_(nullptr)
 {
-  open_log_file_(log_filename);
 }
 
 //-----------------------------------------------------------------------------
-void UpdaterExteroceptive::open_log_file_(const std::string & log_filename)
+void UpdaterExteroceptive::register_logger(std::shared_ptr<Logger> logger)
 {
-  if (!log_filename.empty()) {
-    log_file_.open(log_filename);
-
-    if (!log_file_.is_open()) {
-      throw std::runtime_error("Cannot open debug file : " + log_filename);
-    }
-  }
-}
-
-//-----------------------------------------------------------------------------
-void UpdaterExteroceptive::set_log_file_header_(const std::vector<std::string> & log_column_names)
-{
-  if (log_file_.is_open()) {
-    log_file_ << "%";
-    for (size_t n = 0; n < log_column_names.size(); ++n) {
-      log_file_ << "(" << n + 1 << ")" << log_column_names[n] << ",";
-    }
-    log_file_ << "\n";
-  }
+  logger_ = std::move(logger);
 }
 
 }  // namespace localisation

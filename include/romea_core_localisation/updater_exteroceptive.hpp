@@ -17,11 +17,11 @@
 #define ROMEA_CORE_LOCALISATION__UPDATER_EXTEROCEPTIVE_HPP_
 
 // std
-#include <fstream>
+#include <memory>
 #include <string>
-#include <vector>
 
 // romea
+#include "romea_core_common/log/Logger.hpp"
 #include "romea_core_localisation/updater_base.hpp"
 
 namespace romea
@@ -37,17 +37,14 @@ public:
   UpdaterExteroceptive(
     const std::string & updater_name,
     const double & minimal_rate,
-    const trigger_mode & trigger_mode,
-    const std::string & log_filename);
+    const trigger_mode & trigger_mode);
 
   virtual ~UpdaterExteroceptive() = default;
 
-  void open_log_file_(const std::string & log_filename);
-
-  void set_log_file_header_(const std::vector<std::string> & log_column_names);
+  void register_logger(std::shared_ptr<Logger> logger);
 
 protected:
-  std::ofstream log_file_;
+  std::shared_ptr<Logger> logger_;
 };
 
 }  // namespace localisation

@@ -137,13 +137,19 @@ bool R2HKFPredictor::stop_(const Duration & duration, const MetaState & metaStat
     metaState.addon.travelled_distance -
     metaState.addon.last_exteroceptive_update.travelled_distance;
 
-  double positionCircularErrorProbability = std::sqrt(
-    metaState.state.P(MetaState::LEADER_POSITION_X, MetaState::LEADER_POSITION_X) +
-    metaState.state.P(MetaState::LEADER_POSITION_Y, MetaState::LEADER_POSITION_Y));
+  double positionCircularErrorProbability = position_circular_error_probability_(metaState);
 
   return positionCircularErrorProbability > maximal_position_circular_error_probable_ ||
          travelledDistanceInDeadReckoningMode > maximal_travelled_distance_in_dead_reckoning_ ||
          durationInDeadReckoningMode > maximal_duration_in_dead_reckoning_;
+}
+
+//-----------------------------------------------------------------------------
+double R2HKFPredictor::position_circular_error_probability_(const MetaState & metaState) const
+{
+  return std::sqrt(
+    metaState.state.P(MetaState::LEADER_POSITION_X, MetaState::LEADER_POSITION_X) +
+    metaState.state.P(MetaState::LEADER_POSITION_Y, MetaState::LEADER_POSITION_Y));
 }
 
 //-----------------------------------------------------------------------------
