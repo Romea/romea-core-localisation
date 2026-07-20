@@ -15,6 +15,7 @@
 
 // std
 #include <string>
+#include <utility>
 
 // local
 #include "romea_core_localisation/updater_base.hpp"
@@ -31,6 +32,7 @@ UpdaterBase::UpdaterBase(
   const std::string & updater_name, const double & minimal_rate, const trigger_mode & trigger_mode)
 : trigger_mode_(trigger_mode),
   rate_diagnostic_(updater_name, minimal_rate, 0.1 * minimal_rate),
+  fsm_event_notifier_(),
   mutex_()
 {
 }
@@ -50,10 +52,27 @@ DiagnosticReport UpdaterBase::get_report()
 }
 
 //-----------------------------------------------------------------------------
+void UpdaterBase::register_fsm_event_callback(FSMEventCallback callback)
+{
+  fsm_event_notifier_.register_callback(std::move(callback));
+}
+
+//-----------------------------------------------------------------------------
 void UpdaterBase::udapte_diagnostic_(const Duration & duration)
 {
   std::lock_guard<std::mutex> lock(mutex_);
   rate_diagnostic_.evaluate(duration);
+}
+
+//-----------------------------------------------------------------------------
+void UpdaterBase::notify_fsm_event_(
+  const FSMState & previous_state,
+  const FSMState & current_state,
+  const std::string & description)
+{
+  if (previous_state != current_state) {
+    fsm_event_notifier_.notify(make_fsm_event(previous_state, current_state, description));
+  }
 }
 
 }  // namespace localisation

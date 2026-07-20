@@ -55,8 +55,12 @@ void R2HKFUpdaterLeaderPosition::update(
             current_meta_state.input,
             current_meta_state.state,
             current_meta_state.addon)) {
-        std::cout << " FSM : INIT DONE, GO TO RUNNING MODE " << std::endl;
+        const auto previous_fsm_state = current_fsm_State;
         current_fsm_State = FSMState::RUNNING;
+        notify_fsm_event_(
+          previous_fsm_state,
+          current_fsm_State,
+          "INIT DONE, GO TO RUNNING MODE");
       }
       break;
     default:

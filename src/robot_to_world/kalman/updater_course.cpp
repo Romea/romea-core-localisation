@@ -63,10 +63,14 @@ void R2WKFUpdaterCourse::update(
           update_(
             duration, current_observation, current_meta_state.state, current_meta_state.addon);
         } catch (...) {
-          std::cout << " FSM : COURSE UPDATE HAS FAILED, RESET AND GO TO INIT MODE" << std::endl;
+          const auto previous_fsm_state = current_fsm_State;
           current_fsm_State = FSMState::INIT;
           current_meta_state.state.reset();
           current_meta_state.addon.reset();
+          notify_fsm_event_(
+            previous_fsm_state,
+            current_fsm_State,
+            "COURSE UPDATE HAS FAILED, RESET AND GO TO INIT MODE");
         }
       }
       break;

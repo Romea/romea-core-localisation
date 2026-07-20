@@ -43,6 +43,21 @@ std::string to_string(const FSMState & fms_state)
 }
 
 //-----------------------------------------------------------------------------
+romea::core::FSMState to_common_fsm_state(const FSMState & fsm_state)
+{
+  return {to_string(fsm_state), static_cast<uint8_t>(fsm_state)};
+}
+
+//-----------------------------------------------------------------------------
+romea::core::FSMEvent make_fsm_event(
+  const FSMState & previous_state,
+  const FSMState & current_state,
+  const std::string & description)
+{
+  return {to_common_fsm_state(previous_state), to_common_fsm_state(current_state), description};
+}
+
+//-----------------------------------------------------------------------------
 DiagnosticStatus to_diagnostic_status(const FSMState & fms_state)
 {
   switch (fms_state) {

@@ -17,6 +17,8 @@
 
 // romea
 #include <romea_core_common/diagnostic/DiagnosticStatus.hpp>
+#include <romea_core_common/fsm/FSMEvent.hpp>
+#include <romea_core_common/fsm/FSMState.hpp>
 
 // std
 #include <string>
@@ -39,6 +41,13 @@ enum class FSMState
 };
 
 std::string to_string(const FSMState & fms_state);
+
+romea::core::FSMState to_common_fsm_state(const FSMState & fsm_state);
+
+romea::core::FSMEvent make_fsm_event(
+  const FSMState & previous_state,
+  const FSMState & current_state,
+  const std::string & description);
 
 DiagnosticStatus to_diagnostic_status(const FSMState & fms_state);
 

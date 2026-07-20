@@ -62,8 +62,12 @@ void R2WPFUpdaterPose::update(
             current_meta_state.input,
             current_meta_state.state,
             current_meta_state.addon)) {
+        const auto previous_fsm_state = current_fsm_State;
         current_fsm_State = FSMState::RUNNING;
-        std::cout << " FSM : INIT DONE (POSE), GO TO RUNNING MODE" << std::endl;
+        notify_fsm_event_(
+          previous_fsm_state,
+          current_fsm_State,
+          "INIT DONE (POSE), GO TO RUNNING MODE");
       }
       break;
     case FSMState::RUNNING:
@@ -72,10 +76,14 @@ void R2WPFUpdaterPose::update(
           update_(
             duration, current_observation, current_meta_state.state, current_meta_state.addon);
         } catch (...) {
-          std::cout << " FSM : FILTER DEGENERESCENCE, RESET AND GO TO INIT MODE" << std::endl;
+          const auto previous_fsm_state = current_fsm_State;
           current_fsm_State = FSMState::INIT;
           current_meta_state.state.reset();
           current_meta_state.addon.reset();
+          notify_fsm_event_(
+            previous_fsm_state,
+            current_fsm_State,
+            "FILTER DEGENERESCENCE, RESET AND GO TO INIT MODE");
         }
       }
       break;

@@ -17,6 +17,7 @@
 #define ROMEA_CORE_LOCALISATION__PREDICTOR_BASE_HPP_
 
 // romea
+#include <romea_core_common/fsm/FSMEventNotifier.hpp>
 #include <romea_core_common/log/Logger.hpp>
 #include <romea_core_common/time/Time.hpp>
 #include <romea_core_filtering/filter/predictor_base.hpp>
@@ -51,6 +52,8 @@ public:
 public:
   void register_logger(std::shared_ptr<Logger> logger);
 
+  void register_fsm_event_callback(FSMEventCallback callback);
+
   virtual void predict(
     const Duration & previous_duration,
     const FSMState & previous_fsm_state,
@@ -68,8 +71,14 @@ protected:
 
   virtual double position_circular_error_probability_(const State & current_state) const = 0;
 
+  void notify_fsm_event_(
+    const FSMState & previous_state,
+    const FSMState & current_state,
+    const std::string & description);
+
 protected:
   std::shared_ptr<Logger> logger_;
+  FSMEventNotifier fsm_event_notifier_;
   Duration maximal_duration_in_dead_reckoning_;
   double maximal_travelled_distance_in_dead_reckoning_;
   double maximal_position_circular_error_probable_;
@@ -83,6 +92,7 @@ PredictorBase<State>::PredictorBase(
   const double & maximal_travelled_distance_in_dead_reckoning,
   const double & maximal_position_circular_error_probable)
 : logger_(nullptr),
+  fsm_event_notifier_(),
   maximal_duration_in_dead_reckoning_(maximal_duration_in_dead_reckoning),
   maximal_travelled_distance_in_dead_reckoning_(maximal_travelled_distance_in_dead_reckoning),
   maximal_position_circular_error_probable_(maximal_position_circular_error_probable),
@@ -95,6 +105,23 @@ template<class State>
 void PredictorBase<State>::register_logger(std::shared_ptr<Logger> logger)
 {
   logger_ = std::move(logger);
+}
+
+//-----------------------------------------------------------------------------
+template<class State>
+void PredictorBase<State>::register_fsm_event_callback(FSMEventCallback callback)
+{
+  fsm_event_notifier_.register_callback(std::move(callback));
+}
+
+//-----------------------------------------------------------------------------
+template<class State>
+void PredictorBase<State>::notify_fsm_event_(
+  const FSMState & previous_state, const FSMState & current_state, const std::string & description)
+{
+  if (previous_state != current_state) {
+    fsm_event_notifier_.notify(make_fsm_event(previous_state, current_state, description));
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -139,9 +166,10 @@ void PredictorBase<State>::predict(
     }
 
     if (stop_(current_duration, current_state)) {
-      std::cout << "FSM : TOO LONG IN DEAD RECKONING, RESET AND GO TO INIT " << std::endl;
       reset_(current_state);
       current_fsm_State = FSMState::INIT;
+      notify_fsm_event_(
+        previous_fsm_state, current_fsm_State, "TOO LONG IN DEAD RECKONING, RESET AND GO TO INIT");
     }
   } else {
     current_state = previous_state;

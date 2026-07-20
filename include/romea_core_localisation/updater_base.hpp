@@ -19,12 +19,14 @@
 // romea
 #include <romea_core_common/diagnostic/CheckupRate.hpp>
 #include <romea_core_common/diagnostic/DiagnosticReport.hpp>
+#include <romea_core_common/fsm/FSMEventNotifier.hpp>
 
 // std
 #include <mutex>
 #include <string>
 
 // local
+#include "romea_core_localisation/fsm_state.hpp"
 #include "romea_core_localisation/updater_trigger_mode.hpp"
 
 namespace romea
@@ -47,14 +49,22 @@ public:
 
   bool heart_beat_callback(const Duration & duration);
 
+  void register_fsm_event_callback(FSMEventCallback callback);
+
   DiagnosticReport get_report();
 
 protected:
   void udapte_diagnostic_(const Duration & duration);
 
+  void notify_fsm_event_(
+    const FSMState & previous_state,
+    const FSMState & current_state,
+    const std::string & description);
+
 protected:
   trigger_mode trigger_mode_;
   CheckupGreaterThanRate rate_diagnostic_;
+  FSMEventNotifier fsm_event_notifier_;
   mutable std::mutex mutex_;
 };
 
