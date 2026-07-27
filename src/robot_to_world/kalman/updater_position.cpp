@@ -146,8 +146,8 @@ void R2WKFUpdaterPosition::update_(
   // Update state vector
   bool success = update_state_(current_state);
   if (success) {
-    current_add_on.last_exteroceptive_update.time = duration;
-    current_add_on.last_exteroceptive_update.travelled_distance = current_add_on.travelled_distance;
+    current_add_on.dead_reckoning_tracking.start_time = duration;
+    current_add_on.dead_reckoning_tracking.start_travelled_distance = current_add_on.travelled_distance;
   }
 
   if (logger_) {
@@ -202,8 +202,8 @@ bool R2WKFUpdaterPosition::set_(
     apply_lever_arm_compensation(
       current_state, current_add_on, lever_arm_compensation_, current_observation.lever_arm);
 
-    current_add_on.last_exteroceptive_update.time = duration;
-    current_add_on.last_exteroceptive_update.travelled_distance = current_add_on.travelled_distance;
+    current_add_on.dead_reckoning_tracking.start_time = duration;
+    current_add_on.dead_reckoning_tracking.start_travelled_distance = current_add_on.travelled_distance;
     return true;
   } else {
     return false;

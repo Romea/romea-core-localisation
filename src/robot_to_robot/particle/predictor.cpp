@@ -30,14 +30,10 @@ namespace localisation
 
 //--------------------------------------------------------------------------
 R2RPFPredictor::R2RPFPredictor(
-  const Duration & maximal_duration_in_dead_reckoning,
-  const double & maximal_travelled_distance_in_dead_reckoning,
-  const double & maximal_position_circular_error_probable,
-  const size_t & number_of_particles)
-: PredictorBase<MetaState>(
-    maximal_duration_in_dead_reckoning,
-    maximal_travelled_distance_in_dead_reckoning,
-    maximal_position_circular_error_probable),
+  const size_t & number_of_particles,
+  const DeadReckoningLimits & dead_reckoning_limits,
+  const ObservationAgeLimits & proprioceptive_observation_age_limits)
+: PredictorBase<MetaState>(dead_reckoning_limits, proprioceptive_observation_age_limits),
   cos_courses_(RowMajorVector::Zero(number_of_particles)),
   sin_courses_(RowMajorVector::Zero(number_of_particles)),
   wfdT_(0),
@@ -169,49 +165,10 @@ void R2RPFPredictor::predictAddOn_(
     current_add_on.leader_trajectory.append(Eigen::Vector2d(x, y));
   }
 
-  current_add_on.last_exteroceptive_update = previous_add_on.last_exteroceptive_update;
+  current_add_on.dead_reckoning_tracking = previous_add_on.dead_reckoning_tracking;
+  current_add_on.proprioceptive_data_tracking = previous_add_on.proprioceptive_data_tracking;
   current_add_on.travelled_distance =
     previous_add_on.travelled_distance + std::sqrt(vxfdT_ * vxfdT_ + vyfdT_ * vyfdT_);
-}
-
-//-----------------------------------------------------------------------------
-bool R2RPFPredictor::stop_(const Duration & duration, const MetaState & meatastate)
-{
-  Duration durationInDeadReckoningMode = duration - meatastate.addon.last_exteroceptive_update.time;
-
-  double travelledDistanceInDeadReckoningMode =
-    meatastate.addon.travelled_distance -
-    meatastate.addon.last_exteroceptive_update.travelled_distance;
-
-  double positionCircularErrorProbability = position_circular_error_probability_(meatastate);
-
-  // std::cout << " particle dr elapsed time " << durationToSecond(duration) <<
-  // " " <<
-  //       durationToSecond(state.lastExteroceptiveUpdate.time) << " " <<
-  //       durationToSecond(
-  //   shutoffParameters_.maximal_duration_in_dead_reckoning) << std::endl;
-  // std::cout << " particle dr elapsed distance " << state.travelledDistance <<
-  // " " <<
-  //       state.lastExteroceptiveUpdate.travelledDistance << " " <<
-  //       shutoffParameters_.maximal_travelled_distance_in_dead_reckoning <<
-  //       std::endl;
-
-  return positionCircularErrorProbability > maximal_position_circular_error_probable_ ||
-         travelledDistanceInDeadReckoningMode > maximal_travelled_distance_in_dead_reckoning_ ||
-         durationInDeadReckoningMode > maximal_duration_in_dead_reckoning_;
-}
-
-//-----------------------------------------------------------------------------
-double R2RPFPredictor::position_circular_error_probability_(const MetaState & /*metaState*/) const
-{
-  return 0;
-}
-
-//-----------------------------------------------------------------------------
-void R2RPFPredictor::reset_(MetaState & metaState)
-{
-  metaState.state.reset();
-  metaState.addon.reset();
 }
 
 }  // namespace localisation

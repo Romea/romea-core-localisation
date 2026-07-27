@@ -28,7 +28,7 @@ namespace
 using FSMState = romea::core::localisation::FSMState;
 using MetaState = romea::core::localisation::R2WKFMetaState;
 using Observation = romea::core::localisation::ObservationPosition;
-using TriggerMode = romea::core::localisation::Updatertrigger_mode;
+using TriggerMode = romea::core::localisation::UpdaterTriggerMode;
 using Updater = romea::core::localisation::R2WKFUpdaterPosition;
 
 Observation make_position_observation()
@@ -55,7 +55,8 @@ TEST(TestR2WKFPositionUpdater, initWaitsForMotionInputsAndCourse)
 {
   MetaState meta_state;
   FSMState fsm_state = FSMState::INIT;
-  Updater updater("position_updater", 10.0, TriggerMode::ALWAYS, 10.0);
+  Updater updater(
+    "position_updater", 10.0, TriggerMode::ALWAYS, 10.0);
 
   updater.update(
     romea::core::durationFromSecond(1.0), make_position_observation(), fsm_state, meta_state);
@@ -70,7 +71,8 @@ TEST(TestR2WKFPositionUpdater, initSetsPositionAndSwitchesToRunning)
   MetaState meta_state;
   set_valid_r2w_initialisation_inputs(meta_state);
   FSMState fsm_state = FSMState::INIT;
-  Updater updater("position_updater", 10.0, TriggerMode::ALWAYS, 10.0);
+  Updater updater(
+    "position_updater", 10.0, TriggerMode::ALWAYS, 10.0);
 
   const auto timestamp = romea::core::durationFromSecond(1.5);
   const auto observation = make_position_observation();
@@ -80,9 +82,9 @@ TEST(TestR2WKFPositionUpdater, initSetsPositionAndSwitchesToRunning)
   EXPECT_EQ(fsm_state, FSMState::RUNNING);
   EXPECT_TRUE(meta_state.state.X().head<2>().isApprox(observation.Y()));
   EXPECT_TRUE((meta_state.state.P().block<2, 2>(0, 0).isApprox(observation.R())));
-  EXPECT_EQ(meta_state.addon.last_exteroceptive_update.time, timestamp);
+  EXPECT_EQ(meta_state.addon.dead_reckoning_tracking.start_time, timestamp);
   EXPECT_DOUBLE_EQ(
-    meta_state.addon.last_exteroceptive_update.travelled_distance,
+    meta_state.addon.dead_reckoning_tracking.start_travelled_distance,
     meta_state.addon.travelled_distance);
 }
 
@@ -91,7 +93,8 @@ TEST(TestR2WKFPositionUpdater, onceTriggerDoesNotUpdateAfterInitialisation)
   MetaState meta_state;
   set_valid_r2w_initialisation_inputs(meta_state);
   FSMState fsm_state = FSMState::INIT;
-  Updater updater("position_updater", 10.0, TriggerMode::ONCE, 10.0);
+  Updater updater(
+    "position_updater", 10.0, TriggerMode::ONCE, 10.0);
 
   updater.update(
     romea::core::durationFromSecond(1.0), make_position_observation(), fsm_state, meta_state);
@@ -115,7 +118,8 @@ TEST(TestR2WKFPositionUpdater, mahalanobisRejectionKeepsPreviousState)
   meta_state.input.U() << 1.0, 0.0, 0.1;
   meta_state.input.QU().setIdentity();
   FSMState fsm_state = FSMState::RUNNING;
-  Updater updater("position_updater", 10.0, TriggerMode::ALWAYS, 1.0);
+  Updater updater(
+    "position_updater", 10.0, TriggerMode::ALWAYS, 1.0);
 
   const auto previous_state = meta_state.state.X();
   const auto previous_covariance = meta_state.state.P();
@@ -130,7 +134,7 @@ TEST(TestR2WKFPositionUpdater, mahalanobisRejectionKeepsPreviousState)
   EXPECT_EQ(fsm_state, FSMState::RUNNING);
   EXPECT_TRUE(meta_state.state.X().isApprox(previous_state));
   EXPECT_TRUE(meta_state.state.P().isApprox(previous_covariance));
-  EXPECT_EQ(meta_state.addon.last_exteroceptive_update.time, romea::core::Duration::zero());
+  EXPECT_EQ(meta_state.addon.dead_reckoning_tracking.start_time, romea::core::Duration::zero());
 }
 
 int main(int argc, char ** argv)

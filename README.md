@@ -108,7 +108,7 @@ For example, a robot-to-world Kalman localisation filter is assembled from the f
 | --------- | ---------------------- | ---- |
 | Filter | `romea::core::KalmanFilter<R2WKFMetaState, FSMState, Duration>` | Manages timestamped states asynchronously and applies prediction and update steps. |
 | Meta-state | `R2WKFMetaState` | Stores the vehicle pose, motion inputs and covariance information. |
-| FSM state | `FSMState` | Tracks the filter status associated with each stored state: `INIT`, `RUNNING`, `RESET` or `ABORTED`. |
+| FSM state | `FSMState` | Tracks the filter status associated with each stored state: `INIT`, `RUNNING`, `RESET`, `STALE` or `ABORTED`. |
 | Predictor | `R2WKFPredictor` | Propagates the vehicle state from motion inputs and the vehicle kinematic model. |
 | Exteroceptive updaters | `R2WKFUpdaterPosition`, `R2WKFUpdaterCourse`, `R2WKFUpdaterPose`, `R2WKFUpdaterRange` | Correct the predicted state with external observations. |
 | Proprioceptive updaters | `UpdaterTwist`, `UpdaterLinearSpeed`, `UpdaterLinearSpeeds`, `UpdaterAngularSpeed`, `R2WUpdaterAttitude` | Update the motion inputs and attitude data used by the predictor. |
@@ -120,19 +120,18 @@ The corresponding traits can be used to select the right component set:
 using Traits = romea::core::localisation::R2WTraits<romea::core::KALMAN>;
 
 auto filter = std::make_unique<Traits::Filter>(state_pool_size);
+const romea::core::localisation::DeadReckoningLimits dead_reckoning_limits(
+  romea::core::durationFromSecond(maximal_dead_reckoning_elapsed_time),
+  maximal_dead_reckoning_travelled_distance);
 auto predictor = std::make_unique<Traits::Predictor>(
-  maximal_dead_reckoning_elapsed_time,
-  maximal_dead_reckoning_travelled_distance,
-  maximal_position_circular_error_probability);
+  dead_reckoning_limits);
 
 filter->register_predictor(std::move(predictor));
 
 auto position_updater = std::make_unique<Traits::UpdaterPosition>(
   "position_updater",
   minimal_rate,
-  trigger_mode,
-  mahalanobis_distance_rejection_threshold,
-  log_filename);
+  trigger_mode,mahalanobis_distance_rejection_threshold);
 
 auto twist_updater = std::make_unique<Traits::UpdaterTwist>(
   "twist_updater",

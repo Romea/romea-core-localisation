@@ -25,7 +25,7 @@ namespace
 
 using FSMState = romea::core::localisation::FSMState;
 using MetaState = romea::core::localisation::R2WKFMetaState;
-using TriggerMode = romea::core::localisation::Updatertrigger_mode;
+using TriggerMode = romea::core::localisation::UpdaterTriggerMode;
 using Updater = romea::core::localisation::R2WKFUpdaterRange;
 using Observation = romea::core::localisation::ObservationRange;
 
@@ -56,7 +56,8 @@ TEST(TestR2WKFRangeUpdater, mahalanobisRejectionKeepsPreviousState)
 {
   auto meta_state = make_running_state();
   FSMState fsm_state = FSMState::RUNNING;
-  Updater updater("range_updater", 10.0, TriggerMode::ALWAYS, 1.0);
+  Updater updater(
+    "range_updater", 10.0, TriggerMode::ALWAYS, 1.0);
 
   const auto previous_state = meta_state.state.X();
   const auto previous_covariance = meta_state.state.P();
@@ -67,7 +68,7 @@ TEST(TestR2WKFRangeUpdater, mahalanobisRejectionKeepsPreviousState)
   EXPECT_EQ(fsm_state, FSMState::RUNNING);
   EXPECT_TRUE(meta_state.state.X().isApprox(previous_state));
   EXPECT_TRUE(meta_state.state.P().isApprox(previous_covariance));
-  EXPECT_EQ(meta_state.addon.last_exteroceptive_update.time, romea::core::Duration::zero());
+  EXPECT_EQ(meta_state.addon.dead_reckoning_tracking.start_time, romea::core::Duration::zero());
 }
 
 int main(int argc, char ** argv)

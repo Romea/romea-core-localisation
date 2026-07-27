@@ -39,7 +39,7 @@ namespace localisation
 class UpdaterBase
 {
 public:
-  using trigger_mode = Updatertrigger_mode;
+  using trigger_mode = UpdaterTriggerMode;
 
 public:
   UpdaterBase(
@@ -51,7 +51,7 @@ public:
 
   void register_fsm_event_callback(FSMEventCallback callback);
 
-  DiagnosticReport get_report();
+  virtual DiagnosticReport get_report();
 
 protected:
   void udapte_diagnostic_(const Duration & duration);
@@ -63,6 +63,7 @@ protected:
 
 protected:
   trigger_mode trigger_mode_;
+  double minimal_rate_;
   CheckupGreaterThanRate rate_diagnostic_;
   FSMEventNotifier fsm_event_notifier_;
   mutable std::mutex mutex_;

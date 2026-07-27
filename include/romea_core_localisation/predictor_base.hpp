@@ -23,13 +23,15 @@
 #include <romea_core_filtering/filter/predictor_base.hpp>
 
 // std
-#include <iostream>
+#include <cstddef>
 #include <limits>
 #include <memory>
 #include <utility>
 
 // local
+#include "romea_core_localisation/dead_reckoning_tracking.hpp"
 #include "romea_core_localisation/fsm_state.hpp"
+#include "romea_core_localisation/observation_tracking.hpp"
 
 namespace romea
 {
@@ -42,10 +44,13 @@ template<class State>
 class PredictorBase : public FilterPredictorBase<State, FSMState, Duration>
 {
 public:
+  using ObservationAgeLimits =
+    ::romea::core::localisation::ObservationAgeLimits<State::INPUT_SIZE>;
+
+public:
   PredictorBase(
-    const Duration & maximal_duration_in_dead_reckoning,
-    const double & maximal_travelled_distance_in_dead_reckoning,
-    const double & maximal_position_circular_error_probable);
+    const DeadReckoningLimits & dead_reckoning_limits,
+    const ObservationAgeLimits & proprioceptive_observation_age_limits = ObservationAgeLimits());
 
   virtual ~PredictorBase() = default;
 
@@ -63,13 +68,17 @@ public:
     State & current_state);
 
 protected:
-  virtual bool stop_(const Duration & previous_duration, const State & current_state) = 0;
-
   virtual void predict_(const State & previous_state_vector, State & current_state) = 0;
 
-  virtual void reset_(State & current_state) = 0;
+  virtual void reset_(State & current_state);
 
-  virtual double position_circular_error_probability_(const State & current_state) const = 0;
+  bool proprioceptive_data_are_valid_(
+    const Duration & current_duration,
+    const State & current_state) const;
+
+  bool dead_reckoning_is_valid_(
+    const Duration & current_duration,
+    const State & current_state) const;
 
   void notify_fsm_event_(
     const FSMState & previous_state,
@@ -79,23 +88,20 @@ protected:
 protected:
   std::shared_ptr<Logger> logger_;
   FSMEventNotifier fsm_event_notifier_;
-  Duration maximal_duration_in_dead_reckoning_;
-  double maximal_travelled_distance_in_dead_reckoning_;
-  double maximal_position_circular_error_probable_;
+  DeadReckoningLimits dead_reckoning_limits_;
+  ObservationAgeLimits observation_age_limits_;
   double dt_;
 };
 
 //-----------------------------------------------------------------------------
 template<class State>
 PredictorBase<State>::PredictorBase(
-  const Duration & maximal_duration_in_dead_reckoning,
-  const double & maximal_travelled_distance_in_dead_reckoning,
-  const double & maximal_position_circular_error_probable)
+  const DeadReckoningLimits & dead_reckoning_limits,
+  const ObservationAgeLimits & proprioceptive_observation_age_limits)
 : logger_(nullptr),
   fsm_event_notifier_(),
-  maximal_duration_in_dead_reckoning_(maximal_duration_in_dead_reckoning),
-  maximal_travelled_distance_in_dead_reckoning_(maximal_travelled_distance_in_dead_reckoning),
-  maximal_position_circular_error_probable_(maximal_position_circular_error_probable),
+  dead_reckoning_limits_(dead_reckoning_limits),
+  observation_age_limits_(proprioceptive_observation_age_limits),
   dt_(0)
 {
 }
@@ -126,6 +132,51 @@ void PredictorBase<State>::notify_fsm_event_(
 
 //-----------------------------------------------------------------------------
 template<class State>
+bool PredictorBase<State>::proprioceptive_data_are_valid_(
+  const Duration & current_duration, const State & current_state) const
+{
+  for (std::size_t n = 0; n < State::INPUT_SIZE; ++n) {
+    const auto & maximal_age = observation_age_limits_.maximal_ages[n];
+    if (maximal_age == Duration::max()) {
+      continue;
+    }
+
+    const auto & update_time = current_state.addon.proprioceptive_data_tracking.times[n];
+    if (update_time == Duration::min() || current_duration - update_time > maximal_age) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+template<class State>
+bool PredictorBase<State>::dead_reckoning_is_valid_(
+  const Duration & current_duration, const State & current_state) const
+{
+  const auto duration_in_dead_reckoning =
+    current_duration - current_state.addon.dead_reckoning_tracking.start_time;
+
+  const auto travelled_distance_in_dead_reckoning =
+    current_state.addon.travelled_distance -
+    current_state.addon.dead_reckoning_tracking.start_travelled_distance;
+
+  return duration_in_dead_reckoning <= dead_reckoning_limits_.maximal_duration &&
+         travelled_distance_in_dead_reckoning <= dead_reckoning_limits_.maximal_travelled_distance;
+}
+
+//-----------------------------------------------------------------------------
+template<class State>
+void PredictorBase<State>::reset_(State & current_state)
+{
+  current_state.state.reset();
+  current_state.input.reset();
+  current_state.addon.reset();
+}
+
+//-----------------------------------------------------------------------------
+template<class State>
 void PredictorBase<State>::predict(
   const Duration & previous_duration,
   const FSMState & previous_fsm_state,
@@ -140,6 +191,17 @@ void PredictorBase<State>::predict(
   dt_ = durationToSecond(current_duration - previous_duration);
 
   if (previous_fsm_state == FSMState::RUNNING) {
+    if (!proprioceptive_data_are_valid_(current_duration, previous_state)) {
+      current_state = previous_state;
+      reset_(current_state);
+      current_fsm_State = FSMState::INIT;
+      notify_fsm_event_(
+        previous_fsm_state,
+        current_fsm_State,
+        "PROPRIOCEPTIVE DATA ARE TOO OLD, RESET AND GO TO INIT");
+      return;
+    }
+
     if (dt_ > 0) {
       predict_(previous_state, current_state);
     } else {
@@ -148,24 +210,20 @@ void PredictorBase<State>::predict(
 
     if (logger_) {
       const auto duration_in_dead_reckoning =
-        current_duration - current_state.addon.last_exteroceptive_update.time;
+        current_duration - current_state.addon.dead_reckoning_tracking.start_time;
 
       const auto travelled_distance_in_dead_reckoning =
         current_state.addon.travelled_distance -
-        current_state.addon.last_exteroceptive_update.travelled_distance;
-
-      const auto position_circular_error_probability =
-        position_circular_error_probability_(current_state);
+        current_state.addon.dead_reckoning_tracking.start_travelled_distance;
 
       logger_->addEntry("stamp", durationToSecond(current_duration));
       logger_->addEntry("dt", dt_);
-      logger_->addEntry("pos_cep", position_circular_error_probability);
       logger_->addEntry("dr_distance", travelled_distance_in_dead_reckoning);
       logger_->addEntry("dr_duration", durationToSecond(duration_in_dead_reckoning));
       logger_->writeRow();
     }
 
-    if (stop_(current_duration, current_state)) {
+    if (!dead_reckoning_is_valid_(current_duration, current_state)) {
       reset_(current_state);
       current_fsm_State = FSMState::INIT;
       notify_fsm_event_(

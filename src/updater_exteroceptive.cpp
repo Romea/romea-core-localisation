@@ -15,7 +15,7 @@
 
 // std
 #include <memory>
-#include <string>
+#include <utility>
 
 // local
 #include "romea_core_localisation/updater_exteroceptive.hpp"
@@ -29,8 +29,11 @@ namespace localisation
 
 //-----------------------------------------------------------------------------
 UpdaterExteroceptive::UpdaterExteroceptive(
-  const std::string & updater_name, const double & minimal_rate, const trigger_mode & trigger_mode)
-: UpdaterBase(updater_name, minimal_rate, trigger_mode), logger_(nullptr)
+  const std::string & updater_name,
+  const double & minimal_rate,
+  const trigger_mode & trigger_mode)
+: UpdaterBase(updater_name, minimal_rate, trigger_mode),
+  logger_(nullptr)
 {
 }
 

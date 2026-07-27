@@ -20,11 +20,13 @@
 #include <romea_core_common/time/Time.hpp>
 
 // std
+#include <array>
 #include <string>
 
 // local
 #include "romea_core_localisation/fsm_state.hpp"
 #include "romea_core_localisation/observation_twist.hpp"
+#include "romea_core_localisation/observation_tracking.hpp"
 #include "romea_core_localisation/updater_proprioceptive.hpp"
 
 namespace romea
@@ -45,20 +47,50 @@ public:
 
   using Observation = ObservationTwist;
 
+  static void update_observation_age_limits(
+    ObservationAgeLimits<MetaState::INPUT_SIZE> & observation_age_limits,
+    const double & minimal_rate)
+  {
+    observation_age_limits.update(
+      minimal_rate,
+      std::array<std::size_t, 3>{
+        MetaState::LEADER_LINEAR_SPEED_X_BODY,
+        MetaState::LEADER_LINEAR_SPEED_Y_BODY,
+        MetaState::LEADER_ANGULAR_SPEED_Z_BODY});
+  }
+
   virtual void update(
     const Duration & duration,
     const ObservationTwist & current_observation,
     FSMState & /*current_fsm_State*/,
     MetaState & current_meta_state)
   {
-    rate_diagnostic_.evaluate(duration);
+    if (rate_diagnostic_.evaluate(duration) != DiagnosticStatus::OK) {
+      return;
+    }
 
-    current_meta_state.input.U().template segment<3>(MetaState::LEADER_LINEAR_SPEED_X_BODY) =
-      current_observation.Y();
+    update_input_(current_observation, current_meta_state.input);
+    update_tracking_(duration, current_meta_state.addon);
+  }
 
-    current_meta_state.input.QU().template block<3, 3>(
+private:
+  void update_input_(const ObservationTwist & current_observation, typename MetaState::Input & input)
+  {
+    input.U().template segment<3>(MetaState::LEADER_LINEAR_SPEED_X_BODY) = current_observation.Y();
+
+    input.QU().template block<3, 3>(
       MetaState::LEADER_LINEAR_SPEED_X_BODY, MetaState::LEADER_LINEAR_SPEED_X_BODY) =
       current_observation.R();
+  }
+
+  void update_tracking_(const Duration & duration, typename MetaState::AddOn & add_on)
+  {
+    add_on.proprioceptive_data_tracking.times[
+      MetaState::LEADER_LINEAR_SPEED_X_BODY] = duration;
+    add_on.proprioceptive_data_tracking.times[
+      MetaState::LEADER_LINEAR_SPEED_Y_BODY] = duration;
+    add_on.proprioceptive_data_tracking.times[
+      MetaState::LEADER_ANGULAR_SPEED_Z_BODY] = duration;
   }
 };
 

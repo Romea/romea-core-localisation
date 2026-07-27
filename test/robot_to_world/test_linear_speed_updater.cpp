@@ -35,12 +35,13 @@ TEST(TestAngularSpeedUpdater, checkUpdate)
   observation.Y() = 1;
   observation.R() = 2;
 
-  romea::core::Duration t(1000);
   MetaState metaState;
   FSMState fsm_state = FSMState::INIT;
-  Updater updater("linear_speed_updater", 10);
+  Updater updater("linear_speed_updater", 1);
 
-  updater.update(t, observation, fsm_state, metaState);
+  for (int n = 1; n <= 5; ++n) {
+    updater.update(romea::core::durationFromSecond(n), observation, fsm_state, metaState);
+  }
 
   EXPECT_EQ(fsm_state, FSMState::INIT);
   EXPECT_EQ(metaState.input.U(MetaState::InputIndex::LINEAR_SPEED_X_BODY), observation.Y());

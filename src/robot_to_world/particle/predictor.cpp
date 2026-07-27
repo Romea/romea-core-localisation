@@ -29,14 +29,10 @@ namespace localisation
 
 //--------------------------------------------------------------------------
 R2WPFPredictor::R2WPFPredictor(
-  const Duration & maximal_duration_in_dead_reckoning,
-  const double & maximal_travelled_distance_in_dead_reckoning,
-  const double & maximal_position_circular_error_probable,
-  const size_t & number_of_particles)
-: PredictorBase<MetaState>(
-    maximal_duration_in_dead_reckoning,
-    maximal_travelled_distance_in_dead_reckoning,
-    maximal_position_circular_error_probable),
+  const size_t & number_of_particles,
+  const DeadReckoningLimits & dead_reckoning_limits,
+  const ObservationAgeLimits & proprioceptive_observation_age_limits)
+: PredictorBase<MetaState>(dead_reckoning_limits, proprioceptive_observation_age_limits),
   vxdT_(0),
   vydT_(0),
   cos_courses_(RowMajorVector::Zero(number_of_particles)),
@@ -106,39 +102,11 @@ void R2WPFPredictor::predictAddOn_(const AddOn & previous_add_on, AddOn & curren
 {
   current_add_on.roll = previous_add_on.roll;
   current_add_on.pitch = previous_add_on.pitch;
-  current_add_on.roll = previous_add_on.roll_pitch_variance;
-  current_add_on.last_exteroceptive_update = previous_add_on.last_exteroceptive_update;
+  current_add_on.roll_pitch_variance = previous_add_on.roll_pitch_variance;
+  current_add_on.dead_reckoning_tracking = previous_add_on.dead_reckoning_tracking;
+  current_add_on.proprioceptive_data_tracking = previous_add_on.proprioceptive_data_tracking;
   current_add_on.travelled_distance =
     previous_add_on.travelled_distance + std::sqrt(vxdT_ * vxdT_ + vydT_ * vydT_);
-}
-
-//-----------------------------------------------------------------------------
-bool R2WPFPredictor::stop_(const Duration & duration, const MetaState & metaState)
-{
-  Duration durationInDeadReckoningMode = duration - metaState.addon.last_exteroceptive_update.time;
-
-  double travelledDistanceInDeadReckoningMode =
-    metaState.addon.travelled_distance -
-    metaState.addon.last_exteroceptive_update.travelled_distance;
-
-  double positionCircularErrorProbability = position_circular_error_probability_(metaState);
-
-  return positionCircularErrorProbability > maximal_position_circular_error_probable_ ||
-         travelledDistanceInDeadReckoningMode > maximal_travelled_distance_in_dead_reckoning_ ||
-         durationInDeadReckoningMode > maximal_duration_in_dead_reckoning_;
-}
-
-//-----------------------------------------------------------------------------
-double R2WPFPredictor::position_circular_error_probability_(const MetaState & /*metaState*/) const
-{
-  return 0;
-}
-
-//-----------------------------------------------------------------------------
-void R2WPFPredictor::reset_(MetaState & metaState)
-{
-  metaState.state.reset();
-  metaState.addon.reset();
 }
 
 }  // namespace localisation

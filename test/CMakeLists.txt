@@ -12,6 +12,4 @@ add_subdirectory(robot_to_human)
 
 romea_add_gtest(test_fsm_state_conversions test_fsm_state_conversions.cpp LIBRARIES ${PROJECT_NAME})
 
-romea_add_gtest(test_update_monitoring test_update_monitoring.cpp LIBRARIES ${PROJECT_NAME})
-
 romea_add_gtest(test_traits test_traits.cpp LIBRARIES ${PROJECT_NAME})

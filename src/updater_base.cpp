@@ -14,11 +14,27 @@
 // limitations under the License.
 
 // std
+#include <stdexcept>
 #include <string>
 #include <utility>
 
 // local
 #include "romea_core_localisation/updater_base.hpp"
+
+namespace
+{
+
+//-----------------------------------------------------------------------------
+double validate_minimal_rate(const std::string & updater_name, const double & minimal_rate)
+{
+  if (minimal_rate <= 0.0) {
+    throw std::invalid_argument("Invalid minimal rate for updater " + updater_name);
+  }
+
+  return minimal_rate;
+}
+
+}  // namespace
 
 namespace romea
 {
@@ -31,7 +47,8 @@ namespace localisation
 UpdaterBase::UpdaterBase(
   const std::string & updater_name, const double & minimal_rate, const trigger_mode & trigger_mode)
 : trigger_mode_(trigger_mode),
-  rate_diagnostic_(updater_name, minimal_rate, 0.1 * minimal_rate),
+  minimal_rate_(validate_minimal_rate(updater_name, minimal_rate)),
+  rate_diagnostic_(updater_name, minimal_rate_, 0.1 * minimal_rate_),
   fsm_event_notifier_(),
   mutex_()
 {

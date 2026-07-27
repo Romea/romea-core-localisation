@@ -34,21 +34,15 @@ public:
   using State = R2WKFMetaState::State;
   using Input = R2WKFMetaState::Input;
   using AddOn = R2WKFMetaState::AddOn;
+  using ObservationAgeLimits = PredictorBase<MetaState>::ObservationAgeLimits;
 
 public:
   R2WKFPredictor(
-    const Duration & maximal_duration_in_dead_reckoning,
-    const double & maximal_travelled_distance_in_dead_reckoning,
-    const double & maximal_position_circular_error_probable);
+    const DeadReckoningLimits & dead_reckoning_limits,
+    const ObservationAgeLimits & proprioceptive_observation_age_limits = ObservationAgeLimits());
 
 protected:
-  bool stop_(const Duration & duration, const MetaState & state) override;
-
-  double position_circular_error_probability_(const MetaState & current_state) const override;
-
   void predict_(const MetaState & previous_state, MetaState & next_state) override;
-
-  void reset_(MetaState & state) override;
 
   void predictState_(
     const State & previous_state, const Input & previous_input, State & current_state);

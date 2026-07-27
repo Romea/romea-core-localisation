@@ -21,14 +21,18 @@
 TEST(TestR2RMetaStateBase, resetClearsRuntimeAddOnData)
 {
   romea::core::localisation::R2RMetaStateBase meta_state;
-  meta_state.addon.last_exteroceptive_update.time = romea::core::durationFromSecond(42.0);
-  meta_state.addon.last_exteroceptive_update.travelled_distance = 12.0;
+  meta_state.addon.dead_reckoning_tracking.start_time = romea::core::durationFromSecond(42.0);
+  meta_state.addon.dead_reckoning_tracking.start_travelled_distance = 12.0;
+  meta_state.addon.proprioceptive_data_tracking.times.fill(romea::core::durationFromSecond(42.0));
   meta_state.addon.travelled_distance = 4.0;
 
   meta_state.addon.reset();
 
-  EXPECT_EQ(meta_state.addon.last_exteroceptive_update.time, romea::core::Duration::max());
-  EXPECT_DOUBLE_EQ(meta_state.addon.last_exteroceptive_update.travelled_distance, 0.0);
+  EXPECT_EQ(meta_state.addon.dead_reckoning_tracking.start_time, romea::core::Duration::max());
+  EXPECT_DOUBLE_EQ(meta_state.addon.dead_reckoning_tracking.start_travelled_distance, 0.0);
+  for (const auto & time : meta_state.addon.proprioceptive_data_tracking.times) {
+    EXPECT_EQ(time, romea::core::Duration::min());
+  }
   EXPECT_DOUBLE_EQ(meta_state.addon.travelled_distance, 0.0);
 }
 

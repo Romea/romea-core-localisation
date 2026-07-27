@@ -20,7 +20,8 @@
 #include "romea_core_common/fsm/FSMEventNotifier.hpp"
 #include "romea_core_localisation/fsm_state.hpp"
 #include "romea_core_localisation/predictor_base.hpp"
-#include "romea_core_localisation/update_monitoring.hpp"
+#include "romea_core_localisation/dead_reckoning_tracking.hpp"
+#include "romea_core_localisation/observation_tracking.hpp"
 #include "romea_core_localisation/updater_base.hpp"
 #include "test_utils.hpp"
 
@@ -30,7 +31,7 @@ class TestUpdaterBase : public UpdaterBase
 {
 public:
   TestUpdaterBase()
-  : UpdaterBase("test_updater", 1.0, Updatertrigger_mode::ALWAYS)
+  : UpdaterBase("test_updater", 1.0, UpdaterTriggerMode::ALWAYS)
   {
   }
 
@@ -39,12 +40,27 @@ public:
 
 struct TestPredictorState
 {
+  enum InputIndex
+  {
+    INPUT_SIZE = 1
+  };
+
+  struct Resettable
+  {
+    void reset() {}
+  };
+
   struct Addon
   {
-    UpdateMonitoring last_exteroceptive_update;
+    void reset() {}
+
+    DeadReckoningTracking dead_reckoning_tracking;
+    ObservationUpdateTracking<INPUT_SIZE> proprioceptive_data_tracking;
     double travelled_distance = 0.;
   };
 
+  Resettable state;
+  Resettable input;
   Addon addon;
 };
 
@@ -52,23 +68,18 @@ class TestPredictorBase : public PredictorBase<TestPredictorState>
 {
 public:
   TestPredictorBase()
-  : PredictorBase<TestPredictorState>(romea::core::Duration::max(), 0., 0.)
+  : PredictorBase<TestPredictorState>(
+      DeadReckoningLimits(romea::core::Duration::max(), 0.))
   {
   }
 
   using PredictorBase<TestPredictorState>::notify_fsm_event_;
 
 protected:
-  bool stop_(const romea::core::Duration &, const TestPredictorState &) override { return false; }
-
   void predict_(const TestPredictorState & previous_state, TestPredictorState & current_state) override
   {
     current_state = previous_state;
   }
-
-  void reset_(TestPredictorState & current_state) override { current_state = TestPredictorState(); }
-
-  double position_circular_error_probability_(const TestPredictorState &) const override { return 0.; }
 };
 
 //-----------------------------------------------------------------------------
@@ -78,6 +89,7 @@ TEST(TestFSMStateConversion, checkfsm_stateToString)
   EXPECT_STREQ(to_string(FSMState::RUNNING).c_str(), "RUNNING");
   EXPECT_STREQ(to_string(FSMState::RESET).c_str(), "RESET");
   EXPECT_STREQ(to_string(FSMState::INIT).c_str(), "INIT");
+  EXPECT_STREQ(to_string(FSMState::STALE).c_str(), "STALE");
 }
 
 //-----------------------------------------------------------------------------
@@ -87,6 +99,7 @@ TEST(TestFSMStateConversion, checkfsm_stateToDiagnosticStatus)
   EXPECT_EQ(to_diagnostic_status(FSMState::RUNNING), romea::core::DiagnosticStatus::OK);
   EXPECT_EQ(to_diagnostic_status(FSMState::RESET), romea::core::DiagnosticStatus::WARN);
   EXPECT_EQ(to_diagnostic_status(FSMState::INIT), romea::core::DiagnosticStatus::WARN);
+  EXPECT_EQ(to_diagnostic_status(FSMState::STALE), romea::core::DiagnosticStatus::STALE);
 }
 
 //-----------------------------------------------------------------------------
@@ -107,6 +120,10 @@ TEST(TestFSMStateConversion, checkfsm_stateToCommonFSMState)
   const auto aborted_state = to_common_fsm_state(FSMState::ABORTED);
   EXPECT_STREQ(aborted_state.name.c_str(), "ABORTED");
   EXPECT_EQ(aborted_state.id, 3);
+
+  const auto stale_state = to_common_fsm_state(FSMState::STALE);
+  EXPECT_STREQ(stale_state.name.c_str(), "STALE");
+  EXPECT_EQ(stale_state.id, 4);
 }
 
 //-----------------------------------------------------------------------------
@@ -179,6 +196,17 @@ TEST(TestFSMStateConversion, checkUpdaterBaseDoesNotNotifyUnchangedFSMState)
   updater.notify_fsm_event_(FSMState::RUNNING, FSMState::RUNNING, "UNCHANGED");
 
   EXPECT_FALSE(callback_called);
+}
+
+//-----------------------------------------------------------------------------
+TEST(TestFSMStateConversion, checkUpdaterBaseRejectsNonPositiveMinimalRate)
+{
+  EXPECT_THROW(
+    UpdaterBase("test_updater", 0.0, UpdaterTriggerMode::ALWAYS),
+    std::invalid_argument);
+  EXPECT_THROW(
+    UpdaterBase("test_updater", -1.0, UpdaterTriggerMode::ALWAYS),
+    std::invalid_argument);
 }
 
 //-----------------------------------------------------------------------------

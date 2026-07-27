@@ -29,9 +29,9 @@ namespace localisation
 {
 
 //-----------------------------------------------------------------------------
-std::string to_string(const Updatertrigger_mode & trigger_mode)
+std::string to_string(const UpdaterTriggerMode & trigger_mode)
 {
-  if (trigger_mode == Updatertrigger_mode::ALWAYS) {
+  if (trigger_mode == UpdaterTriggerMode::ALWAYS) {
     return "always";
   } else {
     return "once";
@@ -39,12 +39,12 @@ std::string to_string(const Updatertrigger_mode & trigger_mode)
 }
 
 //-----------------------------------------------------------------------------
-Updatertrigger_mode to_trigger_mode(const std::string & trigger_mode)
+UpdaterTriggerMode to_trigger_mode(const std::string & trigger_mode)
 {
   if (trigger_mode == "always") {
-    return Updatertrigger_mode::ALWAYS;
+    return UpdaterTriggerMode::ALWAYS;
   } else if (trigger_mode == "once") {
-    return Updatertrigger_mode::ONCE;
+    return UpdaterTriggerMode::ONCE;
   } else {
     std::stringstream msg;
     msg << trigger_mode;

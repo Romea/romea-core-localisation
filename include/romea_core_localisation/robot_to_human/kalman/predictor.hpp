@@ -33,24 +33,18 @@ public:
   using State = R2HKFMetaState::State;
   using Input = R2HKFMetaState::Input;
   using AddOn = R2HKFMetaState::AddOn;
+  using ObservationAgeLimits = PredictorBase<MetaState>::ObservationAgeLimits;
 
 public:
   R2HKFPredictor(
-    const Duration & maximal_duration_in_dead_reckoning,
-    const double & maximal_travelled_distance_in_dead_reckoning,
-    const double & maximal_position_circular_error_probable,
-    const double & leaderMotionStd);
+    const double & leaderMotionStd,
+    const DeadReckoningLimits & dead_reckoning_limits,
+    const ObservationAgeLimits & proprioceptive_observation_age_limits = ObservationAgeLimits());
 
   virtual ~R2HKFPredictor() = default;
 
 private:
-  bool stop_(const Duration & duration, const MetaState & state) override;
-
-  double position_circular_error_probability_(const MetaState & current_state) const override;
-
   void predict_(const MetaState & previous_meta_state, MetaState & current_meta_state) override;
-
-  void reset_(MetaState & metaState) override;
 
 private:
   void predictState_(

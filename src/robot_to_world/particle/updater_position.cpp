@@ -124,8 +124,8 @@ void R2WPFUpdaterPosition::update_(
   current_observation.R(MetaState::POSITION_X, MetaState::POSITION_X) += varxyantenna;
   current_observation.R(MetaState::POSITION_Y, MetaState::POSITION_Y) += varxyantenna;
   if (update_state_(current_state, current_observation)) {
-    current_add_on.last_exteroceptive_update.time = duration;
-    current_add_on.last_exteroceptive_update.travelled_distance = current_add_on.travelled_distance;
+    current_add_on.dead_reckoning_tracking.start_time = duration;
+    current_add_on.dead_reckoning_tracking.start_travelled_distance = current_add_on.travelled_distance;
   }
 }
 
@@ -137,8 +137,8 @@ bool R2WPFUpdaterPosition::set_(
   State & current_state,
   AddOn & current_add_on)
 {
-  current_add_on.last_exteroceptive_update.time = duration;
-  current_add_on.last_exteroceptive_update.travelled_distance = current_add_on.travelled_distance;
+  current_add_on.dead_reckoning_tracking.start_time = duration;
+  current_add_on.dead_reckoning_tracking.start_travelled_distance = current_add_on.travelled_distance;
 
   if (
     !std::isnan(current_input.U(MetaState::LINEAR_SPEED_X_BODY)) &&

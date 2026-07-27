@@ -28,20 +28,23 @@ namespace localisation
 
 //-----------------------------------------------------------------------------
 R2RMetaStateBase::AddOn::AddOn()
-: last_exteroceptive_update(),
+: dead_reckoning_tracking(),
+  proprioceptive_data_tracking(),
   leader_trajectory(MAXIMAL_TRAJECTORY_SIZE),
   robot_trajectory(MAXIMAL_TRAJECTORY_SIZE),
   travelled_distance(0)
 {
+  dead_reckoning_tracking.start_time = Duration::zero();
 }
 
 //-----------------------------------------------------------------------------
 void R2RMetaStateBase::AddOn::reset()
 {
-  last_exteroceptive_update.time = Duration::max();
+  dead_reckoning_tracking.start_time = Duration::max();
+  proprioceptive_data_tracking = ObservationUpdateTracking<INPUT_SIZE>();
   leader_trajectory.clear();
   robot_trajectory.clear();
-  last_exteroceptive_update.travelled_distance = 0;
+  dead_reckoning_tracking.start_travelled_distance = 0;
   travelled_distance = 0;
 }
 

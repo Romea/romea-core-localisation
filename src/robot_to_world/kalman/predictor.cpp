@@ -28,13 +28,9 @@ namespace localisation
 
 //--------------------------------------------------------------------------
 R2WKFPredictor::R2WKFPredictor(
-  const Duration & maximal_duration_in_dead_reckoning,
-  const double & maximal_travelled_distance_in_dead_reckoning,
-  const double & maximal_position_circular_error_probable)
-: PredictorBase(
-    maximal_duration_in_dead_reckoning,
-    maximal_travelled_distance_in_dead_reckoning,
-    maximal_position_circular_error_probable),
+  const DeadReckoningLimits & dead_reckoning_limits,
+  const ObservationAgeLimits & proprioceptive_observation_age_limits)
+: PredictorBase(dead_reckoning_limits, proprioceptive_observation_age_limits),
   jF_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE, MetaState::STATE_SIZE)),
   jG_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE, MetaState::INPUT_SIZE)),
   x_(0),
@@ -118,51 +114,10 @@ void R2WKFPredictor::predictAddOn_(const AddOn & previous_add_on, AddOn & curren
   current_add_on.roll = previous_add_on.roll;
   current_add_on.pitch = previous_add_on.pitch;
   current_add_on.roll_pitch_variance = previous_add_on.roll_pitch_variance;
-  current_add_on.last_exteroceptive_update = previous_add_on.last_exteroceptive_update;
+  current_add_on.dead_reckoning_tracking = previous_add_on.dead_reckoning_tracking;
+  current_add_on.proprioceptive_data_tracking = previous_add_on.proprioceptive_data_tracking;
   current_add_on.travelled_distance =
     previous_add_on.travelled_distance + std::sqrt(vxdT_ * vxdT_ + vydT_ * vydT_);
-}
-
-//-----------------------------------------------------------------------------
-bool R2WKFPredictor::stop_(const Duration & duration, const MetaState & metaState)
-{
-  Duration durationInDeadReckoningMode = duration - metaState.addon.last_exteroceptive_update.time;
-
-  double travelledDistanceInDeadReckoningMode =
-    metaState.addon.travelled_distance -
-    metaState.addon.last_exteroceptive_update.travelled_distance;
-
-  double positionCircularErrorProbability = position_circular_error_probability_(metaState);
-
-  if (
-    positionCircularErrorProbability > maximal_position_circular_error_probable_ ||
-    travelledDistanceInDeadReckoningMode > maximal_travelled_distance_in_dead_reckoning_ ||
-    durationInDeadReckoningMode > maximal_duration_in_dead_reckoning_) {
-    std::cout << " positionCircularErrorProbability " << positionCircularErrorProbability << " "
-              << maximal_position_circular_error_probable_ << std::endl;
-    std::cout << " travelledDistanceInDeadReckoningMode " << travelledDistanceInDeadReckoningMode
-              << " " << maximal_travelled_distance_in_dead_reckoning_ << std::endl;
-    std::cout << " durationInDeadReckoningMode " << durationInDeadReckoningMode.count() << " "
-              << maximal_duration_in_dead_reckoning_.count() << std::endl;
-    return true;
-  } else {
-    return false;
-  }
-}
-
-//-----------------------------------------------------------------------------
-double R2WKFPredictor::position_circular_error_probability_(const MetaState & metaState) const
-{
-  return std::sqrt(
-    metaState.state.P(MetaState::POSITION_X, MetaState::POSITION_X) +
-    metaState.state.P(MetaState::POSITION_Y, MetaState::POSITION_Y));
-}
-
-//-----------------------------------------------------------------------------
-void R2WKFPredictor::reset_(MetaState & metaState)
-{
-  metaState.state.reset();
-  metaState.addon.reset();
 }
 
 }  // namespace localisation

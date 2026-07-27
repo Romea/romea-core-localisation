@@ -19,7 +19,8 @@
 // romea
 #include "romea_core_common/containers/Eigen/RingOfEigenVector.hpp"
 #include "romea_core_filtering/gaussian/input.hpp"
-#include "romea_core_localisation/update_monitoring.hpp"
+#include "romea_core_localisation/dead_reckoning_tracking.hpp"
+#include "romea_core_localisation/observation_tracking.hpp"
 
 namespace romea
 {
@@ -53,7 +54,8 @@ struct R2HMetaStateBase
 
     void reset();
 
-    UpdateMonitoring last_exteroceptive_update;
+    DeadReckoningTracking dead_reckoning_tracking;
+    ObservationUpdateTracking<INPUT_SIZE> proprioceptive_data_tracking;
     RingOfEigenVector<Eigen::Vector2d> leader_trajectory;
     RingOfEigenVector<Eigen::Vector2d> robot_trajectory;
     double travelled_distance;

@@ -13,14 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ROMEA_CORE_LOCALISATION__UPDATER_PROPRIOCEPTIVE_HPP_
-#define ROMEA_CORE_LOCALISATION__UPDATER_PROPRIOCEPTIVE_HPP_
+#ifndef ROMEA_CORE_LOCALISATION__DEAD_RECKONING_TRACKING_HPP_
+#define ROMEA_CORE_LOCALISATION__DEAD_RECKONING_TRACKING_HPP_
 
 // std
-#include <string>
+#include <cmath>
 
-// local
-#include "romea_core_localisation/updater_base.hpp"
+// romea
+#include <romea_core_common/time/Time.hpp>
 
 namespace romea
 {
@@ -29,16 +29,35 @@ namespace core
 namespace localisation
 {
 
-class UpdaterProprioceptive : public UpdaterBase
+struct DeadReckoningTracking
 {
 public:
-  UpdaterProprioceptive(const std::string & updater_name, const double & minimal_rate);
+  DeadReckoningTracking()
+  : start_time(Duration::min()), start_travelled_distance(NAN)
+  {
+  }
 
-  virtual ~UpdaterProprioceptive() = default;
+  Duration start_time;
+  double start_travelled_distance;
+};
+
+struct DeadReckoningLimits
+{
+public:
+  DeadReckoningLimits(
+    const Duration & maximal_duration,
+    const double & maximal_travelled_distance)
+  : maximal_duration(maximal_duration),
+    maximal_travelled_distance(maximal_travelled_distance)
+  {
+  }
+
+  Duration maximal_duration;
+  double maximal_travelled_distance;
 };
 
 }  // namespace localisation
 }  // namespace core
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION__UPDATER_PROPRIOCEPTIVE_HPP_
+#endif  // ROMEA_CORE_LOCALISATION__DEAD_RECKONING_TRACKING_HPP_

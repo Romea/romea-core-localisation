@@ -32,13 +32,9 @@ namespace localisation
 
 //-----------------------------------------------------------------------------
 R2RKFPredictor::R2RKFPredictor(
-  const Duration & maximal_duration_in_dead_reckoning,
-  const double & maximal_travelled_distance_in_dead_reckoning,
-  const double & maximal_position_circular_error_probable)
-: PredictorBase<MetaState>(
-    maximal_duration_in_dead_reckoning,
-    maximal_travelled_distance_in_dead_reckoning,
-    maximal_position_circular_error_probable),
+  const DeadReckoningLimits & dead_reckoning_limits,
+  const ObservationAgeLimits & proprioceptive_observation_age_limits)
+: PredictorBase<MetaState>(dead_reckoning_limits, proprioceptive_observation_age_limits),
   jFl_(Eigen::MatrixXd::Identity(MetaState::STATE_SIZE, MetaState::STATE_SIZE)),
   jGl_(Eigen::MatrixXd::Zero(MetaState::STATE_SIZE, MetaState::INPUT_SIZE)),
   jFf_(Eigen::MatrixXd::Identity(MetaState::STATE_SIZE, MetaState::STATE_SIZE)),
@@ -180,49 +176,8 @@ void R2RKFPredictor::predictAddOn_(
 
   current_add_on.travelled_distance =
     previous_add_on.travelled_distance + std::sqrt(vxfdT_ * vxfdT_ + vyfdT_ * vyfdT_);
-  current_add_on.last_exteroceptive_update = previous_add_on.last_exteroceptive_update;
-}
-
-//-----------------------------------------------------------------------------
-bool R2RKFPredictor::stop_(const Duration & duration, const R2RKFMetaState & metaState)
-{
-  Duration durationInDeadReckoningMode = duration - metaState.addon.last_exteroceptive_update.time;
-
-  double travelledDistanceInDeadReckoningMode =
-    metaState.addon.travelled_distance -
-    metaState.addon.last_exteroceptive_update.travelled_distance;
-
-  double positionCircularErrorProbability = position_circular_error_probability_(metaState);
-
-  // std::cout << " kalman dr elapsed time " << durationToSecond(duration) << "
-  // " <<
-  //   durationToSecond(state.lastExteroceptiveUpdate.time) << " " <<
-  //   durationToSecond(shutoffParameters_.maximal_duration_in_dead_reckoning)
-  //   << std::endl;
-  // std::cout << " kalman dr elapsed distance " << state.travelledDistance << "
-  // " <<
-  //   state.lastExteroceptiveUpdate.travelledDistance << " " <<
-  //   shutoffParameters_.maximal_travelled_distance_in_dead_reckoning <<
-  //   std::endl;
-
-  return positionCircularErrorProbability > maximal_position_circular_error_probable_ ||
-         travelledDistanceInDeadReckoningMode > maximal_travelled_distance_in_dead_reckoning_ ||
-         durationInDeadReckoningMode > maximal_duration_in_dead_reckoning_;
-}
-
-//-----------------------------------------------------------------------------
-double R2RKFPredictor::position_circular_error_probability_(const MetaState & metaState) const
-{
-  return std::sqrt(
-    metaState.state.P(MetaState::LEADER_POSITION_X, MetaState::LEADER_POSITION_X) +
-    metaState.state.P(MetaState::LEADER_POSITION_Y, MetaState::LEADER_POSITION_Y));
-}
-
-//-----------------------------------------------------------------------------
-void R2RKFPredictor::reset_(R2RKFMetaState & metaState)
-{
-  metaState.state.reset();
-  metaState.addon.reset();
+  current_add_on.dead_reckoning_tracking = previous_add_on.dead_reckoning_tracking;
+  current_add_on.proprioceptive_data_tracking = previous_add_on.proprioceptive_data_tracking;
 }
 
 }  // namespace localisation

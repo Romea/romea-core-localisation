@@ -42,10 +42,12 @@ TEST(TestR2RLeaderTwistUpdater, writesLeaderInputs)
 {
   MetaState meta_state;
   FSMState fsm_state = FSMState::INIT;
-  Updater updater("leader_twist_updater", 10.0);
+  Updater updater("leader_twist_updater", 1.0);
   const auto observation = make_observation();
 
-  updater.update(romea::core::durationFromSecond(1.0), observation, fsm_state, meta_state);
+  for (int n = 1; n <= 5; ++n) {
+    updater.update(romea::core::durationFromSecond(n), observation, fsm_state, meta_state);
+  }
 
   EXPECT_EQ(fsm_state, FSMState::INIT);
   EXPECT_TRUE(meta_state.input.U()

@@ -43,12 +43,9 @@ R2WResults R2WKFMetaStateToResults::convert(const R2WKFMetaState & meta_state) c
   results.robot_pose.covariance(3, 3) = meta_state.addon.roll_pitch_variance;
   results.robot_pose.covariance(4, 4) = meta_state.addon.roll_pitch_variance;
 
-  results.robot_twist.linearSpeeds.x() =
-    meta_state.input.U(R2WKFMetaState::LINEAR_SPEED_X_BODY);
-  results.robot_twist.linearSpeeds.y() =
-    meta_state.input.U(R2WKFMetaState::LINEAR_SPEED_Y_BODY);
-  results.robot_twist.angularSpeeds.z() =
-    meta_state.input.U(R2WKFMetaState::ANGULAR_SPEED_Z_BODY);
+  results.robot_twist.linearSpeeds.x() = meta_state.input.U(R2WKFMetaState::LINEAR_SPEED_X_BODY);
+  results.robot_twist.linearSpeeds.y() = meta_state.input.U(R2WKFMetaState::LINEAR_SPEED_Y_BODY);
+  results.robot_twist.angularSpeeds.z() = meta_state.input.U(R2WKFMetaState::ANGULAR_SPEED_Z_BODY);
   results.robot_twist.covariance = toSe3Covariance(meta_state.input.QU());
 
   return results;

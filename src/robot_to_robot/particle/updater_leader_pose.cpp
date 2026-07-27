@@ -90,8 +90,8 @@ bool R2RPFUpdaterLeaderPose::set_(
     randomGenerator.init(current_observation.Y(), current_observation.R());
     randomGenerator.fill(current_state.particles);
 
-    current_add_on.last_exteroceptive_update.time = duration;
-    current_add_on.last_exteroceptive_update.travelled_distance = current_add_on.travelled_distance;
+    current_add_on.dead_reckoning_tracking.start_time = duration;
+    current_add_on.dead_reckoning_tracking.start_travelled_distance = current_add_on.travelled_distance;
 
     assert(!std::isnan(current_state.particles(0, 0)));
     assert(!std::isnan(current_state.particles(0, 1)));

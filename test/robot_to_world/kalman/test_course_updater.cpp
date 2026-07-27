@@ -29,7 +29,7 @@ using Updater = romea::core::localisation::R2WKFUpdaterCourse;
 using FSMState = romea::core::localisation::FSMState;
 using MetaState = romea::core::localisation::R2WKFMetaState;
 using Observation = romea::core::localisation::ObservationCourse;
-using trigger_mode = romea::core::localisation::Updatertrigger_mode;
+using trigger_mode = romea::core::localisation::UpdaterTriggerMode;
 
 const double initialCourse = 0.1;
 const double initialCourseVariance = 0.1;
@@ -41,7 +41,8 @@ public:
 
   void init(const FSMState & fsm_state_, const trigger_mode & trigger_mode_)
   {
-    updater = std::make_unique<Updater>("course_updater", 100, trigger_mode_, 5);
+    updater = std::make_unique<Updater>(
+      "course_updater", 100, trigger_mode_, 5);
 
     metastate.state.X() << 0, 0, initialCourse;
     metastate.state.P() << 1, 0, 0, 0, 1, 0, 0, 0, initialCourseVariance;
@@ -91,8 +92,8 @@ TEST_F(TestCourseUpdater, testUpdate)
   EXPECT_EQ(fsm_state, FSMState::RUNNING);
   EXPECT_EQ(metastate.state.X(MetaState::ORIENTATION_Z), initialCourse);
   EXPECT_EQ(metastate.state.P(MetaState::ORIENTATION_Z, MetaState::ORIENTATION_Z), 0.05);
-  EXPECT_EQ(metastate.addon.last_exteroceptive_update.time.count(), duration.count());
-  EXPECT_DOUBLE_EQ(metastate.addon.last_exteroceptive_update.travelled_distance, 0);
+  EXPECT_EQ(metastate.addon.dead_reckoning_tracking.start_time.count(), duration.count());
+  EXPECT_DOUBLE_EQ(metastate.addon.dead_reckoning_tracking.start_travelled_distance, 0);
 }
 
 TEST_F(TestCourseUpdater, testMahalanobisRejection)
@@ -109,8 +110,8 @@ TEST_F(TestCourseUpdater, testMahalanobisRejection)
   EXPECT_EQ(metastate.state.X(MetaState::ORIENTATION_Z), initialCourse);
   EXPECT_EQ(
     metastate.state.P(MetaState::ORIENTATION_Z, MetaState::ORIENTATION_Z), initialCourseVariance);
-  EXPECT_EQ(metastate.addon.last_exteroceptive_update.time.count(), duration.count());
-  EXPECT_DOUBLE_EQ(metastate.addon.last_exteroceptive_update.travelled_distance, 0);
+  EXPECT_EQ(metastate.addon.dead_reckoning_tracking.start_time.count(), duration.count());
+  EXPECT_DOUBLE_EQ(metastate.addon.dead_reckoning_tracking.start_travelled_distance, 0);
 }
 
 TEST_F(TestCourseUpdater, testWrappedCourseInnovationIsAccepted)
@@ -132,7 +133,7 @@ TEST_F(TestCourseUpdater, testWrappedCourseInnovationIsAccepted)
   EXPECT_GT(metastate.state.X(MetaState::ORIENTATION_Z), two_pi - 1e-3);
   EXPECT_LT(metastate.state.X(MetaState::ORIENTATION_Z), two_pi);
   EXPECT_EQ(metastate.state.P(MetaState::ORIENTATION_Z, MetaState::ORIENTATION_Z), 0.05);
-  EXPECT_EQ(metastate.addon.last_exteroceptive_update.time.count(), duration.count());
+  EXPECT_EQ(metastate.addon.dead_reckoning_tracking.start_time.count(), duration.count());
 }
 
 //-----------------------------------------------------------------------------

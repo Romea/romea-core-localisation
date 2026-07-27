@@ -110,8 +110,8 @@ void R2WPFUpdaterRange::update_(
   current_observation.R() += lever_arm_compensation_.getPositionCovariance().trace();
 
   if (update_state_(current_state, current_observation)) {
-    current_add_on.last_exteroceptive_update.time = duration;
-    current_add_on.last_exteroceptive_update.travelled_distance = current_add_on.travelled_distance;
+    current_add_on.dead_reckoning_tracking.start_time = duration;
+    current_add_on.dead_reckoning_tracking.start_travelled_distance = current_add_on.travelled_distance;
   }
 }
 

@@ -28,7 +28,7 @@ using Updater = romea::core::localisation::R2WKFUpdaterPose;
 using FSMState = romea::core::localisation::FSMState;
 using MetaState = romea::core::localisation::R2WKFMetaState;
 using Observation = romea::core::localisation::ObservationPose;
-using trigger_mode = romea::core::localisation::Updatertrigger_mode;
+using trigger_mode = romea::core::localisation::UpdaterTriggerMode;
 
 const Eigen::Vector3d initialPose = (Eigen::Vector3d() << 0.1, 0.2, 0.3).finished();
 const Eigen::Matrix3d initialPoseCovariance =
@@ -48,7 +48,8 @@ public:
 
   void init(const FSMState & fsm_state_, const trigger_mode & trigger_mode_)
   {
-    updater = std::make_unique<Updater>("course_updater", 100, trigger_mode_, 5);
+    updater = std::make_unique<Updater>(
+      "course_updater", 100, trigger_mode_, 5);
 
     metastate.state.X() << initialPose;
     metastate.state.P() << initialPoseCovariance;
@@ -80,8 +81,8 @@ TEST_F(TestPoseUpdater, testSetObservation)
   EXPECT_EQ(fsm_state, FSMState::RUNNING);
   EXPECT_TRUE(metastate.state.X().isApprox(observation.Y()));
   EXPECT_TRUE(metastate.state.P().isApprox(observation.R()));
-  EXPECT_EQ(metastate.addon.last_exteroceptive_update.time.count(), duration.count());
-  EXPECT_DOUBLE_EQ(metastate.addon.last_exteroceptive_update.travelled_distance, 0);
+  EXPECT_EQ(metastate.addon.dead_reckoning_tracking.start_time.count(), duration.count());
+  EXPECT_DOUBLE_EQ(metastate.addon.dead_reckoning_tracking.start_travelled_distance, 0);
 }
 
 TEST_F(TestPoseUpdater, testUpdate)
@@ -97,8 +98,8 @@ TEST_F(TestPoseUpdater, testUpdate)
   EXPECT_EQ(fsm_state, FSMState::RUNNING);
   EXPECT_TRUE(metastate.state.X().isApprox(initialPose));
   EXPECT_TRUE((metastate.state.P().diagonal().isApprox(Eigen::Vector3d(0.05, 0.1, 0.15))));
-  EXPECT_EQ(metastate.addon.last_exteroceptive_update.time.count(), duration.count());
-  EXPECT_DOUBLE_EQ(metastate.addon.last_exteroceptive_update.travelled_distance, 0);
+  EXPECT_EQ(metastate.addon.dead_reckoning_tracking.start_time.count(), duration.count());
+  EXPECT_DOUBLE_EQ(metastate.addon.dead_reckoning_tracking.start_travelled_distance, 0);
 }
 
 TEST_F(TestPoseUpdater, testMahalanobisRejection)
@@ -117,7 +118,7 @@ TEST_F(TestPoseUpdater, testMahalanobisRejection)
   EXPECT_EQ(fsm_state, FSMState::RUNNING);
   EXPECT_TRUE(metastate.state.X().isApprox(previous_state));
   EXPECT_TRUE(metastate.state.P().isApprox(previous_covariance));
-  EXPECT_EQ(metastate.addon.last_exteroceptive_update.time, romea::core::Duration::zero());
+  EXPECT_EQ(metastate.addon.dead_reckoning_tracking.start_time, romea::core::Duration::zero());
 }
 
 //-----------------------------------------------------------------------------

@@ -37,7 +37,8 @@ enum class FSMState
   INIT = 0,
   RUNNING,
   RESET,
-  ABORTED
+  ABORTED,
+  STALE
 };
 
 std::string to_string(const FSMState & fms_state);

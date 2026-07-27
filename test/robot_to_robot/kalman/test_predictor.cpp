@@ -15,6 +15,9 @@
 
 #include <gtest/gtest.h>
 
+#include <array>
+#include <cmath>
+
 #include "romea_core_common/time/Time.hpp"
 #include "romea_core_localisation/fsm_state.hpp"
 #include "romea_core_localisation/robot_to_robot/kalman/predictor.hpp"
@@ -28,7 +31,30 @@ using Predictor = romea::core::localisation::R2RKFPredictor;
 
 Predictor make_predictor()
 {
-  return Predictor(romea::core::durationFromSecond(100.0), 100.0, 100.0);
+  return Predictor(
+    romea::core::localisation::DeadReckoningLimits(
+      romea::core::durationFromSecond(100.0),
+      100.0));
+}
+
+Predictor make_predictor_with_proprioceptive_age_limits()
+{
+  Predictor::ObservationAgeLimits observation_age_limits;
+  observation_age_limits.update(
+    10.0,
+    std::array<std::size_t, MetaState::INPUT_SIZE>{
+      MetaState::LINEAR_SPEED_X_BODY,
+      MetaState::LINEAR_SPEED_Y_BODY,
+      MetaState::ANGULAR_SPEED_Z_BODY,
+      MetaState::LEADER_LINEAR_SPEED_X_BODY,
+      MetaState::LEADER_LINEAR_SPEED_Y_BODY,
+      MetaState::LEADER_ANGULAR_SPEED_Z_BODY});
+
+  return Predictor(
+    romea::core::localisation::DeadReckoningLimits(
+      romea::core::durationFromSecond(100.0),
+      100.0),
+    observation_age_limits);
 }
 
 MetaState make_state()
@@ -39,8 +65,58 @@ MetaState make_state()
   state.input.U().setZero();
   state.input.QU().setIdentity();
   state.input.QU() *= 0.01;
-  state.addon.last_exteroceptive_update.time = romea::core::Duration::zero();
+  state.addon.dead_reckoning_tracking.start_time = romea::core::Duration::zero();
+  state.addon.dead_reckoning_tracking.start_travelled_distance = 0.0;
   return state;
+}
+
+MetaState make_static_state_with_proprioceptive_data_at(const romea::core::Duration & duration)
+{
+  auto state = make_state();
+  state.addon.proprioceptive_data_tracking.times.fill(duration);
+  return state;
+}
+
+void expect_static_state_resets_when_proprioceptive_data_is_lost(
+  const std::size_t & lost_input_index)
+{
+  auto predictor = make_predictor_with_proprioceptive_age_limits();
+  const auto initial_time = romea::core::durationFromSecond(1.0);
+  const auto fresh_prediction_time = romea::core::durationFromSecond(1.1);
+  const auto refreshed_proprioceptive_time = romea::core::durationFromSecond(1.15);
+  const auto stale_prediction_time = romea::core::durationFromSecond(1.25);
+
+  const auto previous = make_static_state_with_proprioceptive_data_at(initial_time);
+  MetaState current;
+  FSMState current_fsm_state = FSMState::INIT;
+
+  predictor.predict(
+    initial_time,
+    FSMState::RUNNING,
+    previous,
+    fresh_prediction_time,
+    current_fsm_state,
+    current);
+
+  EXPECT_EQ(current_fsm_state, FSMState::RUNNING);
+
+  auto previous_after_loss = current;
+  previous_after_loss.addon.proprioceptive_data_tracking.times.fill(refreshed_proprioceptive_time);
+  previous_after_loss.addon.proprioceptive_data_tracking.times[lost_input_index] = initial_time;
+
+  MetaState current_after_loss;
+  predictor.predict(
+    refreshed_proprioceptive_time,
+    FSMState::RUNNING,
+    previous_after_loss,
+    stale_prediction_time,
+    current_fsm_state,
+    current_after_loss);
+
+  EXPECT_EQ(current_fsm_state, FSMState::INIT);
+  EXPECT_TRUE(std::isnan(current_after_loss.state.X(MetaState::LEADER_POSITION_X)));
+  EXPECT_TRUE(std::isnan(current_after_loss.state.X(MetaState::LEADER_POSITION_Y)));
+  EXPECT_TRUE(std::isnan(current_after_loss.state.X(MetaState::LEADER_ORIENTATION_Z)));
 }
 
 }  // namespace
@@ -123,6 +199,20 @@ TEST(TestR2RKFPredictor, followerForwardMotionPropagatesRelativePose)
 
   EXPECT_EQ(current_fsm_state, FSMState::RUNNING);
   EXPECT_TRUE(current.state.X().isApprox(expected, 1e-12));
+}
+
+TEST(TestR2RKFPredictor, staticStateResetsWhenAnyProprioceptiveDataIsLost)
+{
+  for (const auto & input_index : std::array<std::size_t, MetaState::INPUT_SIZE>{
+      MetaState::LINEAR_SPEED_X_BODY,
+      MetaState::LINEAR_SPEED_Y_BODY,
+      MetaState::ANGULAR_SPEED_Z_BODY,
+      MetaState::LEADER_LINEAR_SPEED_X_BODY,
+      MetaState::LEADER_LINEAR_SPEED_Y_BODY,
+      MetaState::LEADER_ANGULAR_SPEED_Z_BODY}) {
+    SCOPED_TRACE(input_index);
+    expect_static_state_resets_when_proprioceptive_data_is_lost(input_index);
+  }
 }
 
 int main(int argc, char ** argv)

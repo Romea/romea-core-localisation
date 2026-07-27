@@ -39,12 +39,13 @@ TEST(TestAngularSpeedUpdater, checkUpdate)
   observation.R(Observation::LINEAR_SPEED_Y_BODY, Observation::LINEAR_SPEED_X_BODY) = 5;
   observation.R(Observation::LINEAR_SPEED_Y_BODY, Observation::LINEAR_SPEED_Y_BODY) = 6;
 
-  romea::core::Duration t(1000);
   MetaState metaState;
   FSMState fsm_state = FSMState::INIT;
-  Updater updater("twist_updater", 10);
+  Updater updater("linear_speeds_updater", 1);
 
-  updater.update(t, observation, fsm_state, metaState);
+  for (int n = 1; n <= 5; ++n) {
+    updater.update(romea::core::durationFromSecond(n), observation, fsm_state, metaState);
+  }
 
   EXPECT_EQ(fsm_state, FSMState::INIT);
   EXPECT_EQ(

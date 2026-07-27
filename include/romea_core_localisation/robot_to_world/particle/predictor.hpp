@@ -36,22 +36,16 @@ public:
   using AddOn = R2WPFMetaState::AddOn;
   using RowMajorVector = R2WPFMetaState::State::RowMajorVector;
   using RowMajorMatrix = R2WPFMetaState::State::RowMajorMatrix;
+  using ObservationAgeLimits = PredictorBase<MetaState>::ObservationAgeLimits;
 
 public:
   R2WPFPredictor(
-    const Duration & maximal_duration_in_dead_reckoning,
-    const double & maximal_travelled_distance_in_dead_reckoning,
-    const double & maximal_position_circular_error_probable,
-    const size_t & number_of_particles);
+    const size_t & number_of_particles,
+    const DeadReckoningLimits & dead_reckoning_limits,
+    const ObservationAgeLimits & proprioceptive_observation_age_limits = ObservationAgeLimits());
 
 private:
-  bool stop_(const Duration & duration, const MetaState & state) override;
-
-  double position_circular_error_probability_(const MetaState & current_state) const override;
-
   void predict_(const MetaState & previous_meta_state, MetaState & current_meta_state) override;
-
-  void reset_(MetaState & metaState) override;
 
   void predictState_(
     const State & previous_state, const Input & previous_input, State & current_state);

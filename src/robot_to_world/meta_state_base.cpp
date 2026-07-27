@@ -23,15 +23,22 @@ namespace localisation
 
 //-----------------------------------------------------------------------------
 R2WMetaStateBase::AddOn::AddOn()
-: last_exteroceptive_update(), roll(0), pitch(0), roll_pitch_variance(0), travelled_distance(0)
+: dead_reckoning_tracking(),
+  proprioceptive_data_tracking(),
+  roll(0),
+  pitch(0),
+  roll_pitch_variance(0),
+  travelled_distance(0)
 {
+  dead_reckoning_tracking.start_time = Duration::zero();
 }
 
 //-----------------------------------------------------------------------------
 void R2WMetaStateBase::AddOn::reset()
 {
-  last_exteroceptive_update.time = Duration::max();
-  last_exteroceptive_update.travelled_distance = 0;
+  dead_reckoning_tracking.start_time = Duration::max();
+  dead_reckoning_tracking.start_travelled_distance = 0;
+  proprioceptive_data_tracking = ObservationUpdateTracking<INPUT_SIZE>();
   roll = 0;
   pitch = 0;
   roll_pitch_variance = 0;

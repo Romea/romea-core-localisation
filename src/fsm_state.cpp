@@ -37,6 +37,8 @@ std::string to_string(const FSMState & fms_state)
       return "RESET";
     case FSMState::ABORTED:
       return "ABORTED";
+    case FSMState::STALE:
+      return "STALE";
     default:
       return "";
   }
@@ -69,6 +71,8 @@ DiagnosticStatus to_diagnostic_status(const FSMState & fms_state)
       return DiagnosticStatus::WARN;
     case FSMState::ABORTED:
       return DiagnosticStatus::ERROR;
+    case FSMState::STALE:
+      return DiagnosticStatus::STALE;
     default:
       return DiagnosticStatus::STALE;
   }

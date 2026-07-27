@@ -76,8 +76,8 @@ bool R2HKFUpdaterLeaderPosition::set_(
   State & current_state,
   AddOn & current_add_on)
 {
-  current_add_on.last_exteroceptive_update.time = duration;
-  current_add_on.last_exteroceptive_update.travelled_distance = current_add_on.travelled_distance;
+  current_add_on.dead_reckoning_tracking.start_time = duration;
+  current_add_on.dead_reckoning_tracking.start_travelled_distance = current_add_on.travelled_distance;
 
   if (
     !std::isnan(current_input.U(MetaState::LINEAR_SPEED_X_BODY)) &&

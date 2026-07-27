@@ -27,7 +27,7 @@ namespace
 
 using FSMState = romea::core::localisation::FSMState;
 using MetaState = romea::core::localisation::R2HKFMetaState;
-using TriggerMode = romea::core::localisation::Updatertrigger_mode;
+using TriggerMode = romea::core::localisation::UpdaterTriggerMode;
 using Updater = romea::core::localisation::R2HKFUpdaterLeaderPosition;
 using Observation = romea::core::localisation::ObservationPosition;
 
@@ -52,7 +52,8 @@ TEST(TestR2HLeaderPositionUpdater, initWaitsForFollowerInputs)
 {
   MetaState meta_state;
   FSMState fsm_state = FSMState::INIT;
-  Updater updater("leader_position_updater", 10.0, TriggerMode::ALWAYS, 10.0);
+  Updater updater(
+    "leader_position_updater", 10.0, TriggerMode::ALWAYS, 10.0);
 
   updater.update(romea::core::durationFromSecond(1.0), make_observation(), fsm_state, meta_state);
 
@@ -66,7 +67,8 @@ TEST(TestR2HLeaderPositionUpdater, initialisesRelativePosition)
   MetaState meta_state;
   set_valid_follower_inputs(meta_state);
   FSMState fsm_state = FSMState::INIT;
-  Updater updater("leader_position_updater", 10.0, TriggerMode::ALWAYS, 10.0);
+  Updater updater(
+    "leader_position_updater", 10.0, TriggerMode::ALWAYS, 10.0);
   const auto timestamp = romea::core::durationFromSecond(1.0);
   const auto observation = make_observation();
 
@@ -75,7 +77,7 @@ TEST(TestR2HLeaderPositionUpdater, initialisesRelativePosition)
   EXPECT_EQ(fsm_state, FSMState::RUNNING);
   EXPECT_TRUE(meta_state.state.X().isApprox(observation.Y()));
   EXPECT_TRUE(meta_state.state.P().isApprox(observation.R()));
-  EXPECT_EQ(meta_state.addon.last_exteroceptive_update.time, timestamp);
+  EXPECT_EQ(meta_state.addon.dead_reckoning_tracking.start_time, timestamp);
 }
 
 int main(int argc, char ** argv)

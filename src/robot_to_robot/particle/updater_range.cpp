@@ -100,8 +100,8 @@ void R2RPFUpdaterRange::update_(
   bool success = update_state_(current_state, current_observation);
 
   if (success) {
-    current_add_on.last_exteroceptive_update.time = duration;
-    current_add_on.last_exteroceptive_update.travelled_distance = current_add_on.travelled_distance;
+    current_add_on.dead_reckoning_tracking.start_time = duration;
+    current_add_on.dead_reckoning_tracking.start_travelled_distance = current_add_on.travelled_distance;
   }
 
   // log

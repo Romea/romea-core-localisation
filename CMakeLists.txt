@@ -19,7 +19,6 @@ add_library(${PROJECT_NAME} SHARED
   src/updater_exteroceptive.cpp
   src/updater_proprioceptive.cpp
   src/updater_trigger_mode.cpp
-  src/update_monitoring.cpp
   src/robot_to_human/meta_state_base.cpp
   src/robot_to_human/kalman/meta_state.cpp
   src/robot_to_human/kalman/predictor.cpp

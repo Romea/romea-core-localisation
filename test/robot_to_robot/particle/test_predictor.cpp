@@ -32,7 +32,11 @@ constexpr size_t kNumberOfParticles = 4;
 
 Predictor make_predictor()
 {
-  return Predictor(romea::core::durationFromSecond(100.0), 100.0, 100.0, kNumberOfParticles);
+  return Predictor(
+    kNumberOfParticles,
+    romea::core::localisation::DeadReckoningLimits(
+      romea::core::durationFromSecond(100.0),
+      100.0));
 }
 
 MetaState make_running_state()
@@ -45,8 +49,8 @@ MetaState make_running_state()
   state.input.U().setZero();
   state.input.QU().setZero();
   state.addon.travelled_distance = 0.5;
-  state.addon.last_exteroceptive_update.time = romea::core::Duration::zero();
-  state.addon.last_exteroceptive_update.travelled_distance = 0.0;
+  state.addon.dead_reckoning_tracking.start_time = romea::core::Duration::zero();
+  state.addon.dead_reckoning_tracking.start_travelled_distance = 0.0;
   return state;
 }
 
@@ -100,7 +104,11 @@ TEST(TestR2RPFPredictor, DISABLED_leaderBodyMotionPropagatesRelativeLeaderPose)
 
 TEST(TestR2RPFPredictor, deadReckoningLimitsResetState)
 {
-  Predictor predictor(romea::core::durationFromSecond(0.5), 100.0, 100.0, kNumberOfParticles);
+  Predictor predictor(
+    kNumberOfParticles,
+    romea::core::localisation::DeadReckoningLimits(
+      romea::core::durationFromSecond(0.5),
+      100.0));
   const auto previous = make_running_state();
   MetaState current(kNumberOfParticles);
   FSMState current_fsm_state = FSMState::RUNNING;

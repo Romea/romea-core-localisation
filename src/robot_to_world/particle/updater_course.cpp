@@ -79,8 +79,8 @@ void R2WPFUpdaterCourse::update_(
   const auto & courses = current_state.particles.row(MetaState::ANGULAR_SPEED_Z_BODY);
   current_state.weights *= ((courses - course).cos() * vonMisesConcentration).exp();
 
-  current_add_on.last_exteroceptive_update.time = duration;
-  current_add_on.last_exteroceptive_update.travelled_distance = current_add_on.travelled_distance;
+  current_add_on.dead_reckoning_tracking.start_time = duration;
+  current_add_on.dead_reckoning_tracking.start_travelled_distance = current_add_on.travelled_distance;
 }
 
 //--------------------------------------------------------------------------
@@ -96,8 +96,8 @@ void R2WPFUpdaterCourse::set_(
   randomGenerator.init(current_observation.Y(), current_observation.R());
   randomGenerator.fill(particleCourses);
 
-  current_add_on.last_exteroceptive_update.time = duration;
-  current_add_on.last_exteroceptive_update.travelled_distance = current_add_on.travelled_distance;
+  current_add_on.dead_reckoning_tracking.start_time = duration;
+  current_add_on.dead_reckoning_tracking.start_travelled_distance = current_add_on.travelled_distance;
 }
 
 }  // namespace localisation

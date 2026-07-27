@@ -15,6 +15,7 @@
 
 #include <gtest/gtest.h>
 
+#include <array>
 #include <cmath>
 
 #include "romea_core_common/time/Time.hpp"
@@ -30,7 +31,27 @@ using Predictor = romea::core::localisation::R2WKFPredictor;
 
 Predictor make_predictor()
 {
-  return Predictor(romea::core::durationFromSecond(100.0), 100.0, 100.0);
+  return Predictor(
+    romea::core::localisation::DeadReckoningLimits(
+      romea::core::durationFromSecond(100.0),
+      100.0));
+}
+
+Predictor make_predictor_with_proprioceptive_age_limits()
+{
+  Predictor::ObservationAgeLimits observation_age_limits;
+  observation_age_limits.update(
+    10.0,
+    std::array<std::size_t, 3>{
+      MetaState::LINEAR_SPEED_X_BODY,
+      MetaState::LINEAR_SPEED_Y_BODY,
+      MetaState::ANGULAR_SPEED_Z_BODY});
+
+  return Predictor(
+    romea::core::localisation::DeadReckoningLimits(
+      romea::core::durationFromSecond(100.0),
+      100.0),
+    observation_age_limits);
 }
 
 MetaState make_running_state()
@@ -41,13 +62,64 @@ MetaState make_running_state()
   state.input.U() << 1.5, 0.4, 0.1;
   state.input.QU().setIdentity();
   state.input.QU() *= 0.01;
-  state.addon.last_exteroceptive_update.time = romea::core::Duration::zero();
-  state.addon.last_exteroceptive_update.travelled_distance = 0.0;
+  state.addon.dead_reckoning_tracking.start_time = romea::core::Duration::zero();
+  state.addon.dead_reckoning_tracking.start_travelled_distance = 0.0;
   state.addon.travelled_distance = 0.5;
   state.addon.roll = 0.01;
   state.addon.pitch = -0.02;
   state.addon.roll_pitch_variance = 0.03;
   return state;
+}
+
+MetaState make_static_running_state_with_proprioceptive_data_at(
+  const romea::core::Duration & duration)
+{
+  auto state = make_running_state();
+  state.input.U().setZero();
+  state.addon.proprioceptive_data_tracking.times.fill(duration);
+  return state;
+}
+
+void expect_static_state_resets_when_proprioceptive_data_is_lost(
+  const std::size_t & lost_input_index)
+{
+  auto predictor = make_predictor_with_proprioceptive_age_limits();
+  const auto initial_time = romea::core::durationFromSecond(1.0);
+  const auto fresh_prediction_time = romea::core::durationFromSecond(1.1);
+  const auto refreshed_proprioceptive_time = romea::core::durationFromSecond(1.15);
+  const auto stale_prediction_time = romea::core::durationFromSecond(1.25);
+
+  const auto previous = make_static_running_state_with_proprioceptive_data_at(initial_time);
+  MetaState current;
+  FSMState current_fsm_state = FSMState::INIT;
+
+  predictor.predict(
+    initial_time,
+    FSMState::RUNNING,
+    previous,
+    fresh_prediction_time,
+    current_fsm_state,
+    current);
+
+  EXPECT_EQ(current_fsm_state, FSMState::RUNNING);
+
+  auto previous_after_loss = current;
+  previous_after_loss.addon.proprioceptive_data_tracking.times.fill(refreshed_proprioceptive_time);
+  previous_after_loss.addon.proprioceptive_data_tracking.times[lost_input_index] = initial_time;
+
+  MetaState current_after_loss;
+  predictor.predict(
+    refreshed_proprioceptive_time,
+    FSMState::RUNNING,
+    previous_after_loss,
+    stale_prediction_time,
+    current_fsm_state,
+    current_after_loss);
+
+  EXPECT_EQ(current_fsm_state, FSMState::INIT);
+  EXPECT_TRUE(std::isnan(current_after_loss.state.X(MetaState::POSITION_X)));
+  EXPECT_TRUE(std::isnan(current_after_loss.state.X(MetaState::POSITION_Y)));
+  EXPECT_TRUE(std::isnan(current_after_loss.state.X(MetaState::ORIENTATION_Z)));
 }
 
 }  // namespace
@@ -125,12 +197,15 @@ TEST(TestR2WKFPredictor, runningStateIsPropagated)
     current.addon.travelled_distance,
     previous.addon.travelled_distance + std::hypot(vx * dt, vy * dt));
   EXPECT_EQ(
-    current.addon.last_exteroceptive_update.time, previous.addon.last_exteroceptive_update.time);
+    current.addon.dead_reckoning_tracking.start_time, previous.addon.dead_reckoning_tracking.start_time);
 }
 
 TEST(TestR2WKFPredictor, deadReckoningLimitsResetState)
 {
-  Predictor predictor(romea::core::durationFromSecond(0.5), 100.0, 100.0);
+  Predictor predictor(
+    romea::core::localisation::DeadReckoningLimits(
+      romea::core::durationFromSecond(0.5),
+      100.0));
   const auto previous = make_running_state();
   MetaState current;
   FSMState current_fsm_state = FSMState::RUNNING;
@@ -147,6 +222,21 @@ TEST(TestR2WKFPredictor, deadReckoningLimitsResetState)
   EXPECT_TRUE(std::isnan(current.state.X(MetaState::POSITION_X)));
   EXPECT_TRUE(std::isnan(current.state.X(MetaState::POSITION_Y)));
   EXPECT_TRUE(std::isnan(current.state.X(MetaState::ORIENTATION_Z)));
+}
+
+TEST(TestR2WKFPredictor, staticStateResetsWhenLinearSpeedXIsLost)
+{
+  expect_static_state_resets_when_proprioceptive_data_is_lost(MetaState::LINEAR_SPEED_X_BODY);
+}
+
+TEST(TestR2WKFPredictor, staticStateResetsWhenLinearSpeedYIsLost)
+{
+  expect_static_state_resets_when_proprioceptive_data_is_lost(MetaState::LINEAR_SPEED_Y_BODY);
+}
+
+TEST(TestR2WKFPredictor, staticStateResetsWhenAngularSpeedZIsLost)
+{
+  expect_static_state_resets_when_proprioceptive_data_is_lost(MetaState::ANGULAR_SPEED_Z_BODY);
 }
 
 int main(int argc, char ** argv)
