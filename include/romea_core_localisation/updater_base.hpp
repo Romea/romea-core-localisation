@@ -51,6 +51,8 @@ public:
 
   void register_fsm_event_callback(FSMEventCallback callback);
 
+  const double & get_minimal_rate() const;
+
   virtual DiagnosticReport get_report();
 
 protected:

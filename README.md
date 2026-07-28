@@ -37,7 +37,7 @@ The package is framework-independent C++ code. Middleware-specific nodes, messag
 | Results | Extract estimated poses, twists and uncertainty information from a filter state. |
 | Traits | Group the right filter, predictor, updater and result classes for a selected model and filter type. |
 
-Applications assemble a complete filter by selecting a `romea_core_filtering` filter type and registering the localisation predictor and updaters provided by this package.
+Applications assemble a complete filter by selecting a filter type, creating a localisation predictor and adding the updaters provided by this package.
 
 ---
 
@@ -100,7 +100,7 @@ The package provides Kalman and particle component sets for the currently implem
 | ----- | ----------------- | ------------------- | ------ |
 | Robot-to-world | `robot_to_world/kalman/*` | `robot_to_world/particle/*` | `R2WTraits<KALMAN>`, `R2WTraits<PARTICLE>` |
 | Robot-to-robot | `robot_to_robot/kalman/*` | `robot_to_robot/particle/*` | `R2RTraits<KALMAN>`, `R2RTraits<PARTICLE>` |
-| Robot-to-human | `robot_to_human/kalman/*` | Not currently provided in this package. | No traits wrapper currently provided. |
+| Robot-to-human | `robot_to_human/kalman/*` | Not currently provided in this package. | `R2HTraits<KALMAN>` |
 
 For example, a robot-to-world Kalman localisation filter is assembled from the following component families:
 
@@ -118,60 +118,47 @@ The corresponding traits can be used to select the right component set:
 
 ```cpp
 using Traits = romea::core::localisation::R2WTraits<romea::core::KALMAN>;
+using LocalisationFilter =
+  romea::core::localisation::Filter<romea::core::KALMAN, Traits>;
 
-auto filter = std::make_unique<Traits::Filter>(state_pool_size);
 const romea::core::localisation::DeadReckoningLimits dead_reckoning_limits(
   romea::core::durationFromSecond(maximal_dead_reckoning_elapsed_time),
   maximal_dead_reckoning_travelled_distance);
-auto predictor = std::make_unique<Traits::Predictor>(
-  dead_reckoning_limits);
 
-filter->register_predictor(std::move(predictor));
+auto predictor = std::make_unique<Traits::Predictor>(dead_reckoning_limits);
+auto filter = std::make_unique<LocalisationFilter>(state_pool_size, std::move(predictor));
 
 auto position_updater = std::make_unique<Traits::UpdaterPosition>(
   "position_updater",
   minimal_rate,
-  trigger_mode,mahalanobis_distance_rejection_threshold);
+  trigger_mode,
+  mahalanobis_distance_rejection_threshold);
 
 auto twist_updater = std::make_unique<Traits::UpdaterTwist>(
   "twist_updater",
   minimal_rate);
 
-// ...
-// Build observations from sensor data, keep updater objects alive,
-// handle diagnostics, trigger policies and application-specific state.
-// ...
+auto twist_callback = filter->add_updater(std::move(twist_updater));
+auto position_callback = filter->add_updater(std::move(position_updater));
 
-auto twist_update = std::bind(
-  &Traits::UpdaterTwist::update,
-  twist_updater.get(),
-  std::placeholders::_1,
-  twist_observation,
-  std::placeholders::_2,
-  std::placeholders::_3);
+filter->initialize();
 
-filter->process(twist_observation_time, std::move(twist_update));
+if (twist_callback) {
+  (*twist_callback)(twist_observation_time, twist_observation);
+}
 
-auto position_update = std::bind(
-  &Traits::UpdaterPosition::update,
-  position_updater.get(),
-  std::placeholders::_1,
-  position_observation,
-  std::placeholders::_2,
-  std::placeholders::_3);
+if (position_callback) {
+  (*position_callback)(position_observation_time, position_observation);
+}
 
-filter->process(position_observation_time, std::move(position_update));
-
-Traits::MetaState current_meta_state;
-Traits::MetaStateToResults meta_state_to_results;
-if (filter->get_state(query_time, &current_meta_state)) {
-  const auto current_results = meta_state_to_results.convert(current_meta_state);
-  const auto & current_pose = current_results.robot_pose;
-  auto current_status = filter->get_fsm_state();
+const auto query = filter->get_results(query_time);
+if (query) {
+  const auto & current_pose = query.results->robot_pose;
+  auto current_status = query.fsm_state;
 }
 ```
 
-This example only shows the assembly principle. Real applications usually build observations inside sensor callbacks, keep updater objects alive and register several proprioceptive and exteroceptive updaters.
+This example only shows the assembly principle. Real applications usually build observations inside sensor callbacks, add several proprioceptive and exteroceptive updaters, and use the returned query state for diagnostics and publication decisions.
 
 ---
 

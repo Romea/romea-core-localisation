@@ -23,6 +23,7 @@
 #include <romea_core_filtering/filter/predictor_base.hpp>
 
 // std
+#include <algorithm>
 #include <cstddef>
 #include <limits>
 #include <memory>
@@ -58,6 +59,8 @@ public:
   void register_logger(std::shared_ptr<Logger> logger);
 
   void register_fsm_event_callback(FSMEventCallback callback);
+
+  void update_observation_age_limits(const ObservationAgeLimits & observation_age_limits);
 
   virtual void predict(
     const Duration & previous_duration,
@@ -111,6 +114,17 @@ template<class State>
 void PredictorBase<State>::register_logger(std::shared_ptr<Logger> logger)
 {
   logger_ = std::move(logger);
+}
+
+//-----------------------------------------------------------------------------
+template<class State>
+void PredictorBase<State>::update_observation_age_limits(
+  const ObservationAgeLimits & observation_age_limits)
+{
+  for (std::size_t n = 0; n < observation_age_limits_.maximal_ages.size(); ++n) {
+    observation_age_limits_.maximal_ages[n] =
+      std::min(observation_age_limits_.maximal_ages[n], observation_age_limits.maximal_ages[n]);
+  }
 }
 
 //-----------------------------------------------------------------------------

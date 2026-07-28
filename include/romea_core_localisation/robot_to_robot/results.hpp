@@ -27,9 +27,8 @@ namespace localisation
 
 struct R2RResults
 {
-  Pose2D leader_pose;
+  PoseAndTwist2D leader_pose_and_twist;
   Twist2D follower_twist;
-  Twist2D leader_twist;
 };
 
 }  // namespace localisation

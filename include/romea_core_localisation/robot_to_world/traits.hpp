@@ -53,6 +53,8 @@ struct R2WTraits<KALMAN>
 {
   using Filter = romea::core::KalmanFilter<R2WKFMetaState, FSMState, Duration>;
   using MetaState = R2WKFMetaState;
+  using Predictor = R2WKFPredictor;
+  using ObservationAgeLimits = typename Predictor::ObservationAgeLimits;
   using UpdaterTwist = romea::core::localisation::UpdaterTwist<R2WKFMetaState>;
   using UpdaterLinearSpeed = romea::core::localisation::UpdaterLinearSpeed<R2WKFMetaState>;
   using UpdaterLinearSpeeds = romea::core::localisation::UpdaterLinearSpeeds<R2WKFMetaState>;
@@ -62,7 +64,6 @@ struct R2WTraits<KALMAN>
   using UpdaterPose = R2WKFUpdaterPose;
   using UpdaterPosition = R2WKFUpdaterPosition;
   using UpdaterRange = R2WKFUpdaterRange;
-  using Predictor = R2WKFPredictor;
   using Results = R2WResults;
   using MetaStateToResults = R2WKFMetaStateToResults;
 };
@@ -72,6 +73,8 @@ struct R2WTraits<PARTICLE>
 {
   using Filter = romea::core::ParticleFilter<R2WPFMetaState, FSMState, Duration>;
   using MetaState = R2WPFMetaState;
+  using Predictor = R2WPFPredictor;
+  using ObservationAgeLimits = typename Predictor::ObservationAgeLimits;
   using UpdaterTwist = romea::core::localisation::UpdaterTwist<R2WPFMetaState>;
   using UpdaterLinearSpeed = romea::core::localisation::UpdaterLinearSpeed<R2WPFMetaState>;
   using UpdaterLinearSpeeds = romea::core::localisation::UpdaterLinearSpeeds<R2WPFMetaState>;
@@ -81,7 +84,6 @@ struct R2WTraits<PARTICLE>
   using UpdaterPose = R2WPFUpdaterPose;
   using UpdaterPosition = R2WPFUpdaterPosition;
   using UpdaterRange = R2WPFUpdaterRange;
-  using Predictor = R2WPFPredictor;
   using Results = R2WResults;
   using MetaStateToResults = R2WPFMetaStateToResults;
 };

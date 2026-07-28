@@ -43,10 +43,10 @@ R2RResults R2RPFMetaStateToResults::convert(const R2RPFMetaState & meta_state) c
   const auto estimate_covariance = compute_estimate_covariance_(meta_state, estimate);
   R2RResults results;
 
-  results.leader_pose.position.x() = estimate(R2RPFMetaState::LEADER_POSITION_X);
-  results.leader_pose.position.y() = estimate(R2RPFMetaState::LEADER_POSITION_Y);
-  results.leader_pose.yaw = estimate(R2RPFMetaState::LEADER_ORIENTATION_Z);
-  results.leader_pose.covariance = estimate_covariance;
+  results.leader_pose_and_twist.pose.position.x() = estimate(R2RPFMetaState::LEADER_POSITION_X);
+  results.leader_pose_and_twist.pose.position.y() = estimate(R2RPFMetaState::LEADER_POSITION_Y);
+  results.leader_pose_and_twist.pose.yaw = estimate(R2RPFMetaState::LEADER_ORIENTATION_Z);
+  results.leader_pose_and_twist.pose.covariance = estimate_covariance;
 
   results.follower_twist.linearSpeeds.x() =
     meta_state.input.U(R2RPFMetaState::LINEAR_SPEED_X_BODY);
@@ -58,13 +58,13 @@ R2RResults R2RPFMetaStateToResults::convert(const R2RPFMetaState & meta_state) c
     meta_state.input.QU().block<3, 3>(
     R2RPFMetaState::LINEAR_SPEED_X_BODY, R2RPFMetaState::LINEAR_SPEED_X_BODY);
 
-  results.leader_twist.linearSpeeds.x() =
+  results.leader_pose_and_twist.twist.linearSpeeds.x() =
     meta_state.input.U(R2RPFMetaState::LEADER_LINEAR_SPEED_X_BODY);
-  results.leader_twist.linearSpeeds.y() =
+  results.leader_pose_and_twist.twist.linearSpeeds.y() =
     meta_state.input.U(R2RPFMetaState::LEADER_LINEAR_SPEED_Y_BODY);
-  results.leader_twist.angularSpeed =
+  results.leader_pose_and_twist.twist.angularSpeed =
     meta_state.input.U(R2RPFMetaState::LEADER_ANGULAR_SPEED_Z_BODY);
-  results.leader_twist.covariance =
+  results.leader_pose_and_twist.twist.covariance =
     meta_state.input.QU().block<3, 3>(
     R2RPFMetaState::LEADER_LINEAR_SPEED_X_BODY,
     R2RPFMetaState::LEADER_LINEAR_SPEED_X_BODY);

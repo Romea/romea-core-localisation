@@ -47,15 +47,15 @@ TEST(TestR2RResults, computesWeightedLeaderPoseEstimate)
 {
   const auto results = make_results();
 
-  EXPECT_NEAR(results.leader_pose.position.x(), 2.0, 1e-12);
-  EXPECT_NEAR(results.leader_pose.position.y(), 5.0, 1e-12);
-  EXPECT_NEAR(results.leader_pose.yaw, 0.4, 1e-12);
+  EXPECT_NEAR(results.leader_pose_and_twist.pose.position.x(), 2.0, 1e-12);
+  EXPECT_NEAR(results.leader_pose_and_twist.pose.position.y(), 5.0, 1e-12);
+  EXPECT_NEAR(results.leader_pose_and_twist.pose.yaw, 0.4, 1e-12);
 }
 
 TEST(TestR2RResults, computesLeaderPoseCovarianceFromParticles)
 {
   const auto results = make_results();
-  const auto & covariance = results.leader_pose.covariance;
+  const auto & covariance = results.leader_pose_and_twist.pose.covariance;
 
   EXPECT_NEAR(covariance(State::LEADER_POSITION_X, State::LEADER_POSITION_X), 2.0 / 3.0, 1e-12);
   EXPECT_NEAR(covariance(State::LEADER_POSITION_Y, State::LEADER_POSITION_Y), 2.0 / 3.0, 1e-12);
@@ -69,9 +69,9 @@ TEST(TestR2RResults, storesFollowerAndLeaderTwists)
   EXPECT_DOUBLE_EQ(results.follower_twist.linearSpeeds.x(), 0.7);
   EXPECT_DOUBLE_EQ(results.follower_twist.linearSpeeds.y(), -0.2);
   EXPECT_DOUBLE_EQ(results.follower_twist.angularSpeed, 0.3);
-  EXPECT_DOUBLE_EQ(results.leader_twist.linearSpeeds.x(), 1.7);
-  EXPECT_DOUBLE_EQ(results.leader_twist.linearSpeeds.y(), -1.2);
-  EXPECT_DOUBLE_EQ(results.leader_twist.angularSpeed, 1.3);
+  EXPECT_DOUBLE_EQ(results.leader_pose_and_twist.twist.linearSpeeds.x(), 1.7);
+  EXPECT_DOUBLE_EQ(results.leader_pose_and_twist.twist.linearSpeeds.y(), -1.2);
+  EXPECT_DOUBLE_EQ(results.leader_pose_and_twist.twist.angularSpeed, 1.3);
 }
 
 int main(int argc, char ** argv)

@@ -42,10 +42,10 @@ TEST(TestR2RResults, storesLeaderPoseAndFollowerTwist)
 {
   const auto results = make_results();
 
-  EXPECT_DOUBLE_EQ(results.leader_pose.position.x(), 1.0);
-  EXPECT_DOUBLE_EQ(results.leader_pose.position.y(), 2.0);
-  EXPECT_DOUBLE_EQ(results.leader_pose.yaw, 0.3);
-  EXPECT_TRUE(results.leader_pose.covariance.isApprox(
+  EXPECT_DOUBLE_EQ(results.leader_pose_and_twist.pose.position.x(), 1.0);
+  EXPECT_DOUBLE_EQ(results.leader_pose_and_twist.pose.position.y(), 2.0);
+  EXPECT_DOUBLE_EQ(results.leader_pose_and_twist.pose.yaw, 0.3);
+  EXPECT_TRUE(results.leader_pose_and_twist.pose.covariance.isApprox(
     (Eigen::Matrix3d() << 0.1, 0.01, 0.02, 0.01, 0.2, 0.03, 0.02, 0.03, 0.3).finished()));
   EXPECT_DOUBLE_EQ(results.follower_twist.linearSpeeds.x(), 4.0);
   EXPECT_DOUBLE_EQ(results.follower_twist.linearSpeeds.y(), 5.0);
@@ -56,10 +56,10 @@ TEST(TestR2RResults, storesLeaderTwist)
 {
   const auto results = make_results();
 
-  EXPECT_DOUBLE_EQ(results.leader_twist.linearSpeeds.x(), 7.0);
-  EXPECT_DOUBLE_EQ(results.leader_twist.linearSpeeds.y(), 8.0);
-  EXPECT_DOUBLE_EQ(results.leader_twist.angularSpeed, 0.9);
-  EXPECT_TRUE(results.leader_twist.covariance.isApprox(
+  EXPECT_DOUBLE_EQ(results.leader_pose_and_twist.twist.linearSpeeds.x(), 7.0);
+  EXPECT_DOUBLE_EQ(results.leader_pose_and_twist.twist.linearSpeeds.y(), 8.0);
+  EXPECT_DOUBLE_EQ(results.leader_pose_and_twist.twist.angularSpeed, 0.9);
+  EXPECT_TRUE(results.leader_pose_and_twist.twist.covariance.isApprox(
     (Eigen::Matrix3d() << 0.7, 0.07, 0.08, 0.07, 0.8, 0.09, 0.08, 0.09, 0.9).finished()));
 }
 

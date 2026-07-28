@@ -69,6 +69,12 @@ DiagnosticReport UpdaterBase::get_report()
 }
 
 //-----------------------------------------------------------------------------
+const double & UpdaterBase::get_minimal_rate() const
+{
+  return minimal_rate_;
+}
+
+//-----------------------------------------------------------------------------
 void UpdaterBase::register_fsm_event_callback(FSMEventCallback callback)
 {
   fsm_event_notifier_.register_callback(std::move(callback));

@@ -26,6 +26,7 @@
 // local
 #include "romea_core_localisation/fsm_state.hpp"
 #include "romea_core_localisation/observation_attitude.hpp"
+#include "romea_core_localisation/observation_tracking.hpp"
 #include "romea_core_localisation/updater_proprioceptive.hpp"
 
 namespace romea
@@ -40,9 +41,17 @@ class R2WUpdaterAttitude : public UpdaterProprioceptive
 {
 public:
   using Observation = ObservationAttitude;
+  using ObservationAgeLimits = romea::core::localisation::ObservationAgeLimits<
+    MetaState::INPUT_SIZE>;
 
   R2WUpdaterAttitude(const std::string & updater_name, const double & minimal_rate)
   : UpdaterProprioceptive(updater_name, minimal_rate)
+  {
+  }
+
+  static void update_observation_age_limits(
+    ObservationAgeLimits & /*observation_age_limits*/,
+    const double & /*minimal_rate*/)
   {
   }
 
