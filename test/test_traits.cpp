@@ -20,7 +20,7 @@
 
 #include "romea_core_filtering/filter/type.hpp"
 #include "romea_core_localisation/dead_reckoning_tracking.hpp"
-#include "romea_core_localisation/filter.hpp"
+#include "romea_core_localisation/filters.hpp"
 #include "romea_core_localisation/robot_to_human/traits.hpp"
 #include "romea_core_localisation/robot_to_robot/traits.hpp"
 #include "romea_core_localisation/robot_to_world/traits.hpp"
@@ -105,23 +105,20 @@ TEST(TestFilter, instantiatesKalmanFilter)
 {
   using Traits = romea::core::localisation::R2WTraits<romea::core::KALMAN>;
   using Filter = romea::core::localisation::Filter<romea::core::KALMAN, Traits>;
-  using Predictor = typename Traits::Predictor;
   using Updater = typename Traits::UpdaterTwist;
 
-  auto predictor = std::make_unique<Predictor>(
+  Filter filter(
+    10,
     romea::core::localisation::DeadReckoningLimits(
       romea::core::durationFromSecond(10.0),
       2.0));
-  Filter filter(10, std::move(predictor));
 
-  auto updater = std::make_unique<Updater>("twist_updater", 10.0);
-  auto update_callback = filter.add_updater(std::move(updater));
+  auto update_callback = filter.add_proprioceptive_updater<Updater>("twist_updater", 10.0);
 
   ASSERT_TRUE(update_callback.has_value());
   EXPECT_TRUE(filter.initialize());
   EXPECT_FALSE(
-    filter.add_updater(
-      std::make_unique<Updater>("twist_updater", 10.0)).has_value());
+    filter.add_proprioceptive_updater<Updater>("twist_updater", 10.0).has_value());
 
   static_assert(std::is_invocable_v<
     typename decltype(update_callback)::value_type,
@@ -135,18 +132,16 @@ TEST(TestFilter, instantiatesRobotToHumanKalmanFilter)
 {
   using Traits = romea::core::localisation::R2HTraits<romea::core::KALMAN>;
   using Filter = romea::core::localisation::Filter<romea::core::KALMAN, Traits>;
-  using Predictor = typename Traits::Predictor;
   using Updater = typename Traits::UpdaterTwist;
 
-  auto predictor = std::make_unique<Predictor>(
+  Filter filter(
+    10,
     0.1,
     romea::core::localisation::DeadReckoningLimits(
       romea::core::durationFromSecond(10.0),
       2.0));
-  Filter filter(10, std::move(predictor));
 
-  auto updater = std::make_unique<Updater>("twist_updater", 10.0);
-  auto update_callback = filter.add_updater(std::move(updater));
+  auto update_callback = filter.add_proprioceptive_updater<Updater>("twist_updater", 10.0);
 
   ASSERT_TRUE(update_callback.has_value());
   EXPECT_TRUE(filter.initialize());
@@ -162,18 +157,16 @@ TEST(TestFilter, instantiatesParticleFilter)
 {
   using Traits = romea::core::localisation::R2WTraits<romea::core::PARTICLE>;
   using Filter = romea::core::localisation::Filter<romea::core::PARTICLE, Traits>;
-  using Predictor = typename Traits::Predictor;
   using Updater = typename Traits::UpdaterTwist;
 
-  auto predictor = std::make_unique<Predictor>(
+  Filter filter(
+    10,
     100,
     romea::core::localisation::DeadReckoningLimits(
       romea::core::durationFromSecond(10.0),
       2.0));
-  Filter filter(10, 100, std::move(predictor));
 
-  auto updater = std::make_unique<Updater>("twist_updater", 10.0);
-  auto update_callback = filter.add_updater(std::move(updater));
+  auto update_callback = filter.add_proprioceptive_updater<Updater>("twist_updater", 10.0);
 
   ASSERT_TRUE(update_callback.has_value());
   EXPECT_TRUE(filter.initialize());
