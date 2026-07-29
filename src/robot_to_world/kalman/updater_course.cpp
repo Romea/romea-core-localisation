@@ -100,7 +100,7 @@ void R2WKFUpdaterCourse::update_(
     logger_->writeRow();
   }
 
-  if (!update_state_(current_state)) {
+  if (!update_state_(current_state, current_observation.R())) {
     // TODO(jean) renvoyer un throw
   }
 

@@ -84,8 +84,8 @@ bool R2RPFUpdaterLeaderPose::set_(
     !std::isnan(current_input.U(R2RPFMetaState::LINEAR_SPEED_Y_BODY)) &&
     !std::isnan(current_input.U(R2RPFMetaState::ANGULAR_SPEED_Z_BODY)) &&
     !std::isnan(current_input.U(R2RPFMetaState::LEADER_LINEAR_SPEED_X_BODY)) &&
-    !std::isnan(current_input.U(R2RPFMetaState::LEADER_LINEAR_SPEED_X_BODY)) &&
-    !std::isnan(current_input.U(R2RPFMetaState::LEADER_LINEAR_SPEED_X_BODY))) {
+    !std::isnan(current_input.U(R2RPFMetaState::LEADER_LINEAR_SPEED_Y_BODY)) &&
+    !std::isnan(current_input.U(R2RPFMetaState::LEADER_ANGULAR_SPEED_Z_BODY))) {
     NormalRandomArrayGenerator3D<double> randomGenerator;
     randomGenerator.init(current_observation.Y(), current_observation.R());
     randomGenerator.fill(current_state.particles);

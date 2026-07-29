@@ -18,6 +18,7 @@
 #include <romea_core_common/math/NormalRandomMatrixGenerator.hpp>
 
 // std
+#include <limits>
 #include <string>
 
 // local
@@ -83,7 +84,7 @@ void R2WPFUpdaterPose::update(
           notify_fsm_event_(
             previous_fsm_state,
             current_fsm_State,
-            "FILTER DEGENERESCENCE, RESET AND GO TO INIT MODE");
+            "POSE UPDATE HAS FAILED, RESET AND GO TO INIT MODE");
         }
       }
       break;
@@ -129,9 +130,22 @@ void R2WPFUpdaterPose::update_(
   // update weights and resample
   current_observation.R(MetaState::POSITION_X, MetaState::POSITION_X) += varxyantenna;
   current_observation.R(MetaState::POSITION_Y, MetaState::POSITION_Y) += varxyantenna;
-  if (update_state_(current_state, current_observation)) {
+  const bool success = update_state_(current_state, current_observation);
+  if (success) {
     current_add_on.dead_reckoning_tracking.start_time = duration;
     current_add_on.dead_reckoning_tracking.start_travelled_distance = current_add_on.travelled_distance;
+  }
+
+  if (logger_) {
+    logger_->addEntry("stamp", durationToSecond(duration));
+    logger_->addEntry("success", success);
+    logger_->addEntry("mahalanobis_distance", this->mahalanobis_distance_);
+    logger_->addEntry(
+      "effective_sample_size",
+      success ? this->resampling_.get_number_of_effective_samples() :
+      std::numeric_limits<double>::quiet_NaN());
+    logger_->addEntry("resampled", success ? this->resampling_.has_resampled() : false);
+    logger_->writeRow();
   }
 }
 

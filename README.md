@@ -36,8 +36,9 @@ The package is framework-independent C++ code. Middleware-specific nodes, messag
 | Exteroceptive updaters | Correct the predicted state from external observations such as position, course, pose or range. |
 | Results | Extract estimated poses, twists and uncertainty information from a filter state. |
 | Traits | Group the right filter, predictor, updater and result classes for a selected model and filter type. |
+| Filter wrapper | Collects localisation updaters, configures proprioceptive observation age limits, initializes the concrete core filter and returns localisation query results. |
 
-Applications assemble a complete filter by selecting a filter type, creating a localisation predictor and adding the updaters provided by this package.
+Applications assemble a complete filter by selecting a filter type, creating a localisation predictor, adding the updaters provided by this package and calling `initialize()` once the updater set is complete.
 
 ---
 
@@ -80,6 +81,10 @@ The localisation filters are built from:
 * predictors, which propagate the state using the current proprioceptive inputs;
 * proprioceptive updaters, which update internal motion inputs such as twist, linear speed or angular speed;
 * exteroceptive updaters, which correct the state with observations such as position, course, pose or range.
+
+Proprioceptive updaters also declare which filter inputs they feed. The filter wrapper merges these constraints before initialization and forwards the resulting observation age limits to the predictor. If a required proprioceptive input becomes too old, prediction can reset the localisation state instead of continuing with stale motion data.
+
+Exteroceptive observations are allowed to be intermittent. Loss of exteroceptive observations is handled by the dead-reckoning limits tracked by the predictor.
 
 Exteroceptive updaters support trigger modes:
 
@@ -158,7 +163,9 @@ if (query) {
 }
 ```
 
-This example only shows the assembly principle. Real applications usually build observations inside sensor callbacks, add several proprioceptive and exteroceptive updaters, and use the returned query state for diagnostics and publication decisions.
+`get_results()` returns a `FilterQuery<Results>`. Results are present only when the underlying filter query is available and the localisation FSM state is `RUNNING`; the FSM state is still returned so callers can publish status and make diagnostics decisions.
+
+This example only shows the assembly principle. Real applications usually build observations inside sensor callbacks, add several proprioceptive and exteroceptive updaters, call `initialize()` after all updaters have been added, and use the returned query state for diagnostics and publication decisions.
 
 ---
 

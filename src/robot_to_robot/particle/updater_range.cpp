@@ -15,6 +15,7 @@
 
 // std
 #include <iostream>
+#include <limits>
 #include <string>
 
 // local
@@ -51,17 +52,19 @@ void R2RPFUpdaterRange::update(
   rate_diagnostic_.evaluate(duration);
 
   if (current_fsm_State == FSMState::RUNNING) {
-    try {
-      update_(duration, current_observation, current_meta_state.state, current_meta_state.addon);
-    } catch (...) {
-      const auto previous_fsm_state = current_fsm_State;
-      current_meta_state.state.reset();
-      current_meta_state.addon.reset();
-      current_fsm_State = FSMState::INIT;
-      notify_fsm_event_(
-        previous_fsm_state,
-        current_fsm_State,
-        "FILTER DEGENERESCENCE, RESET AND GO TO INIT MODE");
+    if (trigger_mode_ == trigger_mode::ALWAYS) {
+      try {
+        update_(duration, current_observation, current_meta_state.state, current_meta_state.addon);
+      } catch (...) {
+        const auto previous_fsm_state = current_fsm_State;
+        current_meta_state.state.reset();
+        current_meta_state.addon.reset();
+        current_fsm_State = FSMState::INIT;
+        notify_fsm_event_(
+          previous_fsm_state,
+          current_fsm_State,
+          "RANGE UPDATE HAS FAILED, RESET AND GO TO INIT MODE");
+      }
     }
   }
 }
@@ -113,6 +116,11 @@ void R2RPFUpdaterRange::update_(
     logger_->addEntry("apriori_range", apriori_observation_.Y());
     logger_->addEntry("cov_apriori_range", apriori_observation_.R());
     logger_->addEntry("mahalanobis_distance", this->mahalanobis_distance_);
+    logger_->addEntry(
+      "effective_sample_size",
+      success ? this->resampling_.get_number_of_effective_samples() :
+      std::numeric_limits<double>::quiet_NaN());
+    logger_->addEntry("resampled", success ? this->resampling_.has_resampled() : false);
     logger_->writeRow();
   }
 }

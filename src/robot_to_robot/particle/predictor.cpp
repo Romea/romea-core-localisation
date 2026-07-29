@@ -66,8 +66,8 @@ void R2RPFPredictor::predict_(const MetaState & previous_meta_state, MetaState &
 void R2RPFPredictor::drawFollowerInputs(const Input & previous_input)
 {
   wfdT_ = previous_input.U(MetaState::ANGULAR_SPEED_Z_BODY) * dt_;
-  vxfdT_ = previous_input.U(MetaState::LEADER_LINEAR_SPEED_X_BODY) * dt_;
-  vyfdT_ = previous_input.U(MetaState::LEADER_LINEAR_SPEED_Y_BODY) * dt_;
+  vxfdT_ = previous_input.U(MetaState::LINEAR_SPEED_X_BODY) * dt_;
+  vyfdT_ = previous_input.U(MetaState::LINEAR_SPEED_Y_BODY) * dt_;
 
   Uf_ = previous_input.U().segment<3>(MetaState::LINEAR_SPEED_X_BODY) * dt_;
 
@@ -133,7 +133,7 @@ void R2RPFPredictor::predictState_(
     previous_state.particles.row(MetaState::LEADER_POSITION_X) *
       randomUfinv_.row(MetaState::ANGULAR_SPEED_Z_BODY) +
     randomUfinv_.row(MetaState::LINEAR_SPEED_Y_BODY) +
-    sin_courses_ * randomUl_.row(MetaState::LINEAR_SPEED_X_BODY) * cos_courses_ *
+    sin_courses_ * randomUl_.row(MetaState::LINEAR_SPEED_X_BODY) + cos_courses_ *
       randomUl_.row(MetaState::LINEAR_SPEED_Y_BODY);
 
   current_state.weights = previous_state.weights;

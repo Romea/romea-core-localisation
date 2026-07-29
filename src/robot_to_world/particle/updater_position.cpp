@@ -14,6 +14,7 @@
 // limitations under the License.
 
 // std
+#include <limits>
 #include <string>
 
 // romea
@@ -49,6 +50,8 @@ void R2WPFUpdaterPosition::update(
   FSMState & current_fsm_State,
   MetaState & current_meta_state)
 {
+  rate_diagnostic_.evaluate(duration);
+
   switch (current_fsm_State) {
     case FSMState::INIT:
       if (set_(
@@ -78,7 +81,7 @@ void R2WPFUpdaterPosition::update(
           notify_fsm_event_(
             previous_fsm_state,
             current_fsm_State,
-            "FILTER DEGENERESCENCE, RESET AND GO TO INIT MODE");
+            "POSITION UPDATE HAS FAILED, RESET AND GO TO INIT MODE");
         }
       }
       break;
@@ -123,9 +126,22 @@ void R2WPFUpdaterPosition::update_(
   // update weights and resample
   current_observation.R(MetaState::POSITION_X, MetaState::POSITION_X) += varxyantenna;
   current_observation.R(MetaState::POSITION_Y, MetaState::POSITION_Y) += varxyantenna;
-  if (update_state_(current_state, current_observation)) {
+  const bool success = update_state_(current_state, current_observation);
+  if (success) {
     current_add_on.dead_reckoning_tracking.start_time = duration;
     current_add_on.dead_reckoning_tracking.start_travelled_distance = current_add_on.travelled_distance;
+  }
+
+  if (logger_) {
+    logger_->addEntry("stamp", durationToSecond(duration));
+    logger_->addEntry("success", success);
+    logger_->addEntry("mahalanobis_distance", this->mahalanobis_distance_);
+    logger_->addEntry(
+      "effective_sample_size",
+      success ? this->resampling_.get_number_of_effective_samples() :
+      std::numeric_limits<double>::quiet_NaN());
+    logger_->addEntry("resampled", success ? this->resampling_.has_resampled() : false);
+    logger_->writeRow();
   }
 }
 
@@ -170,7 +186,7 @@ void R2WPFUpdaterPosition::computelever_arms_(
 
   randomGenerator.init(
     lever_arm_compensation_.getPosition().segment<2>(0),
-    lever_arm_compensation_.getPosition().block<2, 2>(0, 0));
+    lever_arm_compensation_.getPositionCovariance().block<2, 2>(0, 0));
 
   randomGenerator.fill(leverArms_);
 }
@@ -179,7 +195,8 @@ void R2WPFUpdaterPosition::computelever_arms_(
 void R2WPFUpdaterPosition::setParticlePositions_(
   const Observation & current_observation, State & current_state)
 {
-  auto particlePositions = current_state.particles.block(2, number_of_particles_, 0, 0);
+  auto particlePositions = current_state.particles.template block<2, Eigen::Dynamic>(
+    MetaState::POSITION_X, 0, 2, number_of_particles_);
 
   NormalRandomArrayGenerator2D<double> randomGenerator;
   randomGenerator.init(current_observation.Y(), current_observation.R());

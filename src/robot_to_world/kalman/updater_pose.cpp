@@ -149,7 +149,7 @@ void R2WKFUpdaterPose::update_(
   }
 
   // Update state vector
-  bool success = update_state_(current_state);
+  bool success = update_state_(current_state, current_observation.R());
   if (success) {
     current_add_on.dead_reckoning_tracking.start_time = duration;
     current_add_on.dead_reckoning_tracking.start_travelled_distance =

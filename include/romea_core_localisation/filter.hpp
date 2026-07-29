@@ -101,11 +101,10 @@ public:
 
 protected:
   FilterBase(
-    std::unique_ptr<Filter> filter,
     std::unique_ptr<Predictor> predictor,
     std::unique_ptr<MetaState> current_meta_state,
     std::unique_ptr<MetaStateToResults> meta_state_to_results)
-  : filter_(std::move(filter)),
+  : filter_(nullptr),
     predictor_(std::move(predictor)),
     current_meta_state_(std::move(current_meta_state)),
     meta_state_to_results_(std::move(meta_state_to_results)),
@@ -116,6 +115,8 @@ protected:
     is_initialized_(false)
   {
   }
+
+  virtual ~FilterBase() = default;
 
 public:
   void register_event_log_callback(LogCallback callback)
@@ -140,7 +141,7 @@ public:
       return false;
     }
 
-    filter_->register_predictor(std::move(predictor_));
+    filter_ = make_filter_(std::move(predictor_));
     is_initialized_ = true;
 
     log_event_("filter initialized");
@@ -148,7 +149,12 @@ public:
     return true;
   }
 
-  void reset() { filter_->reset(); }
+  void reset()
+  {
+    if (filter_) {
+      filter_->reset();
+    }
+  }
 
   FilterQuery<Results> get_results(const Duration & duration)
   {
@@ -301,6 +307,8 @@ private:
     }
   }
 
+  virtual std::unique_ptr<Filter> make_filter_(std::unique_ptr<Predictor> predictor) = 0;
+
 protected:
   std::unique_ptr<Filter> filter_;
   std::unique_ptr<Predictor> predictor_;
@@ -326,12 +334,22 @@ public:
   explicit Filter(
     const std::size_t & state_pool_size, std::unique_ptr<typename Base::Predictor> predictor)
   : Base(
-      std::make_unique<typename Base::Filter>(state_pool_size),
       std::move(predictor),
       std::make_unique<typename Base::MetaState>(),
-      std::make_unique<typename Base::MetaStateToResults>())
+      std::make_unique<typename Base::MetaStateToResults>()),
+    state_pool_size_(state_pool_size)
   {
   }
+
+private:
+  std::unique_ptr<typename Base::Filter> make_filter_(
+    std::unique_ptr<typename Base::Predictor> predictor) override
+  {
+    return std::make_unique<typename Base::Filter>(state_pool_size_, std::move(predictor));
+  }
+
+private:
+  std::size_t state_pool_size_;
 };
 
 template<class Traits>
@@ -346,12 +364,25 @@ public:
     const std::size_t & number_of_particles,
     std::unique_ptr<typename Base::Predictor> predictor)
   : Base(
-      std::make_unique<typename Base::Filter>(state_pool_size, number_of_particles),
       std::move(predictor),
       std::make_unique<typename Base::MetaState>(number_of_particles),
-      std::make_unique<typename Base::MetaStateToResults>(number_of_particles))
+      std::make_unique<typename Base::MetaStateToResults>(number_of_particles)),
+    state_pool_size_(state_pool_size),
+    number_of_particles_(number_of_particles)
   {
   }
+
+private:
+  std::unique_ptr<typename Base::Filter> make_filter_(
+    std::unique_ptr<typename Base::Predictor> predictor) override
+  {
+    return std::make_unique<typename Base::Filter>(
+      state_pool_size_, number_of_particles_, std::move(predictor));
+  }
+
+private:
+  std::size_t state_pool_size_;
+  std::size_t number_of_particles_;
 };
 
 }  // namespace localisation

@@ -18,6 +18,7 @@
 #include <romea_core_common/math/NormalRandomMatrixGenerator.hpp>
 
 // std
+#include <cmath>
 #include <random>
 #include <string>
 
@@ -50,6 +51,8 @@ void R2WPFUpdaterCourse::update(
   FSMState & current_fsm_State,
   MetaState & current_meta_state)
 {
+  assert(current_observation.R() > 0);
+
   rate_diagnostic_.evaluate(duration);
 
   switch (current_fsm_State) {
@@ -58,7 +61,18 @@ void R2WPFUpdaterCourse::update(
       break;
     case FSMState::RUNNING:
       if (trigger_mode_ == trigger_mode::ALWAYS) {
-        update_(duration, current_observation, current_meta_state.state, current_meta_state.addon);
+        try {
+          update_(duration, current_observation, current_meta_state.state, current_meta_state.addon);
+        } catch (...) {
+          const auto previous_fsm_state = current_fsm_State;
+          current_fsm_State = FSMState::INIT;
+          current_meta_state.state.reset();
+          current_meta_state.addon.reset();
+          notify_fsm_event_(
+            previous_fsm_state,
+            current_fsm_State,
+            "COURSE UPDATE HAS FAILED, RESET AND GO TO INIT MODE");
+        }
       }
       break;
     default:
@@ -76,7 +90,7 @@ void R2WPFUpdaterCourse::update_(
   double course = current_observation.Y();
   double vonMisesConcentration = 0.5 / (1 - std::exp(-current_observation.R() / 2));
 
-  const auto & courses = current_state.particles.row(MetaState::ANGULAR_SPEED_Z_BODY);
+  const auto & courses = current_state.particles.row(MetaState::ORIENTATION_Z);
   current_state.weights *= ((courses - course).cos() * vonMisesConcentration).exp();
 
   current_add_on.dead_reckoning_tracking.start_time = duration;
@@ -93,7 +107,7 @@ void R2WPFUpdaterCourse::set_(
   auto particleCourses = current_state.particles.row(MetaState::ORIENTATION_Z);
 
   NormalRandomArrayGenerator<double> randomGenerator;
-  randomGenerator.init(current_observation.Y(), current_observation.R());
+  randomGenerator.init(current_observation.Y(), std::sqrt(current_observation.R()));
   randomGenerator.fill(particleCourses);
 
   current_add_on.dead_reckoning_tracking.start_time = duration;

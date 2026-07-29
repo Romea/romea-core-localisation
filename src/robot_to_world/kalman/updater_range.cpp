@@ -71,7 +71,7 @@ void R2WKFUpdaterRange::update(
       } catch (...) {
         const auto previous_fsm_state = current_fsm_State;
         current_meta_state.state.reset();
-        current_meta_state.state.reset();
+        current_meta_state.addon.reset();
         current_fsm_State = FSMState::INIT;
         notify_fsm_event_(
           previous_fsm_state,

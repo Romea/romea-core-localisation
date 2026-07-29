@@ -15,6 +15,7 @@
 
 // std
 #include <iostream>
+#include <limits>
 #include <string>
 
 // romea
@@ -49,6 +50,8 @@ void R2WPFUpdaterRange::update(
   FSMState & current_fsm_State,
   MetaState & current_meta_state)
 {
+  rate_diagnostic_.evaluate(duration);
+
   if (current_fsm_State == FSMState::RUNNING) {
     if (trigger_mode_ == trigger_mode::ALWAYS) {
       try {
@@ -61,7 +64,7 @@ void R2WPFUpdaterRange::update(
         notify_fsm_event_(
           previous_fsm_state,
           current_fsm_State,
-          "FILTER DEGENERESCENCE, RESET AND GO TO INIT MODE");
+          "RANGE UPDATE HAS FAILED, RESET AND GO TO INIT MODE");
       }
     }
   }
@@ -109,9 +112,26 @@ void R2WPFUpdaterRange::update_(
   // update weights and resample
   current_observation.R() += lever_arm_compensation_.getPositionCovariance().trace();
 
-  if (update_state_(current_state, current_observation)) {
+  const bool success = update_state_(current_state, current_observation);
+  if (success) {
     current_add_on.dead_reckoning_tracking.start_time = duration;
     current_add_on.dead_reckoning_tracking.start_travelled_distance = current_add_on.travelled_distance;
+  }
+
+  if (logger_) {
+    logger_->addEntry("stamp", durationToSecond(duration));
+    logger_->addEntry("success", success);
+    logger_->addEntry("range", current_observation.Y());
+    logger_->addEntry("cov_range", current_observation.R());
+    logger_->addEntry("apriori_range", apriori_observation_.Y());
+    logger_->addEntry("cov_apriori_range", apriori_observation_.R());
+    logger_->addEntry("mahalanobis_distance", this->mahalanobis_distance_);
+    logger_->addEntry(
+      "effective_sample_size",
+      success ? this->resampling_.get_number_of_effective_samples() :
+      std::numeric_limits<double>::quiet_NaN());
+    logger_->addEntry("resampled", success ? this->resampling_.has_resampled() : false);
+    logger_->writeRow();
   }
 }
 

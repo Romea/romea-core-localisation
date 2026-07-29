@@ -20,6 +20,8 @@ romea_add_gtest(test_pose_kf_updater kalman/test_pose_updater.cpp LIBRARIES ${PR
 
 romea_add_gtest(test_range_kf_updater kalman/test_range_updater.cpp LIBRARIES ${PROJECT_NAME})
 
+romea_add_gtest(test_r2w_kf_initialisation_updaters kalman/test_initialisation_updaters.cpp LIBRARIES ${PROJECT_NAME})
+
 romea_add_gtest(test_r2w_kf_predictor kalman/test_predictor.cpp LIBRARIES ${PROJECT_NAME})
 
 romea_add_gtest(test_r2w_kf_results kalman/test_results.cpp LIBRARIES ${PROJECT_NAME})

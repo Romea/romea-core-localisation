@@ -99,7 +99,7 @@ void R2HKFUpdaterRange::update_(
   QInn_ = current_observation.R() + aprioriRangeVariance;
 
   // Update state vector
-  bool success = update_state_(current_state);
+  bool success = update_state_(current_state, current_observation.R());
 
   if (logger_) {
     logger_->addEntry("stamp", durationToSecond(duration));
